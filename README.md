@@ -1,5 +1,5 @@
 # spid-php-sdk
-Software Development Kit that simplify SPID access integration with SimpleSAMLphp.
+Software Development Kit for easy SPID access integration with SimpleSAMLphp.
 
 spid-php-sdk è uno script composer (https://getcomposer.org/) per Linux che semplifica e automatizza il processo di installazione e configurazione di SimpleSAMLphp (https://simplesamlphp.org/) per l'integrazione dell'autenticazione SPID all'interno di applicazioni PHP tramite lo spid-smart-button (https://github.com/italia/spid-smart-button). spid-php-sdk permette di realizzare un Service Provider per SPID in pochi secondi.
 
