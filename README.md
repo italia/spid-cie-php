@@ -71,7 +71,7 @@ restituisce gli attributi dell'utente autenticato
 
 ### getAttribute
 ```
-string getAttributes(string $attribute)
+string getAttribute(string $attribute)
 ```
 restituisce il valore per lo specifico attributo 
 
