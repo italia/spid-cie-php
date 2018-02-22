@@ -14,6 +14,8 @@ Durante il processo di setup lo script richiede l'inserimento delle seguenti inf
 * i dati per la generazione del certificato X.509 per il service provider
 
 e si occupa di eseguire i seguenti passi:
+* scarica l'ultima versione di SimpleSAMLphp con le relative dipendenze
+* scarica l'ultima versione dello spid smart button
 * crea un certificato X.509 per il service provider
 * scarica i metadata degli IDP di produzione tramite il metadata unico di configurazione (https://registry.spid.gov.it/metadata/idp/spid-entities-idps.xml)
 * effettua tutte le necessarie configurazioni su SimpleSAMLphp
