@@ -1,0 +1,48 @@
+$metadata['{{ENTITYID}}'] = array (
+
+  'entityid' => '{{SPENTITYID}}',
+  'description' => array (
+    'en' => '{{ORGANIZATIONNAME}}',
+    'it' => '{{ORGANIZATIONNAME}}',
+  ),  
+  'icon' => '{{ICON}}', 
+  'OrganizationName' => array (
+    'en' => '{{ORGANIZATIONNAME}}',
+    'it' => '{{ORGANIZATIONNAME}}',
+  ),
+  'name' => array (
+    'en' => '{{ORGANIZATIONNAME}}',
+    'it' => '{{ORGANIZATIONNAME}}',
+  ),
+  'OrganizationDisplayName' => array (
+    'en' => '{{ORGANIZATIONDISPLAYNAME}}',
+    'it' => '{{ORGANIZATIONDISPLAYNAME}}',
+  ),
+  'url' => array (
+    'en' => '{{ORGANIZATIONURL}}',
+    'it' => '{{ORGANIZATIONURL}}',
+  ),
+  'OrganizationURL' => array (
+    'en' => '{{ORGANIZATIONURL}}',
+    'it' => '{{ORGANIZATIONURL}}',
+  ),
+  'contacts' => array (
+  ),
+  'metadata-set' => 'saml20-idp-remote',
+  'sign.authnrequest' => true,
+  'SingleSignOnService' => {{SSO}},
+  'SingleLogoutService' => {{SLO}},
+  'ArtifactResolutionService' => array (
+  ),
+  'NameIDFormats' => array (
+    0 => '{{NAMEIDFORMAT}}',
+  ),
+  'keys' => array (
+    0 => array (
+      'encryption' => false,
+      'signing' => true,
+      'type' => 'X509Certificate',
+      'X509Certificate' => '{{X509CERTIFICATE}}'
+    ),
+  ),
+);

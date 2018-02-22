@@ -1,0 +1,34 @@
+{
+    "repositories": {
+        "spid-smart-button": {
+            "type": "package",
+            "package": {
+                "name": "italia/spid-smart-button",
+                "version": "1.0",
+                "source": {
+                    "url": "https://github.com/italia/spid-smart-button",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
+        }
+    },
+    "require": {
+        "simplesamlphp/simplesamlphp": "*",
+        "italia/spid-smart-button": "*"
+    },
+    "scripts": {
+        "post-update-cmd": [
+            "setup\\Setup::setup"
+        ],
+        "uninstall": [
+            "setup\\Setup::remove"
+        ]
+    },
+    "scripts-descriptions": {
+        "uninstall": "Remove all packages and custom configurations"
+    },    
+    "autoload": {
+        "classmap": ["setup/"]
+    }         
+}
