@@ -19,7 +19,7 @@ class Setup {
         $_curDir = getcwd();
         $_serviceName = "myservice";
         $_entityID = "https://localhost";
-        $_acsIndex = 1;
+        $_acsIndex = 0;
 
         $curDir = readline("Please insert path for current directory (" . $colors->getColoredString($_curDir, "green") . "): ");
         if($curDir==null || $curDir=="") $curDir = $_curDir;
