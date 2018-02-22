@@ -44,13 +44,13 @@ $spid_level indica il livello SPID da richiedere
 
 ### isAuthenticated
 ```
-bool isAuthenticated
+bool isAuthenticated()
 ```
 restituisce true se l'utente è autenticato, false altrimenti
 
 ### requireAuth
 ```
-void requireAuth
+void requireAuth()
 ```
 richiede che l'utente sia autenticato. Se l'utente non è autenticato mostra il pannello di scelta dell'IDP
 
