@@ -14,32 +14,39 @@ class Setup {
         echo $colors->getColoredString("SPID PHP SDK Setup\nversion 1.0\n\n", "green");
 
         // retrieve path and inputs
-        $_homeDir = shell_exec('echo -e "$HOME\c"');
-        $_wwwDir = shell_exec('echo -e "$HOME/public_html\c"');
+        $_homeDir = shell_exec('echo -n "$HOME"');
+        $_wwwDir = shell_exec('echo -n "$HOME/public_html"');
         $_curDir = getcwd();
         $_serviceName = "myservice";
         $_entityID = "https://localhost";
         $_acsIndex = 0;
 
-        $curDir = readline("Please insert path for current directory (" . $colors->getColoredString($_curDir, "green") . "): ");
+        echo "Please insert path for current directory (" . $colors->getColoredString($_curDir, "green") . "): ";
+        $curDir = readline();
         if($curDir==null || $curDir=="") $curDir = $_curDir;
 
-        $wwwDir = readline("Please insert path for www (" . $colors->getColoredString($_wwwDir, "green") . "): ");
+        echo "Please insert path for www (" . $colors->getColoredString($_wwwDir, "green") . "): ";
+        $wwwDir = readline();
         if($wwwDir==null || $wwwDir=="") $wwwDir = $_wwwDir;
         
-        $serviceName = readline("Please insert name for service endpoint (" . $colors->getColoredString($_serviceName, "green") . "): ");
+        echo "Please insert name for service endpoint (" . $colors->getColoredString($_serviceName, "green") . "): ";
+        $serviceName = readline();
         if($serviceName==null || $serviceName=="") $serviceName = $_serviceName;
 
-        $entityID = readline("Please insert your EntityID (" . $colors->getColoredString($_entityID, "green") . "): ");
+        echo "Please insert your EntityID (" . $colors->getColoredString($_entityID, "green") . "): ";
+        $entityID = readline();
         if($entityID==null || $entityID=="") $entityID = $_entityID;
 
-        $acsIndex = readline("Please insert your Attribute Consuming Service Index (" . $colors->getColoredString($_acsIndex, "green") . "): ");
+        echo "Please insert your Attribute Consuming Service Index (" . $colors->getColoredString($_acsIndex, "green") . "): ";
+        $acsIndex = readline();
         if($acsIndex==null || $acsIndex=="") $acsIndex = $_acsIndex;
 
-        $addTestIDP = readline("Add configuration for Test IDP idp.spid.gov.it ? (" . $colors->getColoredString("Y", "green") . "): ");
+        echo "Add configuration for Test IDP idp.spid.gov.it ? (" . $colors->getColoredString("Y", "green") . "): ";
+        $addTestIDP = readline();
         $addTestIDP = ($addTestIDP!=null && strtoupper($addTestIDP)=="N")? false:true;
 
-        $addExamples = readline("Add example php file to www ? (" . $colors->getColoredString("Y", "green") . "): ");
+        echo "Add example php file to www ? (" . $colors->getColoredString("Y", "green") . "): ";
+        $addExamples = readline();
         $addExamples = ($addExamples!=null && strtoupper($addExamples)=="N")? false:true;
         
         echo $colors->getColoredString("\nCurrent directory: " . $curDir, "yellow");
@@ -64,7 +71,8 @@ class Setup {
         shell_exec("mkdir " . $curDir . "/cert");
         shell_exec("cp " . $curDir . "/vendor/simplesamlphp/simplesamlphp/cert/*.crt " . $curDir . "/cert");
 
-        readline($colors->getColoredString("\n\nReady to setup. Press a key to continue or CTRL-C to exit\n", "white"));        
+        echo $colors->getColoredString("\n\nReady to setup. Press a key to continue or CTRL-C to exit\n", "white");
+        readline();        
         
         // set link to simplesamlphp      
         echo $colors->getColoredString("\nCreate symlink for simplesamlphp service... ", "white");  
@@ -265,17 +273,20 @@ class Setup {
         $colors = new Colors();
 
         // retrieve path and inputs
-        $_wwwDir = shell_exec('echo -e "$HOME/public_html\c"');
+        $_wwwDir = shell_exec('echo -n "$HOME/public_html"');
         $_installDir = getcwd();
         $_serviceName = "myservice";
 
-        $installDir = readline("Please insert root path where sdk is installed (" . $colors->getColoredString($_installDir, "green") . "): ");
+        echo "Please insert root path where sdk is installed (" . $colors->getColoredString($_installDir, "green") . "): ";
+        $installDir = readline();
         if($installDir==null || $installDir=="") $installDir = $_installDir;
 
-        $wwwDir = readline("Please insert path for www (" . $colors->getColoredString($_wwwDir, "green") . "): ");
+        echo "Please insert path for www (" . $colors->getColoredString($_wwwDir, "green") . "): ";
+        $wwwDir = readline();
         if($wwwDir==null || $wwwDir=="") $wwwDir = $_wwwDir;
         
-        $serviceName = readline("Please insert name for service endpoint (" . $colors->getColoredString($_serviceName, "green") . "): ");
+        echo "Please insert name for service endpoint (" . $colors->getColoredString($_serviceName, "green") . "): ";
+        $serviceName = readline();
         if($serviceName==null || $serviceName=="") $serviceName = $_serviceName;
 
         
