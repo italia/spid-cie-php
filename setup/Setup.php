@@ -25,7 +25,7 @@ class Setup {
         $curDir = readline();
         if($curDir==null || $curDir=="") $curDir = $_curDir;
 
-        echo "Please insert path for www (" . $colors->getColoredString($_wwwDir, "green") . "): ";
+        echo "Please insert path for web root directory (" . $colors->getColoredString($_wwwDir, "green") . "): ";
         $wwwDir = readline();
         if($wwwDir==null || $wwwDir=="") $wwwDir = $_wwwDir;
         
@@ -50,7 +50,7 @@ class Setup {
         $addExamples = ($addExamples!=null && strtoupper($addExamples)=="N")? false:true;
         
         echo $colors->getColoredString("\nCurrent directory: " . $curDir, "yellow");
-        echo $colors->getColoredString("\nWWW directory: " . $wwwDir, "yellow");
+        echo $colors->getColoredString("\nWeb root directory: " . $wwwDir, "yellow");
         echo $colors->getColoredString("\nService Name: " . $serviceName, "yellow");
         echo $colors->getColoredString("\nEntity ID: " . $entityID, "yellow");
         echo $colors->getColoredString("\nAttribute Consuming Service Index: " . $acsIndex, "yellow");
@@ -59,9 +59,15 @@ class Setup {
         
         echo "\n\n";
         
+        // create vhost directory if not exists
+        if(!file_exists($wwwDir)) {
+            echo $colors->getColoredString("\nWebroot directory not found. Making directory " . $wwwDir, "yellow");
+            echo $colors->getColoredString("\nPlease remember to configure your virtual host.\n\n", "yellow");
+            shell_exec("mkdir " . $wwwDir);
+        }
+
         // create log directory
         shell_exec("mkdir " . $curDir . "/vendor/simplesamlphp/simplesamlphp/log");
-        shell_exec("chmod 777 " . $curDir . "/vendor/simplesamlphp/simplesamlphp/log");
 
         // create certificates
         shell_exec("mkdir " . $curDir . "/vendor/simplesamlphp/simplesamlphp/cert");
@@ -255,8 +261,10 @@ class Setup {
         
         // reset permissions
         echo $colors->getColoredString("\nSetting directories and files permissions... ", "white");  
-        shell_exec("find . -type d -exec chmod 0755 {} \;");   
-        shell_exec("find . -type f -exec chmod 0644 {} \;");  
+        shell_exec("find " . $curDir . "/. -type d -exec chmod 0755 {} \;");   
+        shell_exec("find " . $curDir . "/. -type f -exec chmod 0644 {} \;");  
+        shell_exec("chmod 777 " . $curDir . "/vendor/simplesamlphp/simplesamlphp/log");
+
         if($addExamples) {
             shell_exec("chmod 0644 " . $wwwDir . "/login.php");  
             shell_exec("chmod 0644 " . $wwwDir . "/user.php");  
