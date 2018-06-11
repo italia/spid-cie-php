@@ -25,6 +25,9 @@ Al termine del processo di setup si potrà utilizzare il certificato X.509 creat
 Se si è scelto di copiare i file di esempio, inoltre, sarà possibile verificare subito l'integrazione accedendo da web a /login.php o /user.php
 
 ## Requisiti
+* Web server
+* php >= 7
+* php-xml
 * Composer (https://getcomposer.org)
 * OpenSSL 
 
