@@ -61,6 +61,7 @@ class Setup {
         
         // create log directory
         shell_exec("mkdir " . $curDir . "/vendor/simplesamlphp/simplesamlphp/log");
+        shell_exec("chmod 777 " . $curDir . "/vendor/simplesamlphp/simplesamlphp/log");
 
         // create certificates
         shell_exec("mkdir " . $curDir . "/vendor/simplesamlphp/simplesamlphp/cert");
