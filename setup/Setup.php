@@ -175,11 +175,11 @@ class Setup {
             switch($IDPentityID) {
                 case "https://loginspid.aruba.it": $icon = "spid-idp-aruba.svg"; break;
                 case "https://identity.infocert.it": $icon = "spid-idp-infocertid.svg"; break;
-                //case "https://spid.intesa.it": $icon = ""; break;
-                //case "https://idp.namirialtsp.com/idp": $icon = ""; break;
+                case "https://spid.intesa.it": $icon = "spid-idp-intesaid.svg"; break;
+                case "https://idp.namirialtsp.com/idp": $icon = "spid-idp-namirialid.svg"; break;
                 case "https://posteid.poste.it": $icon = "spid-idp-posteid.svg"; break;
                 case "https://identity.sieltecloud.it": $icon = "spid-idp-sielteid.svg"; break;
-                //case "https://spid.register.it": $icon = ""; break;
+                case "https://spid.register.it": $icon = "spid-idp-spiditalia.svg"; break;
                 case "https://login.id.tim.it/affwebservices/public/saml2sso": $icon = "spid-idp-timid.svg"; break;                
             }
 

@@ -6,7 +6,7 @@
                 "name": "italia/spid-smart-button",
                 "version": "1.0",
                 "source": {
-                    "url": "https://github.com/italia/spid-smart-button",
+                    "url": "https://github.com/damikael/spid-smart-button",
                     "type": "git",
                     "reference": "master"
                 }
