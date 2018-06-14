@@ -45,7 +45,7 @@ class Setup {
         $addTestIDP = readline();
         $addTestIDP = ($addTestIDP!=null && strtoupper($addTestIDP)=="N")? false:true;
 
-        echo "Optional URI for local Test IDP (leave empty to skip) ? (): ";
+        echo "Optional URI for local Test IDP metadata endpoint (leave empty to skip) ? (): ";
         $localTestIDP = readline();
         $localTestIDP = $localTestIDP == null ? "" : $localTestIDP;
         
@@ -61,7 +61,7 @@ class Setup {
         echo $colors->getColoredString("\nAttribute Consuming Service Index: " . $acsIndex, "yellow");
         echo $colors->getColoredString("\nAdd configuration for Test IDP idp.spid.gov.it: ", "yellow");
         echo $colors->getColoredString(($addTestIDP)? "Y":"N", "yellow");
-        echo $colors->getColoredString("\nURI for local Test IDP: " . $localTestIDP, "yellow");
+        echo $colors->getColoredString("\nURI for local Test IDP metadata endpoint: " . $localTestIDP, "yellow");
         
         echo "\n\n";
         
@@ -131,9 +131,10 @@ class Setup {
         $xml = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml);  
         $xml = simplexml_load_string($xml); 
 
-        // add configuration for local test IDP
+        // add configuration for local test IDP metadata
         if($localTestIDP != "") {
             echo $colors->getColoredString("\nRetrieve configuration for local test IDP... ", "white");  
+            // often test IDPs have snakeoil SSL certificates so let's skip the certificate validation
             $arrContextOptions=array(
                 "ssl"=>array(
                     "verify_peer"=>false,
@@ -143,16 +144,8 @@ class Setup {
             $xml1 = file_get_contents($localTestIDP, false, stream_context_create($arrContextOptions));
             // remove tag prefixes
             $xml1 = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml1);
-            echo "$xml1\n";
             $xml1 = simplexml_load_string($xml1);
-            echo ($xml1 !== FALSE ? 'Valid XML' : 'Parse Error'), PHP_EOL;
-            echo "xml1 = $xml1\n";
-            echo print_r($xml1) . PHP_EOL;
-            echo "xml1 as xml = " . $xml1->asXml(). "\n";
-            // http://php.net/manual/en/simplexmlelement.addchild.php
-            $myfile = fopen("before", "w") or die("Unable to open file!");
-            fwrite($myfile, print_r($xml, true));
-            fclose($myfile);
+            // debug: echo ($xml1 !== FALSE ? 'Valid XML' : 'Parse Error'), PHP_EOL;
 
             $to = $xml->addChild('EntityDescriptor', $xml1);
             foreach($xml1 as $from) {
@@ -161,10 +154,6 @@ class Setup {
                 $fromDom = dom_import_simplexml($from);
                 $toDom->appendChild($toDom->ownerDocument->importNode($fromDom, true));
             }
-
-            $myfile1 = fopen("after", "w") or die("Unable to open file!");
-            fwrite($myfile1, print_r($xml, true));
-            fclose($myfile1);
         }
 
         foreach($xml->EntityDescriptor as $entity) {
