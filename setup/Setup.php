@@ -241,9 +241,9 @@ class Setup {
         // write sdk 
         echo $colors->getColoredString("\nWrite sdk helper class... ", "white");  
         $vars = array("{{SERVICENAME}}"=> $serviceName);
-        $template = file_get_contents($curDir.'/setup/sdk/spid-php-sdk.tpl', true);
+        $template = file_get_contents($curDir.'/setup/sdk/spid-php.tpl', true);
         $customized = str_replace(array_keys($vars), $vars, $template);
-        file_put_contents($curDir . "/spid-php-sdk.php", $customized);  
+        file_put_contents($curDir . "/spid-php.php", $customized);  
         echo $colors->getColoredString("OK", "green"); 
 
         // write example files 
@@ -309,7 +309,7 @@ class Setup {
         shell_exec("rm " . $wwwDir . "/" . $serviceName);
         echo $colors->getColoredString("OK", "green");   
         echo $colors->getColoredString("\nRemove sdk file... ", "white");
-        shell_exec("rm " . $installDir . "/spid-php-sdk.php");
+        shell_exec("rm " . $installDir . "/spid-php.php");
         echo $colors->getColoredString("OK", "green");
         echo $colors->getColoredString("\nRemove composer lock file... ", "white");
         shell_exec("rm " . $installDir . "/composer.lock");

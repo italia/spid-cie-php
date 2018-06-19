@@ -1,6 +1,6 @@
 <?php 
-    require_once("{{SDKHOME}}/spid-php-sdk.php");
-    $spidsdk = new SPID_PHP_SDK(1);
+    require_once("{{SDKHOME}}/spid-php.php");
+    $spidsdk = new SPID_PHP(1);
     $spidsdk->requireAuth();
 ?>
 
