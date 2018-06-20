@@ -41,10 +41,15 @@ class Setup {
         $acsIndex = readline();
         if($acsIndex==null || $acsIndex=="") $acsIndex = $_acsIndex;
 
-        echo "Add configuration for Test IDP idp.spid.gov.it ? (" . $colors->getColoredString("Y", "green") . "): ";
+        echo "Add configuration for Public Test IDP idp.spid.gov.it ? (" . $colors->getColoredString("Y", "green") . "): ";
         $addTestIDP = readline();
         $addTestIDP = ($addTestIDP!=null && strtoupper($addTestIDP)=="N")? false:true;
 
+        echo "Optional URI for local Test IDP metadata endpoint (leave empty to skip) ? (): ";
+        $localTestIDP = readline();
+        $localTestIDP = $localTestIDP == null ? "" : $localTestIDP;
+        
+        
         echo "Add example php file to www ? (" . $colors->getColoredString("Y", "green") . "): ";
         $addExamples = readline();
         $addExamples = ($addExamples!=null && strtoupper($addExamples)=="N")? false:true;
@@ -56,6 +61,7 @@ class Setup {
         echo $colors->getColoredString("\nAttribute Consuming Service Index: " . $acsIndex, "yellow");
         echo $colors->getColoredString("\nAdd configuration for Test IDP idp.spid.gov.it: ", "yellow");
         echo $colors->getColoredString(($addTestIDP)? "Y":"N", "yellow");
+        echo $colors->getColoredString("\nURI for local Test IDP metadata endpoint: " . $localTestIDP, "yellow");
         
         echo "\n\n";
         
@@ -108,9 +114,9 @@ class Setup {
         // setup IDP configurations
         $IDPMetadata = "";
 
-        // add configuration for test IDP
+        // add configuration for public test IDP
         if($addTestIDP) {
-            echo $colors->getColoredString("\nWrite metadata for test IDP... ", "white");  
+            echo $colors->getColoredString("\nWrite metadata for public test IDP... ", "white");  
             $vars = array("{{ENTITYID}}"=> "'".$entityID."'");
             $template_idp_test = file_get_contents($_curDir.'/setup/metadata/saml20-idp-remote-test.ptpl', true);
             $template_idp_test = str_replace(array_keys($vars), $vars, $template_idp_test);
@@ -121,8 +127,34 @@ class Setup {
         // retrieve IDP metadata
         echo $colors->getColoredString("\nRetrieve configurations for production IDPs... ", "white");  
         $xml = file_get_contents('https://registry.spid.gov.it/metadata/idp/spid-entities-idps.xml'); 
+        // remove tag prefixes
         $xml = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml);  
         $xml = simplexml_load_string($xml); 
+
+        // add configuration for local test IDP metadata
+        if($localTestIDP != "") {
+            echo $colors->getColoredString("\nRetrieve configuration for local test IDP... ", "white");  
+            // often test IDPs have snakeoil SSL certificates so let's skip the certificate validation
+            $arrContextOptions=array(
+                "ssl"=>array(
+                    "verify_peer"=>false,
+                    "verify_peer_name"=>false,
+                ),
+            );
+            $xml1 = file_get_contents($localTestIDP, false, stream_context_create($arrContextOptions));
+            // remove tag prefixes
+            $xml1 = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml1);
+            $xml1 = simplexml_load_string($xml1);
+            // debug: echo ($xml1 !== FALSE ? 'Valid XML' : 'Parse Error'), PHP_EOL;
+
+            $to = $xml->addChild('EntityDescriptor', $xml1);
+            foreach($xml1 as $from) {
+                // https://stackoverflow.com/a/4778964
+                $toDom = dom_import_simplexml($to);
+                $fromDom = dom_import_simplexml($from);
+                $toDom->appendChild($toDom->ownerDocument->importNode($fromDom, true));
+            }
+        }
 
         foreach($xml->EntityDescriptor as $entity) {
             $OrganizationName = trim($entity->Organization->OrganizationName);
