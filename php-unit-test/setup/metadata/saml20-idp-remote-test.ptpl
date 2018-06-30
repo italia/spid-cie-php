@@ -1,0 +1,86 @@
+$metadata['https://idp.spid.gov.it'] = array (
+  'entityid' => {{ENTITYID}},
+  'description' =>
+  array (
+    'en' => 'IDP spid.gov.it',
+    'it' => 'IDP spid.gov.it',
+  ),
+  'icon' => 'spid-idp-dummy.svg', 
+  'OrganizationName' =>
+  array (
+    'en' => 'IDP spid.gov.it',
+    'it' => 'IDP spid.gov.it',
+  ),
+  'name' =>
+  array (
+    'en' => 'IDP spid.gov.it',
+    'it' => 'IDP spid.gov.it',
+  ),
+  'OrganizationDisplayName' =>
+  array (
+    'en' => 'IDP spid.gov.it',
+    'it' => 'IDP spid.gov.it',
+  ),
+  'url' =>
+  array (
+    'en' => 'https://idp.spid.gov.it',
+    'it' => 'https://idp.spid.gov.it',
+  ),
+  'OrganizationURL' =>
+  array (
+    'en' => 'https://idp.spid.gov.it',
+    'it' => 'https://idp.spid.gov.it',
+  ),
+  'contacts' =>
+  array (
+  ),
+  'metadata-set' => 'saml20-idp-remote',
+  'sign.authnrequest' => true,
+  'SingleSignOnService' =>
+  array (
+    
+    0 =>
+    array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+      'Location' => 'https://idp.spid.gov.it/samlsso',
+    ),
+    
+    /*
+    0 =>
+    array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+      'Location' => 'https://spid-idp.linfabox.it/samlsso',
+    ),
+    */
+  ),
+  'SingleLogoutService' =>
+  array (
+    0 =>
+    array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+      'Location' => 'https://idp.spid.gov.it/samlsso',
+    ),
+    1 =>
+    array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+      'Location' => 'https://idp.spid.gov.it/samlsso',
+    ),
+  ),
+  'ArtifactResolutionService' =>
+  array (
+  ),
+  'NameIDFormats' =>
+  array (
+    0 => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
+  ),
+  'keys' =>
+  array (
+    0 =>
+    array (
+      'encryption' => false,
+      'signing' => true,
+      'type' => 'X509Certificate',
+      'X509Certificate' => 'MIICNTCCAZ6gAwIBAgIES343gjANBgkqhkiG9w0BAQUFADBVMQswCQYDVQQGEwJVUzELMAkGA1UE CAwCQ0ExFjAUBgNVBAcMDU1vdW50YWluIFZpZXcxDTALBgNVBAoMBFdTTzIxEjAQBgNVBAMMCWxv Y2FsaG9zdDAeFw0xMDAyMTkwNzAyMjZaFw0zNTAyMTMwNzAyMjZaMFUxCzAJBgNVBAYTAlVTMQsw CQYDVQQIDAJDQTEWMBQGA1UEBwwNTW91bnRhaW4gVmlldzENMAsGA1UECgwEV1NPMjESMBAGA1UE AwwJbG9jYWxob3N0MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCUp/oV1vWc8/TkQSiAvTou sMzOM4asB2iltr2QKozni5aVFu818MpOLZIr8LMnTzWllJvvaA5RAAdpbECb+48FjbBe0hseUdN5 HpwvnH/DW8ZccGvk53I6Orq7hLCv1ZHtuOCokghz/ATrhyPq+QktMfXnRS4HrKGJTzxaCcU7OQID AQABoxIwEDAOBgNVHQ8BAf8EBAMCBPAwDQYJKoZIhvcNAQEFBQADgYEAW5wPR7cr1LAdq+IrR44i QlRG5ITCZXY9hI0PygLP2rHANh+PYfTmxbuOnykNGyhM6FjFLbW2uZHQTY1jMrPprjOrmyK5sjJR O4d1DeGHT/YnIjs9JogRKv4XHECwLtIVdAbIdWHEtVZJyMSktcyysFcvuhPQK8Qc/E/Wq8uHSCo='
+    ),
+  ),
+);
