@@ -2,4 +2,5 @@ vendor
 cert
 composer.lock
 spid-php.php
+idp_metadata
 
