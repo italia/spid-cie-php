@@ -3,6 +3,11 @@
 $config = array(
 
     // An authentication source 
+    'admin' => array(
+        'core:AdminPassword',
+    ),
+
+    // An authentication source
     'service-l1' => array(
         'saml:SP',
         'privatekey' => 'spid-sp.pem',
