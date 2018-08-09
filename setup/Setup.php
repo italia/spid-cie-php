@@ -147,13 +147,14 @@ class Setup {
             $xml1 = simplexml_load_string($xml1);
             // debug: echo ($xml1 !== FALSE ? 'Valid XML' : 'Parse Error'), PHP_EOL;
 
-            $to = $xml->addChild('EntityDescriptor', $xml1);
+            $to = $xml->addChild('EntityDescriptor');
             foreach($xml1 as $from) {
                 // https://stackoverflow.com/a/4778964
                 $toDom = dom_import_simplexml($to);
                 $fromDom = dom_import_simplexml($from);
                 $toDom->appendChild($toDom->ownerDocument->importNode($fromDom, true));
-            }
+	    }
+	    $to->addAttribute("entityID", $xml1["entityID"]);
         }
 
         foreach($xml->EntityDescriptor as $entity) {
