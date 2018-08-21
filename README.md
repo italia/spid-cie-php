@@ -107,3 +107,70 @@ if(!$spidsdk->isAuthenticated()) {
 }
 ```
 
+## Compliance
+
+|<img src="https://github.com/italia/spid-graphics/blob/master/spid-logos/spid-logo-c-lb.png?raw=true" width="100" /><br />_Compliance with [SPID regulations](http://www.agid.gov.it/sites/default/files/circolari/spid-regole_tecniche_v1.pdf) (for Service Providers)_|status|notes|
+|:---|:---|:---|
+|**Metadata:**|||
+|parsing of IdP XML metadata (1.2.2.4)|✓||
+|parsing of AA XML metadata (2.2.4)|no||
+|SP XML metadata generation (1.3.2)|!|[#34](https://github.com/italia/spid-php/issues/34) [#35](https://github.com/italia/spid-php/issues/35) [#36](https://github.com/italia/spid-php/issues/36) [#37](https://github.com/italia/spid-php/issues/37) [#39](https://github.com/italia/spid-php/issues/39)|
+|**AuthnRequest generation (1.2.2.1):**|||
+|generation of AuthnRequest XML|!|[#31](https://github.com/italia/spid-php/issues/31)|
+|HTTP-Redirect binding|✓||
+|HTTP-POST binding|✓||
+|`AssertionConsumerServiceURL` customization|no||
+|`AssertionConsumerServiceIndex` customization|!|[#37](https://github.com/italia/spid-php/issues/37)|
+|`AttributeConsumingServiceIndex` customization|!|[#38](https://github.com/italia/spid-php/issues/38)|
+|`AuthnContextClassRef` (SPID level) customization|✓||
+|`RequestedAuthnContext/@Comparison` customization|no|[#31](https://github.com/italia/spid-php/issues/31)|
+|`RelayState` customization (1.2.2)|no||
+|**Response/Assertion parsing**|||
+|verification of `Response/Signature` value (if any)|?||
+|verification of `Response/Signature` certificate (if any) against IdP/AA metadata|?||
+|verification of `Assertion/Signature` value|✓||
+|verification of `Assertion/Signature` certificate against IdP/AA metadata|?||
+|verification of `SubjectConfirmationData/@Recipient`|✓||
+|verification of `SubjectConfirmationData/@NotOnOrAfter`|✓||
+|verification of `SubjectConfirmationData/@InResponseTo`|✓||
+|verification of `Issuer`|✓||
+|verification of `Destination`|✓||
+|verification of `Conditions/@NotBefore`|✓||
+|verification of `Conditions/@NotOnOrAfter`|✓||
+|verification of `Audience`|✓||
+|parsing of Response with no `Assertion` (authentication/query failure)|✓||
+|parsing of failure `StatusCode` (Requester/Responder)|no||
+|verification of `RelayState` (saml-bindings-2.0-os 3.5.3)|?||
+|**Response/Assertion parsing for SSO (1.2.1, 1.2.2.2, 1.3.1):**|||
+|parsing of `NameID`|?||
+|parsing of `AuthnContextClassRef` (SPID level)|no||
+|parsing of attributes|✓||
+|**Response/Assertion parsing for attribute query (2.2.2.2, 2.3.1):**|||
+|parsing of attributes|no||
+|**LogoutRequest generation (for SP-initiated logout):**|||
+|generation of LogoutRequest XML|?||
+|HTTP-Redirect binding|?||
+|HTTP-POST binding|?||
+|**LogoutResponse parsing (for SP-initiated logout):**|||
+|parsing of LogoutResponse XML|?||
+|verification of `LogoutResponse/Signature` value (if any)|?||
+|verification of `LogoutResponse/Signature` certificate (if any) against IdP metadata|?||
+|verification of `Issuer`|?||
+|verification of `Destination`|?||
+|PartialLogout detection|?||
+|**LogoutRequest parsing (for third-party-initiated logout):**||
+|parsing of LogoutRequest XML|?||
+|verification of `LogoutRequest/Signature` value (if any)|?||
+|verification of `LogoutRequest/Signature` certificate (if any) against IdP metadata|?||
+|verification of `Issuer`|?||
+|verification of `Destination`|?||
+|parsing of `NameID`|?||
+|**LogoutResponse generation (for third-party-initiated logout):**||
+|generation of LogoutResponse XML|?||
+|HTTP-Redirect binding|?||
+|HTTP-POST binding|?||
+|PartialLogout customization|?||
+|**AttributeQuery generation (2.2.2.1):**||
+|generation of AttributeQuery XML|no||
+|SOAP binding (client)|no||
+
