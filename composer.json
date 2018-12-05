@@ -1,5 +1,17 @@
 {
     "repositories": {
+        "spid-sp-access-button": {
+            "type": "package",
+            "package": {
+                "name": "italia/spid-sp-access-button",
+                "version": "1.0",
+                "source": {
+                    "url": "https://github.com/italia/spid-sp-access-button",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
+        },        
         "spid-smart-button": {
             "type": "package",
             "package": {
@@ -14,8 +26,9 @@
         }
     },
     "require": {
-        "simplesamlphp/simplesamlphp": "1.15.4",
-        "italia/spid-smart-button": "*"
+        "simplesamlphp/simplesamlphp": "*",
+        "italia/spid-smart-button": "*",
+        "italia/spid-sp-access-button": "*"
     },
     "scripts": {
         "post-update-cmd": [

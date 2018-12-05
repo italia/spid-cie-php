@@ -45,15 +45,25 @@ class Setup {
         $addTestIDP = readline();
         $addTestIDP = ($addTestIDP!=null && strtoupper($addTestIDP)=="N")? false:true;
 
+        echo "Add configuration for AgID Validator validator.spid.gov.it ? (" . $colors->getColoredString("Y", "green") . "): ";
+        $addValidatorIDP = readline();
+        $addValidatorIDP = ($addValidatorIDP!=null && strtoupper($addValidatorIDP)=="N")? false:true;
+
         echo "Optional URI for local Test IDP metadata endpoint (leave empty to skip) ? (): ";
         $localTestIDP = readline();
         $localTestIDP = $localTestIDP == null ? "" : $localTestIDP;
         
-        
-        echo "Add example php file to www ? (" . $colors->getColoredString("Y", "green") . "): ";
+        echo "Add example php files login.php and user.php to www ? (" . $colors->getColoredString("Y", "green") . "): ";
         $addExamples = readline();
         $addExamples = ($addExamples!=null && strtoupper($addExamples)=="N")? false:true;
-        
+
+        /*
+        echo "Use SPID smart button ? (" . $colors->getColoredString("N", "green") . "): ";
+        $useSmartButton = readline();
+        $useSmartButton = ($useSmartButton!=null && strtoupper($useSmartButton)=="Y")? true:false;
+        */
+        $useSmartButton = false;
+
         echo $colors->getColoredString("\nCurrent directory: " . $curDir, "yellow");
         echo $colors->getColoredString("\nWeb root directory: " . $wwwDir, "yellow");
         echo $colors->getColoredString("\nService Name: " . $serviceName, "yellow");
@@ -62,6 +72,11 @@ class Setup {
         echo $colors->getColoredString("\nAdd configuration for Test IDP idp.spid.gov.it: ", "yellow");
         echo $colors->getColoredString(($addTestIDP)? "Y":"N", "yellow");
         echo $colors->getColoredString("\nURI for local Test IDP metadata endpoint: " . $localTestIDP, "yellow");
+        echo $colors->getColoredString("\nAdd example php files: ", "yellow");
+        echo $colors->getColoredString(($addExamples)? "Y":"N", "yellow");
+        //echo $colors->getColoredString("\nUse SPID smart button: ", "yellow");
+        //echo $colors->getColoredString(($useSmartButton)? "Y":"N", "yellow");
+        
         
         echo "\n\n";
         
@@ -77,7 +92,7 @@ class Setup {
 
         // create certificates
         shell_exec("mkdir " . $curDir . "/vendor/simplesamlphp/simplesamlphp/cert");
-        shell_exec("openssl req -newkey rsa:2048 -new -x509 -days 3652 -nodes -out " . 
+        shell_exec("openssl req -x509 -sha256 -days 365 -newkey rsa:2048 -nodes -out " . 
                     $curDir . "/vendor/simplesamlphp/simplesamlphp/cert/spid-sp.crt -keyout " . 
                     $curDir . "/vendor/simplesamlphp/simplesamlphp/cert/spid-sp.pem");    
                     
@@ -114,16 +129,29 @@ class Setup {
         // setup IDP configurations
         $IDPMetadata = "";
 
+        $IDPEntities = "";        
+
         // add configuration for public test IDP
         if($addTestIDP) {
             echo $colors->getColoredString("\nWrite metadata for public test IDP... ", "white");  
             $vars = array("{{ENTITYID}}"=> "'".$entityID."'");
             $template_idp_test = file_get_contents($_curDir.'/setup/metadata/saml20-idp-remote-test.ptpl', true);
             $template_idp_test = str_replace(array_keys($vars), $vars, $template_idp_test);
-            $IDPMetadata .= "\n\n" . $template_idp_test;        
+            $IDPMetadata .= "\n\n" . $template_idp_test;    
+            $IDPEntities .= "\n\t\t\t\$this->idps['TEST'] = 'https://idp.spid.gov.it';";    
             echo $colors->getColoredString("OK", "green");  
         }
 
+        // add configuration for AgID Validator
+        if($addValidatorIDP) {
+            echo $colors->getColoredString("\nWrite metadata for AgID Validator... ", "white");  
+            $vars = array("{{ENTITYID}}"=> "'".$entityID."'");
+            $template_idp_validator = file_get_contents($_curDir.'/setup/metadata/saml20-idp-remote-validator.ptpl', true);
+            $template_idp_validator = str_replace(array_keys($vars), $vars, $template_idp_validator);
+            $IDPMetadata .= "\n\n" . $template_idp_validator;    
+            $IDPEntities .= "\n\t\t\t\$this->idps['VALIDATOR'] = 'https://validator.spid.gov.it';";     
+            echo $colors->getColoredString("OK", "green");  
+        }
         // retrieve IDP metadata
         echo $colors->getColoredString("\nRetrieve configurations for production IDPs... ", "white");  
         $xml = file_get_contents('https://registry.spid.gov.it/metadata/idp/spid-entities-idps.xml'); 
@@ -203,7 +231,9 @@ class Setup {
             } 
             */             
 
+            
             $icon = "spid-idp-dummy.svg";
+            /*
             switch($IDPentityID) {
                 case "https://loginspid.aruba.it": $icon = "spid-idp-aruba.svg"; break;
                 case "https://identity.infocert.it": $icon = "spid-idp-infocertid.svg"; break;
@@ -214,6 +244,7 @@ class Setup {
                 case "https://spid.register.it": $icon = "spid-idp-spiditalia.svg"; break;
                 case "https://login.id.tim.it/affwebservices/public/saml2sso": $icon = "spid-idp-timid.svg"; break;                
             }
+            */
 
             $vars = array(
                 "{{ENTITYID}}"=> $IDPentityID,
@@ -232,6 +263,8 @@ class Setup {
             $template_idp = str_replace(array_keys($vars), $vars, $template_idp);
     
             $IDPMetadata .= "\n\n" . $template_idp;
+
+            $IDPEntities .= "\n\t\t\t\$this->idps['".str_replace("'", "", $OrganizationName)."'] = '".$IDPentityID."';";
         }
         echo $colors->getColoredString("OK", "green");  
         
@@ -249,34 +282,51 @@ class Setup {
         file_put_contents($curDir . "/vendor/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php", $customized);        
         */
         
-        // overwrite template file
-        echo $colors->getColoredString("\nWrite smart-button template... ", "white");  
-        $vars = array("{{SERVICENAME}}"=> $serviceName);
-        $template = file_get_contents($curDir.'/setup/templates/selectidp-links.tpl', true);
-        $customized = str_replace(array_keys($vars), $vars, $template);
-        file_put_contents($curDir . "/vendor/simplesamlphp/simplesamlphp/templates/selectidp-links.php", $customized);        
-        
-        // overwrite smart button js file
-        $vars = array("{{SERVICENAME}}"=> $serviceName);
-        $template = file_get_contents($curDir.'/setup/www/js/agid-spid-enter.tpl', true);
-        $customized = str_replace(array_keys($vars), $vars, $template);
-        shell_exec("mkdir " . $curDir . "/vendor/simplesamlphp/simplesamlphp/www/js");
-        file_put_contents($curDir . "/vendor/simplesamlphp/simplesamlphp/www/js/agid-spid-enter.js", $customized);  
-        echo $colors->getColoredString("OK", "green");  
-        
-        // copy smart button css and img
-        echo $colors->getColoredString("\nCopy smart-button resurces... ", "white");  
-        shell_exec("cp -rf " . $curDir . "/vendor/italia/spid-smart-button/css " . $curDir . "/vendor/simplesamlphp/simplesamlphp/www/css");
-        shell_exec("cp -rf " . $curDir . "/vendor/italia/spid-smart-button/img " . $curDir . "/vendor/simplesamlphp/simplesamlphp/www/img");
-        echo $colors->getColoredString("OK", "green");  
+        if($useSmartButton) {
+            // overwrite template file
+            echo $colors->getColoredString("\nWrite smart-button template... ", "white");  
+            $vars = array("{{SERVICENAME}}"=> $serviceName);
+            $template = file_get_contents($curDir.'/setup/templates/smartbutton/selectidp-links.tpl', true);
+            $customized = str_replace(array_keys($vars), $vars, $template);
+            file_put_contents($curDir . "/vendor/simplesamlphp/simplesamlphp/templates/selectidp-links.php", $customized);        
+            
+            // overwrite smart button js file
+            $vars = array("{{SERVICENAME}}"=> $serviceName);
+            $template = file_get_contents($curDir.'/setup/www/js/agid-spid-enter.tpl', true);
+            $customized = str_replace(array_keys($vars), $vars, $template);
+            shell_exec("mkdir " . $curDir . "/vendor/simplesamlphp/simplesamlphp/www/js");
+            file_put_contents($curDir . "/vendor/simplesamlphp/simplesamlphp/www/js/agid-spid-enter.js", $customized);  
+            echo $colors->getColoredString("OK", "green");  
+            
+            // copy smart button css and img
+            echo $colors->getColoredString("\nCopy smart-button resurces... ", "white");  
+            shell_exec("cp -rf " . $curDir . "/vendor/italia/spid-smart-button/css " . $curDir . "/vendor/simplesamlphp/simplesamlphp/www/css");
+            shell_exec("cp -rf " . $curDir . "/vendor/italia/spid-smart-button/img " . $curDir . "/vendor/simplesamlphp/simplesamlphp/www/img");
+            echo $colors->getColoredString("OK", "green");  
+
+        } else {
+            // overwrite template file
+            echo $colors->getColoredString("\nWrite spid button template... ", "white");  
+            shell_exec("mkdir " . $curDir . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button");
+            shell_exec("mkdir " . $curDir . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button/css");
+            shell_exec("mkdir " . $curDir . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button/img");
+            shell_exec("mkdir " . $curDir . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button/js");
+            shell_exec("cp -rf " . $curDir . "/vendor/italia/spid-sp-access-button/src/production/css " . $curDir . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button");
+            shell_exec("cp -rf " . $curDir . "/vendor/italia/spid-sp-access-button/src/production/img " . $curDir . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button");
+            shell_exec("cp -rf " . $curDir . "/vendor/italia/spid-sp-access-button/src/production/js " . $curDir . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button");
+            echo $colors->getColoredString("OK", "green"); 
+        }
         
         // write sdk 
         echo $colors->getColoredString("\nWrite sdk helper class... ", "white");  
-        $vars = array("{{SERVICENAME}}"=> $serviceName);
+        $vars = array("{{SERVICENAME}}"=> $serviceName, "{{IDPS}}"=> $IDPEntities);
         $template = file_get_contents($curDir.'/setup/sdk/spid-php.tpl', true);
         $customized = str_replace(array_keys($vars), $vars, $template);
         file_put_contents($curDir . "/spid-php.php", $customized);  
         echo $colors->getColoredString("OK", "green"); 
+
+        // apply simplesalphp patch for spid compliance
+        shell_exec("cp -rf " . $curDir . "/setup/simplesamlphp " . $curDir . "/vendor/simplesamlphp");
 
         // write example files 
         if($addExamples) {
