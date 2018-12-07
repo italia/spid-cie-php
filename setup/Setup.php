@@ -35,7 +35,7 @@ class Setup {
         if($wwwDir==null || $wwwDir=="") $wwwDir = $_wwwDir;
         
         echo "Please insert name for service endpoint (" . $colors->getColoredString($_serviceName, "green") . "): ";
-        $serviceName = readline();
+        $serviceName = str_replace("'", "\'", readline());
         if($serviceName==null || $serviceName=="") $serviceName = $_serviceName;
 
         echo "Please insert your EntityID (" . $colors->getColoredString($_entityID, "green") . "): ";
@@ -43,28 +43,82 @@ class Setup {
         if($entityID==null || $entityID=="") $entityID = $_entityID;
 
         echo "Please insert your Service Provider Name (" . $colors->getColoredString($_spName, "green") . "): ";
-        $spName = readline();
+        $spName = str_replace("'", "\'", readline());
         if($spName==null || $spName=="") $spName = $_spName;
 
-        echo "Please insert your Service Provider Description (" . $colors->getColoredString($_spName, "green") . "): ";
-        $spDescription = readline();
+        echo "Please insert your Service Provider Description (" . $colors->getColoredString($_spDescription, "green") . "): ";
+        $spDescription = str_replace("'", "\'", readline());
         if($spDescription==null || $spDescription=="") $spDescription = $_spDescription;
 
-        echo "Please insert your Organization Name (" . $colors->getColoredString($_spName, "green") . "): ";
-        $spOrganizationName = readline();
+        echo "Please insert your Organization Name (" . $colors->getColoredString($_spOrganizationName, "green") . "): ";
+        $spOrganizationName = str_replace("'", "\'", readline());
         if($spOrganizationName==null || $spOrganizationName=="") $spOrganizationName = $_spOrganizationName;
 
-        echo "Please insert your Organization Display Name (" . $colors->getColoredString($_spName, "green") . "): ";
-        $spOrganizationDisplayName = readline();
+        echo "Please insert your Organization Display Name (" . $colors->getColoredString($_spOrganizationDisplayName, "green") . "): ";
+        $spOrganizationDisplayName = str_replace("'", "\'", readline());
         if($spOrganizationDisplayName==null || $spOrganizationDisplayName=="") $spOrganizationDisplayName = $_spOrganizationDisplayName;
 
-        echo "Please insert your Organization URL (" . $colors->getColoredString($_spName, "green") . "): ";
+        echo "Please insert your Organization URL (" . $colors->getColoredString($_spOrganizationURL, "green") . "): ";
         $spOrganizationURL = readline();
         if($spOrganizationURL==null || $spOrganizationURL=="") $spOrganizationURL = $_spOrganizationURL;
 
         echo "Please insert your Attribute Consuming Service Index (" . $colors->getColoredString($_acsIndex, "green") . "): ";
         $acsIndex = readline();
         if($acsIndex==null || $acsIndex=="") $acsIndex = $_acsIndex;
+
+        $attr = array();
+
+        echo "Request attribute spidCode (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'spidCode'";
+
+        echo "Request attribute name (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'name'";
+        
+        echo "Request attribute familyName (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'familyName'";
+        
+        echo "Request attribute placeOfBirth (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'placeOfBirth'";
+        
+        echo "Request attribute countyOfBirth (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'countyOfBirth'";
+        
+        echo "Request attribute dateOfBirth (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'dateOfBirth'";
+        
+        echo "Request attribute gender (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'gender'";
+        
+        echo "Request attribute companyName (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'companyName'";
+        
+        echo "Request attribute registeredOffice (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'registeredOffice'";
+        
+        echo "Request attribute fiscalNumber (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'fiscalNumber'";
+        
+        echo "Request attribute ivaCode (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'ivaCode'";
+        
+        echo "Request attribute idCard (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'idCard'";
+        
+        echo "Request attribute expirationDate (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'expirationDate'";
+        
+        echo "Request attribute mobilePhone (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'mobilePhone'";
+        
+        echo "Request attribute email (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'email'";
+        
+        echo "Request attribute address (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'address'";
+        
+        echo "Request attribute digitalAddress (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'digitalAddress'";
+        
 
         echo "Add configuration for Public Test IDP idp.spid.gov.it ? (" . $colors->getColoredString("Y", "green") . "): ";
         $addTestIDP = readline();
@@ -149,8 +203,10 @@ class Setup {
             "{{ORGANIZATIONNAME}}"=> "'".$spOrganizationName."'", 
             "{{ORGANIZATIONDISPLAYNAME}}"=> "'".$spOrganizationDisplayName."'", 
             "{{ORGANIZATIONURL}}"=> "'".$spOrganizationURL."'", 
-            "{{ACSINDEX}}"=> $acsIndex
+            "{{ACSINDEX}}"=> $acsIndex,
+            "{{ATTRIBUTES}}"=> implode(",", $attr)
         );
+
         $template = file_get_contents($curDir.'/setup/config/authsources.tpl', true);
         $customized = str_replace(array_keys($vars), $vars, $template);
         file_put_contents($curDir . "/vendor/simplesamlphp/simplesamlphp/config/authsources.php", $customized);
