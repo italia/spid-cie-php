@@ -293,7 +293,7 @@ class sspmod_saml_Auth_Source_SP extends SimpleSAML_Auth_Source
         $issuer->Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity";
         $issuer->NameQualifier=$this->metadata->getString('entityid');
         $issuer->value=$this->entityId;
-        $ar->setIssuer($issuer);        
+        $ar->setIssuer($issuer);      
 
         $b = \SAML2\Binding::getBinding($dst['Binding']);
 

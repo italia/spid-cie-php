@@ -16,8 +16,11 @@
         }
     
         public function login($idp) {
+            $l = ($l=="2" || $l=="3")? $l : "1";
+            $spidlevel = "https://www.spid.gov.it/SpidL" . $l;
+
             $this->spid_auth->login(array(
-                'saml:AuthnContextClassRef' => 'https://www.spid.gov.it/SpidL1',
+                'saml:AuthnContextClassRef' => $spidlevel,
                 'saml:AuthnContextComparison' => 'SAML2\Constants::COMPARISON_EXACT',
                 'saml:idp' => $this->idps[$idp],
                 'saml:NameIDPolicy' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',

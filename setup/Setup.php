@@ -390,7 +390,7 @@ class Setup {
         echo $colors->getColoredString("OK", "green"); 
 
         // apply simplesalphp patch for spid compliance
-        shell_exec("cp -rf " . $curDir . "/setup/simplesamlphp " . $curDir . "/vendor/simplesamlphp");
+        //shell_exec("cp -rf " . $curDir . "/setup/simplesamlphp " . $curDir . "/vendor/simplesamlphp");
 
         // write example files 
         if($addExamples) {
