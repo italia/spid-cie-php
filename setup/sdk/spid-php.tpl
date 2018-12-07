@@ -6,8 +6,8 @@
         private $spid_auth;
         private $idps = array();
 
-        function __construct($level) {
-            $this->spid_auth = new SimpleSAML_Auth_Simple('service-l'.$level);
+        function __construct() {
+            $this->spid_auth = new SimpleSAML_Auth_Simple('service');
             {{IDPS}}
         }
 
