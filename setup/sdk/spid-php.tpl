@@ -24,7 +24,7 @@
                 'saml:AuthnContextComparison' => 'SAML2\Constants::COMPARISON_EXACT',
                 'saml:idp' => $this->idps[$idp],
                 'saml:NameIDPolicy' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
-                'ErrorURL' => '/error_handler.php'
+                //'ErrorURL' => '/error_handler.php'
             ));
         }
 
