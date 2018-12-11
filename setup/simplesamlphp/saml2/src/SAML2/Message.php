@@ -228,7 +228,37 @@ abstract class Message implements SignedElement
             && $authnContextClassRef[0]->nodeValue!="https://www.spid.gov.it/SpidL2"
             && $authnContextClassRef[0]->nodeValue!="https://www.spid.gov.it/SpidL3") {
                 throw new \Exception('AuthnContextClassRef was not valid.');
-            }
+        }
+
+        $inResponseTo = $xml->getAttribute('InResponseTo');
+        $state = \SimpleSAML_Auth_State::loadState($inResponseTo, 'saml:sp:sso', true);
+        $req_authnContextClassRef = $state["saml:AuthnContextClassRef"];
+        $req_authnContextComparison = $state["saml:AuthnContextComparison"];
+        $res_authnContextClassRef = $authnContextClassRef[0]->nodeValue;
+
+        $req_level = intval(substr($req_authnContextClassRef, -1));
+        $res_level = intval(substr($res_authnContextClassRef, -1));
+        
+        switch($req_authnContextComparison) {
+            case "SAML2\Constants::COMPARISON_EXACT":
+                if($req_authnContextClassRef!=$res_authnContextClassRef) {
+                    throw new \Exception('AuthnContextClassRef can not be accepted. Requested EXACT ' . $req_authnContextClassRef);
+                }
+            break;
+
+            case "SAML2\Constants::COMPARISON_MINIMUM":
+                if($res_level < $req_level) {
+                    throw new \Exception('AuthnContextClassRef can not be accepted. Requested MINIMUM ' . $req_authnContextClassRef);
+                }
+            break;
+
+            case "SAML2\Constants::COMPARISON_MAXIMUM":
+                if($res_level > $req_level) {
+                    throw new \Exception('AuthnContextClassRef can not be accepted. Requested MAXIMUM ' . $req_authnContextClassRef);
+                }
+            break;
+
+        }
     }
 
 
