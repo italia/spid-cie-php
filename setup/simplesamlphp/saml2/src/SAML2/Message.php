@@ -186,6 +186,21 @@ abstract class Message implements SignedElement
         $this->validateSignature($xml);
 
         $this->extensions = Extensions::getList($xml);
+
+        /* SPID CUSTOM : Assertion Issuer cannot be blank */
+        $assertionIssuer = Utils::xpQuery($xml, './saml_assertion:Assertion/saml_assertion:Issuer');
+        $this->assertionIssuer = new XML\saml\Issuer($assertionIssuer[0]);
+        if($assertionIssuer[0]!=null) $this->assertionIssuer->Format = $assertionIssuer[0]->getAttribute('Format');
+
+        if($this->assertionIssuer->value == null || $this->assertionIssuer->value == "") {
+            throw new \Exception('Missing Issuer on Assertion');
+        }
+
+        /* SPID CUSTOM : Attribute Format of Assertion Issuer */
+        if($this->assertionIssuer->Format == null || $this->assertionIssuer->Format != "urn:oasis:names:tc:SAML:2.0:nameid-format:entity") {
+            throw new \Exception('Attribute Format of Issuer on Assertion was not valid.');
+        }
+
     }
 
 

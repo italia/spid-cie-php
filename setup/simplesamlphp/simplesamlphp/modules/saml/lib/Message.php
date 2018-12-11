@@ -705,8 +705,15 @@ class sspmod_saml_Message
         } 
 
         $subjectConfirmation = $assertion->getSubjectConfirmation();
-        $subjectConfirmationDataRecipient = $subjectConfirmation[0]->SubjectConfirmationData->Recipient;
+        $subjectConfirmationData = $subjectConfirmation[0]->SubjectConfirmationData;
+        
+        if($subjectConfirmationData == null) {
+            throw new SimpleSAML_Error_Exception(
+                'SubjectConfirmationData was not valid.'
+            );
+        }  
 
+        $subjectConfirmationDataRecipient = $subjectConfirmationData->Recipient;
         if($subjectConfirmationDataRecipient == null || $subjectConfirmationDataRecipient == "") {
             throw new SimpleSAML_Error_Exception(
                 'Attribute Recipient of SubjectConfirmationData was not valid.'
@@ -719,6 +726,31 @@ class sspmod_saml_Message
                 'Attribute InResponseTo of SubjectConfirmationData was not valid.'
             );
         }
+
+        $subjectConfirmationDataNotOnOrAfter = $subjectConfirmation[0]->SubjectConfirmationData->NotOnOrAfter;
+        if($subjectConfirmationDataNotOnOrAfter == null || $subjectConfirmationDataNotOnOrAfter == "") {
+            throw new SimpleSAML_Error_Exception(
+                'Attribute NotOnOrAfter of SubjectConfirmationData was not valid.'
+            );
+        }      
+        
+        $issuer = $response->getIssuer();
+
+        if($issuer == null || $issuer != $idpMetadata->getString('entityid')) {
+            throw new SimpleSAML_Error_Exception(
+                'Issuer was not valid. Expected ' . $idpMetadata->getString('entityid')
+            );
+        }
+        
+        $issuer = $assertion->getIssuer();
+
+        if($issuer == null || $issuer != $idpMetadata->getString('entityid')) {
+            throw new SimpleSAML_Error_Exception(
+                'Issuer on Assertion was not valid. Expected ' . $idpMetadata->getString('entityid')
+            );
+        }       
+
+
 
         /* END SPID CUSTOM */
 
