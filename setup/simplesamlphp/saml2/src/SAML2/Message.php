@@ -201,6 +201,34 @@ abstract class Message implements SignedElement
             throw new \Exception('Attribute Format of Issuer on Assertion was not valid.');
         }
 
+        /* SPID CUSTOM : check conditions */
+        $conditions = Utils::xpQuery($xml, './saml_assertion:Assertion/saml_assertion:Conditions');
+        if($conditions==null || $conditions[0]->nodeValue==null || trim($conditions[0]->nodeValue)=="") {
+            throw new \Exception('Missing Conditions on Assertion');
+        }
+        if($conditions[0]->getAttribute("NotBefore")==null || trim($conditions[0]->getAttribute("NotBefore"))=="") {
+            throw new \Exception('Missing Attribute NotBefore of Conditions on Assertion');
+        }
+        if($conditions[0]->getAttribute("NotOnOrAfter")==null || trim($conditions[0]->getAttribute("NotOnOrAfter"))=="") {
+            throw new \Exception('Missing Attribute NotOnOrAfter of Conditions on Assertion');
+        }
+
+        /* SPID CUSTOM : check attributes */
+        $attributeStatement = Utils::xpQuery($xml, './saml_assertion:Assertion/saml_assertion:AttributeStatement');        
+        if($attributeStatement==null || $attributeStatement[0]->nodeValue==null || trim($attributeStatement[0]->nodeValue)=="") {
+            throw new \Exception('Missing AttributeStatement on Assertion');
+        }
+
+        /* SPID CUSTOM : check attributes */
+        $authnContextClassRef = Utils::xpQuery($xml, './saml_assertion:Assertion/saml_assertion:AuthnStatement/saml_assertion:AuthnContext/saml_assertion:AuthnContextClassRef');
+        if($authnContextClassRef==null || $authnContextClassRef[0]->nodeValue==null || trim($authnContextClassRef[0]->nodeValue)=="") {
+            throw new \Exception('Missing AuthnContextClassRef on Assertion');
+        }
+        if($authnContextClassRef[0]->nodeValue!="https://www.spid.gov.it/SpidL1"
+            && $authnContextClassRef[0]->nodeValue!="https://www.spid.gov.it/SpidL2"
+            && $authnContextClassRef[0]->nodeValue!="https://www.spid.gov.it/SpidL3") {
+                throw new \Exception('AuthnContextClassRef was not valid.');
+            }
     }
 
 

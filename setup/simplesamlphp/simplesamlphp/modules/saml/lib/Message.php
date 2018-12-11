@@ -749,8 +749,7 @@ class sspmod_saml_Message
                 'Issuer on Assertion was not valid. Expected ' . $idpMetadata->getString('entityid')
             );
         }       
-
-
+    
 
         /* END SPID CUSTOM */
 
