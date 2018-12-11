@@ -152,7 +152,9 @@ class SimpleSAML_Error_Exception extends Exception
         $ret = array(
             $this->getClass().': '.$this->getMessage(),
         );
-        $ret = array();
+        
+        /* SPID CUSTOM */
+        //$ret = array();
         return array_merge($ret, $this->formatBacktrace($anonymize));
     }
 
@@ -174,8 +176,10 @@ class SimpleSAML_Error_Exception extends Exception
         $e = $this;
         do {
             if ($e !== $this) {
-                //$ret[] = 'Caused by: '.$e->getClass().': '.$e->getMessage();
-                $ret[] = 'Error: '.$e->getMessage();
+                $ret[] = 'Caused by: '.$e->getClass().': '.$e->getMessage();
+                
+                /* SPID CUSTOM */
+                //$ret[] = 'Error: '.$e->getMessage();
             }
             //$ret[] = 'Backtrace:';
 
@@ -185,7 +189,8 @@ class SimpleSAML_Error_Exception extends Exception
                     $trace = str_replace($basedir, '', $trace);
                 }
 
-                //$ret[] = ($depth - $i - 1).' '.$trace;
+                /* SPID CUSTOM : to comment */
+                $ret[] = ($depth - $i - 1).' '.$trace;
             }
             $e = $e->cause;
         } while ($e !== null);

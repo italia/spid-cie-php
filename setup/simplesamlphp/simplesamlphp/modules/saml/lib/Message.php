@@ -589,6 +589,16 @@ class sspmod_saml_Message
             throw self::getResponseError($response);
         }
 
+        /* SPID CUSTOM */
+        $issueInstant = $response->getIssueInstant();
+        if($issueInstant !== null && $issueInstant <= time() - 60) {
+            throw new SimpleSAML_Error_Exception(
+                'Received a response that has expired. Check clock synchronization on IdP and SP.'
+            );
+        }
+
+        /* END SPID CUSTOM */
+
         // validate Response-element destination
         $currentURL = \SimpleSAML\Utils\HTTP::getSelfURLNoQuery();
         $msgDestination = $response->getDestination();
@@ -657,6 +667,60 @@ class sspmod_saml_Message
         } // at least one valid signature found
 
         $currentURL = \SimpleSAML\Utils\HTTP::getSelfURLNoQuery();
+
+        /* SPID CUSTOM */
+        $issueInstant = $assertion->getIssueInstant();
+        if($issueInstant !== null && $issueInstant <= time() - 60) {
+            throw new SimpleSAML_Error_Exception(
+                'Received an assertion that has expired. Check clock synchronization on IdP and SP.'
+            );
+        }
+        if($issueInstant !== null && $issueInstant > time() + 60) {
+            throw new SimpleSAML_Error_Exception(
+                'Received an assertion that is valid in the future. Check clock synchronization on IdP and SP.'
+            );
+        }        
+
+        $nameId = $assertion->getNameID();
+        if($nameId == null || $nameId->value == null || $nameId->value == "") {
+            throw new SimpleSAML_Error_Exception(
+                'NameID value was not valid.'
+            );
+        } 
+
+        if($nameId->Format == null || $nameId->Format != "urn:oasis:names:tc:SAML:2.0:nameid-format:transient") {
+            throw new SimpleSAML_Error_Exception(
+                'Attribute Format of NameID was not valid.'
+            );
+        } 
+        if($nameId->NameQualifier == null || $nameId->NameQualifier == "") {
+            throw new SimpleSAML_Error_Exception(
+                'Attribute NameQualifier of NameID was not valid.'
+            );
+        } 
+        if($nameId->NameQualifier != $idpMetadata->getString('entityid')) {
+            throw new SimpleSAML_Error_Exception(
+                'Attribute NameQualifier of NameID was not valid. expected ' . $idpMetadata->getString('entityid')
+            );
+        } 
+
+        $subjectConfirmation = $assertion->getSubjectConfirmation();
+        $subjectConfirmationDataRecipient = $subjectConfirmation[0]->SubjectConfirmationData->Recipient;
+
+        if($subjectConfirmationDataRecipient == null || $subjectConfirmationDataRecipient == "") {
+            throw new SimpleSAML_Error_Exception(
+                'Attribute Recipient of SubjectConfirmationData was not valid.'
+            );
+        }        
+        
+        $subjectConfirmationDataInResponseTo = $subjectConfirmation[0]->SubjectConfirmationData->InResponseTo;
+        if($subjectConfirmationDataInResponseTo == null || $subjectConfirmationDataInResponseTo == "") {
+            throw new SimpleSAML_Error_Exception(
+                'Attribute InResponseTo of SubjectConfirmationData was not valid.'
+            );
+        }
+
+        /* END SPID CUSTOM */
 
         // check various properties of the assertion
         $notBefore = $assertion->getNotBefore();
