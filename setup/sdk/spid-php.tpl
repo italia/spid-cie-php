@@ -15,7 +15,7 @@
             $this->spid_auth->requireAuth();
         }
     
-        public function login($idp) {
+        public function login($idp, $l) {
             $l = ($l=="2" || $l=="3")? $l : "1";
             $spidlevel = "https://www.spid.gov.it/SpidL" . $l;
 
