@@ -757,7 +757,21 @@ class sspmod_saml_Message
                 'Issuer on Assertion was not valid. Expected ' . $idpMetadata->getString('entityid')
             );
         }       
-    
+
+
+        $req_attributes = $spMetadata->getValue('attributes');
+        $res_attributes_array = $assertion->getAttributes();
+        $res_attributes = array();
+        foreach($res_attributes_array as $a=>$v) {
+            $res_attributes[] = $a;
+        }
+        $attributesMatch = (count(array_intersect($req_attributes, $res_attributes)) == count($req_attributes));    
+
+        if(!$attributesMatch) {
+            throw new SimpleSAML_Error_Exception(
+                'Received attributes does not match requested. Expected: '.implode(",", $req_attributes).'. Received: '.implode(",", $res_attributes)
+            );
+        }
 
         /* END SPID CUSTOM */
 
