@@ -6,8 +6,8 @@
         private $spid_auth;
         private $idps = array();
 
-        function __construct($level) {
-            $this->spid_auth = new SimpleSAML_Auth_Simple('service-l'.$level);
+        function __construct() {
+            $this->spid_auth = new SimpleSAML_Auth_Simple('service');
             {{IDPS}}
         }
 
@@ -16,12 +16,15 @@
         }
     
         public function login($idp) {
+            $l = ($l=="2" || $l=="3")? $l : "1";
+            $spidlevel = "https://www.spid.gov.it/SpidL" . $l;
+
             $this->spid_auth->login(array(
-                'saml:AuthnContextClassRef' => 'https://www.spid.gov.it/SpidL1',
+                'saml:AuthnContextClassRef' => $spidlevel,
                 'saml:AuthnContextComparison' => 'SAML2\Constants::COMPARISON_EXACT',
                 'saml:idp' => $this->idps[$idp],
                 'saml:NameIDPolicy' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
-                'ErrorURL' => '/error_handler.php'
+                //'ErrorURL' => '/error_handler.php'
             ));
         }
 

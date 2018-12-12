@@ -18,6 +18,11 @@ class Setup {
         $_wwwDir = shell_exec('echo -n "$HOME/public_html"');
         $_curDir = getcwd();
         $_serviceName = "myservice";
+        $_spName = "Service Provider Name";
+        $_spDescription = "Service Provider Description";
+        $_spOrganizationName = "Organization Name";
+        $_spOrganizationDisplayName = "Organization Display Name";
+        $_spOrganizationURL = "https://www.organization.org";
         $_entityID = "https://localhost";
         $_acsIndex = 0;
 
@@ -30,16 +35,90 @@ class Setup {
         if($wwwDir==null || $wwwDir=="") $wwwDir = $_wwwDir;
         
         echo "Please insert name for service endpoint (" . $colors->getColoredString($_serviceName, "green") . "): ";
-        $serviceName = readline();
+        $serviceName = str_replace("'", "\'", readline());
         if($serviceName==null || $serviceName=="") $serviceName = $_serviceName;
 
         echo "Please insert your EntityID (" . $colors->getColoredString($_entityID, "green") . "): ";
         $entityID = readline();
         if($entityID==null || $entityID=="") $entityID = $_entityID;
 
+        echo "Please insert your Service Provider Name (" . $colors->getColoredString($_spName, "green") . "): ";
+        $spName = str_replace("'", "\'", readline());
+        if($spName==null || $spName=="") $spName = $_spName;
+
+        echo "Please insert your Service Provider Description (" . $colors->getColoredString($_spDescription, "green") . "): ";
+        $spDescription = str_replace("'", "\'", readline());
+        if($spDescription==null || $spDescription=="") $spDescription = $_spDescription;
+
+        echo "Please insert your Organization Name (" . $colors->getColoredString($_spOrganizationName, "green") . "): ";
+        $spOrganizationName = str_replace("'", "\'", readline());
+        if($spOrganizationName==null || $spOrganizationName=="") $spOrganizationName = $_spOrganizationName;
+
+        echo "Please insert your Organization Display Name (" . $colors->getColoredString($_spOrganizationDisplayName, "green") . "): ";
+        $spOrganizationDisplayName = str_replace("'", "\'", readline());
+        if($spOrganizationDisplayName==null || $spOrganizationDisplayName=="") $spOrganizationDisplayName = $_spOrganizationDisplayName;
+
+        echo "Please insert your Organization URL (" . $colors->getColoredString($_spOrganizationURL, "green") . "): ";
+        $spOrganizationURL = readline();
+        if($spOrganizationURL==null || $spOrganizationURL=="") $spOrganizationURL = $_spOrganizationURL;
+
         echo "Please insert your Attribute Consuming Service Index (" . $colors->getColoredString($_acsIndex, "green") . "): ";
         $acsIndex = readline();
         if($acsIndex==null || $acsIndex=="") $acsIndex = $_acsIndex;
+
+        $attr = array();
+
+        echo "Request attribute spidCode (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'spidCode'";
+
+        echo "Request attribute name (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'name'";
+        
+        echo "Request attribute familyName (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'familyName'";
+        
+        echo "Request attribute placeOfBirth (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'placeOfBirth'";
+        
+        echo "Request attribute countyOfBirth (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'countyOfBirth'";
+        
+        echo "Request attribute dateOfBirth (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'dateOfBirth'";
+        
+        echo "Request attribute gender (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'gender'";
+        
+        echo "Request attribute companyName (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'companyName'";
+        
+        echo "Request attribute registeredOffice (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'registeredOffice'";
+        
+        echo "Request attribute fiscalNumber (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'fiscalNumber'";
+        
+        echo "Request attribute ivaCode (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'ivaCode'";
+        
+        echo "Request attribute idCard (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'idCard'";
+        
+        echo "Request attribute expirationDate (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'expirationDate'";
+        
+        echo "Request attribute mobilePhone (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'mobilePhone'";
+        
+        echo "Request attribute email (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'email'";
+        
+        echo "Request attribute address (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'address'";
+        
+        echo "Request attribute digitalAddress (" . $colors->getColoredString("Y", "green") . "): ";
+        if(strtoupper(readline())!="N") $attr[] = "'digitalAddress'";
+        
 
         echo "Add configuration for Public Test IDP idp.spid.gov.it ? (" . $colors->getColoredString("Y", "green") . "): ";
         $addTestIDP = readline();
@@ -49,10 +128,6 @@ class Setup {
         $addValidatorIDP = readline();
         $addValidatorIDP = ($addValidatorIDP!=null && strtoupper($addValidatorIDP)=="N")? false:true;
 
-        echo "Optional URI for local Test IDP metadata endpoint (leave empty to skip) ? (): ";
-        $localTestIDP = readline();
-        $localTestIDP = $localTestIDP == null ? "" : $localTestIDP;
-        
         echo "Add example php files login.php and user.php to www ? (" . $colors->getColoredString("Y", "green") . "): ";
         $addExamples = readline();
         $addExamples = ($addExamples!=null && strtoupper($addExamples)=="N")? false:true;
@@ -68,10 +143,14 @@ class Setup {
         echo $colors->getColoredString("\nWeb root directory: " . $wwwDir, "yellow");
         echo $colors->getColoredString("\nService Name: " . $serviceName, "yellow");
         echo $colors->getColoredString("\nEntity ID: " . $entityID, "yellow");
+        echo $colors->getColoredString("\nService Provider Name: " . $spName, "yellow");
+        echo $colors->getColoredString("\nService Provider Description: " . $spDescription, "yellow");
+        echo $colors->getColoredString("\nOrganization Name: " . $spOrganizationName, "yellow");
+        echo $colors->getColoredString("\nOrganization Display Name: " . $spOrganizationDisplayName, "yellow");
+        echo $colors->getColoredString("\nOrganization URL: " . $spOrganizationURL, "yellow");
         echo $colors->getColoredString("\nAttribute Consuming Service Index: " . $acsIndex, "yellow");
         echo $colors->getColoredString("\nAdd configuration for Test IDP idp.spid.gov.it: ", "yellow");
         echo $colors->getColoredString(($addTestIDP)? "Y":"N", "yellow");
-        echo $colors->getColoredString("\nURI for local Test IDP metadata endpoint: " . $localTestIDP, "yellow");
         echo $colors->getColoredString("\nAdd example php files: ", "yellow");
         echo $colors->getColoredString(($addExamples)? "Y":"N", "yellow");
         //echo $colors->getColoredString("\nUse SPID smart button: ", "yellow");
@@ -117,7 +196,17 @@ class Setup {
         
         // customize and copy authsources file
         echo $colors->getColoredString("\nWrite authsources file... ", "white");  
-        $vars = array("{{ENTITYID}}"=> "'".$entityID."'", "{{ACSINDEX}}"=> $acsIndex);
+        $vars = array(
+            "{{ENTITYID}}"=> "'".$entityID."'", 
+            "{{NAME}}"=> "'".$spName."'", 
+            "{{DESCRIPTION}}"=> "'".$spDescription."'", 
+            "{{ORGANIZATIONNAME}}"=> "'".$spOrganizationName."'", 
+            "{{ORGANIZATIONDISPLAYNAME}}"=> "'".$spOrganizationDisplayName."'", 
+            "{{ORGANIZATIONURL}}"=> "'".$spOrganizationURL."'", 
+            "{{ACSINDEX}}"=> $acsIndex,
+            "{{ATTRIBUTES}}"=> implode(",", $attr)
+        );
+
         $template = file_get_contents($curDir.'/setup/config/authsources.tpl', true);
         $customized = str_replace(array_keys($vars), $vars, $template);
         file_put_contents($curDir . "/vendor/simplesamlphp/simplesamlphp/config/authsources.php", $customized);
@@ -128,7 +217,6 @@ class Setup {
 
         // setup IDP configurations
         $IDPMetadata = "";
-
         $IDPEntities = "";        
 
         // add configuration for public test IDP
@@ -152,37 +240,14 @@ class Setup {
             $IDPEntities .= "\n\t\t\t\$this->idps['VALIDATOR'] = 'https://validator.spid.gov.it';";     
             echo $colors->getColoredString("OK", "green");  
         }
+
         // retrieve IDP metadata
         echo $colors->getColoredString("\nRetrieve configurations for production IDPs... ", "white");  
         $xml = file_get_contents('https://registry.spid.gov.it/metadata/idp/spid-entities-idps.xml'); 
+
         // remove tag prefixes
         $xml = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml);  
         $xml = simplexml_load_string($xml); 
-
-        // add configuration for local test IDP metadata
-        if($localTestIDP != "") {
-            echo $colors->getColoredString("\nRetrieve configuration for local test IDP... ", "white");  
-            // often test IDPs have snakeoil SSL certificates so let's skip the certificate validation
-            $arrContextOptions=array(
-                "ssl"=>array(
-                    "verify_peer"=>false,
-                    "verify_peer_name"=>false,
-                ),
-            );
-            $xml1 = file_get_contents($localTestIDP, false, stream_context_create($arrContextOptions));
-            // remove tag prefixes
-            $xml1 = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml1);
-            $xml1 = simplexml_load_string($xml1);
-            // debug: echo ($xml1 !== FALSE ? 'Valid XML' : 'Parse Error'), PHP_EOL;
-
-            $to = $xml->addChild('EntityDescriptor', $xml1);
-            foreach($xml1 as $from) {
-                // https://stackoverflow.com/a/4778964
-                $toDom = dom_import_simplexml($to);
-                $fromDom = dom_import_simplexml($from);
-                $toDom->appendChild($toDom->ownerDocument->importNode($fromDom, true));
-            }
-        }
 
         foreach($xml->EntityDescriptor as $entity) {
             $OrganizationName = trim($entity->Organization->OrganizationName);
@@ -263,7 +328,6 @@ class Setup {
             $template_idp = str_replace(array_keys($vars), $vars, $template_idp);
     
             $IDPMetadata .= "\n\n" . $template_idp;
-
             $IDPEntities .= "\n\t\t\t\$this->idps['".str_replace("'", "", $OrganizationName)."'] = '".$IDPentityID."';";
         }
         echo $colors->getColoredString("OK", "green");  
@@ -326,7 +390,7 @@ class Setup {
         echo $colors->getColoredString("OK", "green"); 
 
         // apply simplesalphp patch for spid compliance
-        shell_exec("cp -rf " . $curDir . "/setup/simplesamlphp " . $curDir . "/vendor/simplesamlphp");
+        shell_exec("cp -rf " . $curDir . "/setup/simplesamlphp " . $curDir . "/vendor");
 
         // write example files 
         if($addExamples) {
