@@ -706,11 +706,14 @@ class sspmod_saml_Message
                 'Attribute NameQualifier of NameID was not valid.'
             );
         } 
+
+        /*
         if($nameId->NameQualifier != $idpMetadata->getString('entityid')) {
             throw new SimpleSAML_Error_Exception(
                 'Attribute NameQualifier of NameID was not valid. expected ' . $idpMetadata->getString('entityid')
             );
         } 
+        */
 
         $subjectConfirmation = $assertion->getSubjectConfirmation();
         $subjectConfirmationData = $subjectConfirmation[0]->SubjectConfirmationData;
