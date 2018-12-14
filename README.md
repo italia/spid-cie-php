@@ -46,6 +46,41 @@ Se si è scelto di copiare i file di esempio, inoltre, sarà possibile verificar
 # composer uninstall
 ```
 
+## Configurazione nginx
+Per utilizzare SimpleSAMLphp su webserver nginx occorre configurare nginx come nell'esempio seguente.
+In *myservice* inserire il nome del servizio come specificato durante l'installazione.
+
+```
+server {  
+  listen 443 ssl http2;  
+  server_name sp.exaple.com;
+  root /var/www;
+  include snippets/snakeoil.conf;  
+  
+  location / {
+    try_files $uri $uri/ =404;
+    index index.php;
+    location ~ \.php$ {
+      include snippets/fastcgi-php.conf;  
+      fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;  
+    }
+  }
+  
+  location /myservice/ {
+    index index.php;
+    location ~ \.php(/|$) {
+      fastcgi_split_path_info ^(.+?\.php)(/.+)$;
+      try_files $fastcgi_script_name =404;
+      set $path_info $fastcgi_path_info;
+      fastcgi_param PATH_INFO $path_info;
+      fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;  
+      fastcgi_index index.php;
+      include fastcgi.conf;
+    }
+  }
+}
+```
+
 ## API
 ### Costruttore
 ```
