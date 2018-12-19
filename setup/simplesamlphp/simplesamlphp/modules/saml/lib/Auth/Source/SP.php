@@ -287,7 +287,10 @@ class sspmod_saml_Auth_Source_SP extends SimpleSAML_Auth_Source
                 \SAML2\Constants::BINDING_HTTP_POST,
             ]);
         }
-        $ar->setDestination($dst['Location']);
+
+        /* SPID CUSTOM */ 
+        //$ar->setDestination($dst['Location']);
+        $ar->setDestination($idpMetadata->getString('entityid'));
 
         $issuer = new \SAML2\XML\saml\Issuer();
         $issuer->Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity";
@@ -296,6 +299,9 @@ class sspmod_saml_Auth_Source_SP extends SimpleSAML_Auth_Source
         $ar->setIssuer($issuer);      
 
         $b = \SAML2\Binding::getBinding($dst['Binding']);
+
+        /* SPID CUSTOM */ 
+        $b->setDestination($dst['Location']);
 
         $this->sendSAML2AuthnRequest($state, $b, $ar);
 
