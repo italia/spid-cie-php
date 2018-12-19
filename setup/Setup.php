@@ -132,7 +132,7 @@ class Setup {
         $addValidatorIDP = readline();
         $addValidatorIDP = ($addValidatorIDP!=null && strtoupper($addValidatorIDP)=="N")? false:true;
 
-        echo "Add example php files login.php and user.php to www ? (" . $colors->getColoredString("Y", "green") . "): ";
+        echo "Add example php files login-spid.php to www ? (" . $colors->getColoredString("Y", "green") . "): ";
         $addExamples = readline();
         $addExamples = ($addExamples!=null && strtoupper($addExamples)=="N")? false:true;
 
@@ -269,6 +269,9 @@ class Setup {
             $xml1 = file_get_contents($addLocalTestIDP, false, stream_context_create($arrContextOptions));
             // remove tag prefixes
             $xml1 = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml1);
+            $xml1 = simplexml_load_string($xml1);
+
+            /*
             echo "$xml1\n";
             $xml1 = simplexml_load_string($xml1);
             echo ($xml1 !== FALSE ? 'Valid XML' : 'Parse Error'), PHP_EOL;
@@ -289,6 +292,11 @@ class Setup {
             $myfile1 = fopen("after", "w") or die("Unable to open file!");
             fwrite($myfile1, print_r($xml, true));
             fclose($myfile1);
+            */
+            $xml1->Organization->OrganizationName = "LOCAL";
+            $xmlDom = dom_import_simplexml($xml);
+            $xmlLocalTestDom = dom_import_simplexml($xml1);
+            $xmlDom->appendChild($xmlDom->ownerDocument->importNode($xmlLocalTestDom, true));
         }
 
         foreach($xml->EntityDescriptor as $entity) {
@@ -437,14 +445,11 @@ class Setup {
 
         // write example files 
         if($addExamples) {
-            echo $colors->getColoredString("\nWrite example files to www (login.php & user.php)... ", "white");  
+            echo $colors->getColoredString("\nWrite example files to www (login-spid.php)... ", "white");  
             $vars = array("{{SDKHOME}}"=> $curDir);
-            $template = file_get_contents($curDir.'/setup/sdk/login.tpl', true);
+            $template = file_get_contents($curDir.'/setup/sdk/login-spid.tpl', true);
             $customized = str_replace(array_keys($vars), $vars, $template);
-            file_put_contents($wwwDir . "/login.php", $customized);  
-            $template = file_get_contents($curDir.'/setup/sdk/user.tpl', true);
-            $customized = str_replace(array_keys($vars), $vars, $template);
-            file_put_contents($wwwDir . "/user.php", $customized);  
+            file_put_contents($wwwDir . "/login-spid.php", $customized);    
             echo $colors->getColoredString("OK", "green"); 
         }
         
@@ -455,8 +460,7 @@ class Setup {
         shell_exec("chmod 777 " . $curDir . "/vendor/simplesamlphp/simplesamlphp/log");
 
         if($addExamples) {
-            shell_exec("chmod 0644 " . $wwwDir . "/login.php");  
-            shell_exec("chmod 0644 " . $wwwDir . "/user.php");  
+            shell_exec("chmod 0644 " . $wwwDir . "/login-spid.php");  
         }
         echo $colors->getColoredString("OK", "green");  
             

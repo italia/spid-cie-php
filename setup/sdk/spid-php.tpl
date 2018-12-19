@@ -150,16 +150,25 @@
                     </li>
                 ";
             }
+            $button_local = "";
+            if(array_key_exists('LOCAL', $this->idps)) {
+                $button_local = "
+                    <li class=\"spid-idp-button-link\" data-idp=\"localid\">
+                        <a href=\"?idp=LOCAL\">IDP LOCAL</a>
+                    </li>
+                ";
+            }
             $button_validator = "";
             if(array_key_exists('VALIDATOR', $this->idps)) {
                 $button_validator = "
-                    <li class=\"spid-idp-button-link\" data-idp=\"testid\">
+                    <li class=\"spid-idp-button-link\" data-idp=\"validatorid\">
                         <a href=\"?idp=VALIDATOR\">AgID VALIDATOR</a>
                     </li>
                 ";
             }            
             $button_li = 
                 $button_test.
+                $button_local.
                 $button_validator."
                 <li class=\"spid-idp-button-link\" data-idp=\"arubaid\">
                     <a href=\"?idp=ArubaPEC S.p.A.\"><span class=\"spid-sr-only\">Aruba ID</span><img src=\"{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.svg\" onerror=\"this.src='{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.png'; this.onerror=null;\" alt=\"Aruba ID\" /></a>
