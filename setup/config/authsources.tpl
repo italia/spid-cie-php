@@ -51,7 +51,7 @@ $config = array(
 
         /* Configurazione attributi per metadata */
         'attributes.index' => {{ACSINDEX}},
-        'attributes.isDefault' => true,
+        //'attributes.isDefault' => true,
         'attributes.NameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:basic',
         'attributes' => array({{ATTRIBUTES}}),
 
