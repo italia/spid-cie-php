@@ -124,7 +124,7 @@ class Setup {
         $addTestIDP = readline();
         $addTestIDP = ($addTestIDP!=null && strtoupper($addTestIDP)=="N")? false:true;
 
-        echo "Optional URI for local Test IDP (leave empty to skip) ? (): ";
+        echo "Optional URI for local Test IDP metadata (leave empty to skip) ? (): ";
         $addLocalTestIDP = readline();
         $addLocalTestIDP = $addLocalTestIDP == null ? "" : $addLocalTestIDP;
         
