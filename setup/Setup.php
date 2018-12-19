@@ -124,6 +124,10 @@ class Setup {
         $addTestIDP = readline();
         $addTestIDP = ($addTestIDP!=null && strtoupper($addTestIDP)=="N")? false:true;
 
+        echo "Optional URI for local Test IDP (leave empty to skip) ? (): ";
+        $addLocalTestIDP = readline();
+        $addLocalTestIDP = $addLocalTestIDP == null ? "" : $addLocalTestIDP;
+        
         echo "Add configuration for AgID Validator validator.spid.gov.it ? (" . $colors->getColoredString("Y", "green") . "): ";
         $addValidatorIDP = readline();
         $addValidatorIDP = ($addValidatorIDP!=null && strtoupper($addValidatorIDP)=="N")? false:true;
@@ -151,6 +155,10 @@ class Setup {
         echo $colors->getColoredString("\nAttribute Consuming Service Index: " . $acsIndex, "yellow");
         echo $colors->getColoredString("\nAdd configuration for Test IDP idp.spid.gov.it: ", "yellow");
         echo $colors->getColoredString(($addTestIDP)? "Y":"N", "yellow");
+        echo $colors->getColoredString("\nAdd configuration for local test IDP: ", "yellow");
+        echo $colors->getColoredString(($addLocalTestIDP!="")? $addLocalTestIDP:"N", "yellow");
+        echo $colors->getColoredString("\nAdd configuration for AgID Validator validator.spid.gov.it: ", "yellow");
+        echo $colors->getColoredString(($addValidatorIDP)? "Y":"N", "yellow");
         echo $colors->getColoredString("\nAdd example php files: ", "yellow");
         echo $colors->getColoredString(($addExamples)? "Y":"N", "yellow");
         //echo $colors->getColoredString("\nUse SPID smart button: ", "yellow");
@@ -248,6 +256,40 @@ class Setup {
         // remove tag prefixes
         $xml = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml);  
         $xml = simplexml_load_string($xml); 
+
+        // add configuration for local test IDP
+        if($addLocalTestIDP != "") {
+            echo $colors->getColoredString("\nRetrieve configuration for local test IDP... ", "white");  
+            $arrContextOptions=array(
+                "ssl"=>array(
+                    "verify_peer"=>false,
+                    "verify_peer_name"=>false,
+                ),
+            );
+            $xml1 = file_get_contents($addLocalTestIDP, false, stream_context_create($arrContextOptions));
+            // remove tag prefixes
+            $xml1 = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml1);
+            echo "$xml1\n";
+            $xml1 = simplexml_load_string($xml1);
+            echo ($xml1 !== FALSE ? 'Valid XML' : 'Parse Error'), PHP_EOL;
+            echo "xml1 = $xml1\n";
+            echo print_r($xml1) . PHP_EOL;
+            echo "xml1 as xml = " . $xml1->asXml(). "\n";
+            // http://php.net/manual/en/simplexmlelement.addchild.php
+            $myfile = fopen("before", "w") or die("Unable to open file!");
+            fwrite($myfile, print_r($xml, true));
+            fclose($myfile);
+            $to = $xml->addChild('EntityDescriptor', $xml1);
+            foreach($xml1 as $from) {
+                // https://stackoverflow.com/a/4778964
+                $toDom = dom_import_simplexml($to);
+                $fromDom = dom_import_simplexml($from);
+                $toDom->appendChild($toDom->ownerDocument->importNode($fromDom, true));
+            }
+            $myfile1 = fopen("after", "w") or die("Unable to open file!");
+            fwrite($myfile1, print_r($xml, true));
+            fclose($myfile1);
+        }
 
         foreach($xml->EntityDescriptor as $entity) {
             $OrganizationName = trim($entity->Organization->OrganizationName);
@@ -390,8 +432,8 @@ class Setup {
         echo $colors->getColoredString("OK", "green"); 
 
         // apply simplesalphp patch for spid compliance
-        // override managed by composer
-        //shell_exec("cp -rf " . $curDir . "/setup/simplesamlphp/* " . $curDir . "/vendor/simplesamlphp");
+        // not needed
+        // shell_exec("cp -rf " . $curDir . "/setup/simplesamlphp " . $curDir . "/vendor");
 
         // write example files 
         if($addExamples) {
