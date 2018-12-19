@@ -26,8 +26,8 @@ e si occupa di eseguire i seguenti passi:
 * effettua tutte le necessarie configurazioni su SimpleSAMLphp
 * predispone il template e le risorse grafiche dello SPID SP Access Button per essere utilizzate con SimpleSAMLphp
 
-Al termine del processo di setup si potrà utilizzare il certificato X.509 creato nella directory /cert per registrare il service provider sull'ambiente di test tramite l'interfaccia di backoffice (https://idp.spid.gov.it:8080).
-Se si è scelto di copiare i file di esempio, inoltre, sarà possibile verificare subito l'integrazione accedendo da web a /login.php o /user.php
+Al termine del processo di setup si potrà scaricare il [metadata](#Metadata) oppure utilizzare il certificato X.509 creato nella directory /cert per registrare il service provider sull'ambiente di test tramite l'interfaccia di backoffice (https://idp.spid.gov.it:8080).
+Se si è scelto di copiare i file di esempio, inoltre, sarà possibile verificare subito l'integrazione accedendo da web a /login-spid.php
 
 ## Requisiti
 * Web server
@@ -80,6 +80,13 @@ server {
   }
 }
 ```
+
+## Metadata
+Dopo aver completato la procedura di installazione il metadata del service provider è scaricabile alla seguente url:
+
+**/*myservice*/module.php/saml/sp/metadata.php/service**
+
+dove *myservice* è il nome del servizio come specificato durante l'installazione.
 
 ## API
 ### Costruttore
