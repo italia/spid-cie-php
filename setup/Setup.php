@@ -262,10 +262,92 @@ class Setup {
         $customized = str_replace(array_keys($vars), $vars, $template);
         file_put_contents($config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/config/authsources.php", $customized);
         echo $colors->getColoredString("OK", "green");  
+        echo "\n\n";
+
+        Setup::updateMetadata();
+
         
+        if($config['useSmartButton']) {
+            // overwrite template file
+            echo $colors->getColoredString("\nWrite smart-button template... ", "white");  
+            $vars = array("{{SERVICENAME}}"=> $config['serviceName']);
+            $template = file_get_contents($config['installDir'].'/setup/templates/smartbutton/selectidp-links.tpl', true);
+            $customized = str_replace(array_keys($vars), $vars, $template);
+            file_put_contents($config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/templates/selectidp-links.php", $customized);        
+            
+            // overwrite smart button js file
+            $vars = array("{{SERVICENAME}}"=> $config['serviceName']);
+            $template = file_get_contents($config['installDir'].'/setup/www/js/agid-spid-enter.tpl', true);
+            $customized = str_replace(array_keys($vars), $vars, $template);
+            shell_exec("mkdir " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/js");
+            file_put_contents($config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/js/agid-spid-enter.js", $customized);  
+            echo $colors->getColoredString("OK", "green");  
+            
+            // copy smart button css and img
+            echo $colors->getColoredString("\nCopy smart-button resurces... ", "white");  
+            shell_exec("cp -rf " . $config['installDir'] . "/vendor/italia/spid-smart-button/css " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/css");
+            shell_exec("cp -rf " . $config['installDir'] . "/vendor/italia/spid-smart-button/img " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/img");
+            echo $colors->getColoredString("OK", "green");  
+
+        } else {
+            // overwrite template file
+            echo $colors->getColoredString("\nWrite spid button template... ", "white");  
+            shell_exec("mkdir " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button");
+            shell_exec("mkdir " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button/css");
+            shell_exec("mkdir " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button/img");
+            shell_exec("mkdir " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button/js");
+            shell_exec("cp -rf " . $config['installDir'] . "/vendor/italia/spid-sp-access-button/src/production/css " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button");
+            shell_exec("cp -rf " . $config['installDir'] . "/vendor/italia/spid-sp-access-button/src/production/img " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button");
+            shell_exec("cp -rf " . $config['installDir'] . "/vendor/italia/spid-sp-access-button/src/production/js " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button");
+            echo $colors->getColoredString("OK", "green"); 
+        }
+        
+
+        // apply simplesalphp patch for spid compliance
+        // not needed
+        // shell_exec("cp -rf " . $config['installDir'] . "/setup/simplesamlphp " . $config['installDir'] . "/vendor");
+
+        // write example files 
+        if($config['addExamples']) {
+            echo $colors->getColoredString("\nWrite example files to www (login-spid.php)... ", "white");  
+            $vars = array("{{SDKHOME}}"=> $config['installDir']);
+            $template = file_get_contents($config['installDir'].'/setup/sdk/login-spid.tpl', true);
+            $customized = str_replace(array_keys($vars), $vars, $template);
+            file_put_contents($config['wwwDir'] . "/login-spid.php", $customized);    
+            echo $colors->getColoredString("OK", "green"); 
+        }
+        
+        // reset permissions
+        echo $colors->getColoredString("\nSetting directories and files permissions... ", "white");  
+        shell_exec("find " . $config['installDir'] . "/. -type d -exec chmod 0755 {} \;");   
+        shell_exec("find " . $config['installDir'] . "/. -type f -exec chmod 0644 {} \;");  
+        shell_exec("chmod 777 " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/log");
+
+        if($config['addExamples']) {
+            shell_exec("chmod 0644 " . $config['wwwDir'] . "/login-spid.php");  
+        }
+        echo $colors->getColoredString("OK", "green");  
+            
+        
+
+        echo $colors->getColoredString("\n\nSPID PHP SDK successfully installed! Enjoy the identities\n\n", "green");
+    }
+
+
+    public static function updateMetadata() {
+        $colors = new Colors();
+        $_installDir = getcwd();
+        $config = file_exists("spid-php-setup.json")? json_decode(file_get_contents("spid-php-setup.json"), true) : array();
+        $xml = file_get_contents('https://registry.spid.gov.it/metadata/idp/spid-entities-idps.xml'); 
+        
+        if(!file_exists($config['installDir']."/vendor")) {
+            echo "\nspid-php is not installed. Please install it first.\n\n composer install\n\n";
+            exit(1);
+        }
+
         // customize and copy metadata file
         $template = file_get_contents($config['installDir'].'/setup/metadata/saml20-idp-remote.tpl', true);        
-
+        
         // setup IDP configurations
         $IDPMetadata = "";
         $IDPEntities = "";        
@@ -293,8 +375,7 @@ class Setup {
         }
 
         // retrieve IDP metadata
-        echo $colors->getColoredString("\nRetrieve configurations for production IDPs... ", "white");  
-        $xml = file_get_contents('https://registry.spid.gov.it/metadata/idp/spid-entities-idps.xml'); 
+        echo $colors->getColoredString("\nRetrieve configurations for production IDPs... ", "white");
 
         // remove tag prefixes
         $xml = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml);  
@@ -423,6 +504,7 @@ class Setup {
             $IDPMetadata .= "\n\n" . $template_idp;
             $IDPEntities .= "\n\t\t\t\$this->idps['".str_replace("'", "", $OrganizationName)."'] = '".$IDPentityID."';";
         }
+
         echo $colors->getColoredString("OK", "green");  
         
         echo $colors->getColoredString("\nWrite metadata for production IDPs... ", "white");  
@@ -430,50 +512,7 @@ class Setup {
         $template = str_replace(array_keys($vars), $vars, $template);
         file_put_contents($config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php", $template);
         echo $colors->getColoredString("OK", "green");  
-        
-        /*
-        // customize and copy metadata file
-        $vars = array("{{ENTITYID}}"=> "'".$entityID."'");
-        $template = file_get_contents($_installDir.'/setup/metadata/saml20-idp-remote.tpl', true);
-        $customized = str_replace(array_keys($vars), $vars, $template);
-        file_put_contents($config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php", $customized);        
-        */
-        
-        if($config['useSmartButton']) {
-            // overwrite template file
-            echo $colors->getColoredString("\nWrite smart-button template... ", "white");  
-            $vars = array("{{SERVICENAME}}"=> $config['serviceName']);
-            $template = file_get_contents($config['installDir'].'/setup/templates/smartbutton/selectidp-links.tpl', true);
-            $customized = str_replace(array_keys($vars), $vars, $template);
-            file_put_contents($config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/templates/selectidp-links.php", $customized);        
-            
-            // overwrite smart button js file
-            $vars = array("{{SERVICENAME}}"=> $config['serviceName']);
-            $template = file_get_contents($config['installDir'].'/setup/www/js/agid-spid-enter.tpl', true);
-            $customized = str_replace(array_keys($vars), $vars, $template);
-            shell_exec("mkdir " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/js");
-            file_put_contents($config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/js/agid-spid-enter.js", $customized);  
-            echo $colors->getColoredString("OK", "green");  
-            
-            // copy smart button css and img
-            echo $colors->getColoredString("\nCopy smart-button resurces... ", "white");  
-            shell_exec("cp -rf " . $config['installDir'] . "/vendor/italia/spid-smart-button/css " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/css");
-            shell_exec("cp -rf " . $config['installDir'] . "/vendor/italia/spid-smart-button/img " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/img");
-            echo $colors->getColoredString("OK", "green");  
 
-        } else {
-            // overwrite template file
-            echo $colors->getColoredString("\nWrite spid button template... ", "white");  
-            shell_exec("mkdir " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button");
-            shell_exec("mkdir " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button/css");
-            shell_exec("mkdir " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button/img");
-            shell_exec("mkdir " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button/js");
-            shell_exec("cp -rf " . $config['installDir'] . "/vendor/italia/spid-sp-access-button/src/production/css " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button");
-            shell_exec("cp -rf " . $config['installDir'] . "/vendor/italia/spid-sp-access-button/src/production/img " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button");
-            shell_exec("cp -rf " . $config['installDir'] . "/vendor/italia/spid-sp-access-button/src/production/js " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button");
-            echo $colors->getColoredString("OK", "green"); 
-        }
-        
         // write sdk 
         echo $colors->getColoredString("\nWrite sdk helper class... ", "white");  
         $vars = array("{{SERVICENAME}}"=> $config['serviceName'], "{{IDPS}}"=> $IDPEntities);
@@ -481,38 +520,8 @@ class Setup {
         $customized = str_replace(array_keys($vars), $vars, $template);
         file_put_contents($config['installDir'] . "/spid-php.php", $customized);  
         echo $colors->getColoredString("OK", "green"); 
-
-        // apply simplesalphp patch for spid compliance
-        // not needed
-        // shell_exec("cp -rf " . $config['installDir'] . "/setup/simplesamlphp " . $config['installDir'] . "/vendor");
-
-        // write example files 
-        if($config['addExamples']) {
-            echo $colors->getColoredString("\nWrite example files to www (login-spid.php)... ", "white");  
-            $vars = array("{{SDKHOME}}"=> $config['installDir']);
-            $template = file_get_contents($config['installDir'].'/setup/sdk/login-spid.tpl', true);
-            $customized = str_replace(array_keys($vars), $vars, $template);
-            file_put_contents($config['wwwDir'] . "/login-spid.php", $customized);    
-            echo $colors->getColoredString("OK", "green"); 
-        }
-        
-        // reset permissions
-        echo $colors->getColoredString("\nSetting directories and files permissions... ", "white");  
-        shell_exec("find " . $config['installDir'] . "/. -type d -exec chmod 0755 {} \;");   
-        shell_exec("find " . $config['installDir'] . "/. -type f -exec chmod 0644 {} \;");  
-        shell_exec("chmod 777 " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/log");
-
-        if($config['addExamples']) {
-            shell_exec("chmod 0644 " . $config['wwwDir'] . "/login-spid.php");  
-        }
-        echo $colors->getColoredString("OK", "green");  
-            
-        
-
-        echo $colors->getColoredString("\n\nSPID PHP SDK successfully installed! Enjoy the identities\n\n", "green");
+        echo "\n\n";
     }
-
-
 
     public static function remove() {
         $colors = new Colors();
