@@ -11,7 +11,7 @@ class Setup {
         $colors = new Colors();
 
         echo shell_exec("clear");
-        echo $colors->getColoredString("SPID PHP SDK Setup\nversion 1.0\n\n", "green");
+        echo $colors->getColoredString("SPID PHP SDK Setup\nversion 2.0\n\n", "green");
 
         // retrieve path and inputs
         $_homeDir = shell_exec('echo -n "$HOME"');
