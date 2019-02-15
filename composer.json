@@ -1,4 +1,7 @@
 {
+    "config": {
+        "version": "2.1"
+    },
     "repositories": {
         "spid-sp-access-button": {
             "type": "package",

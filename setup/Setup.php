@@ -9,9 +9,10 @@ class Setup {
 
     public static function setup(Event  $event) {
         $colors = new Colors();
-
+        $version = $event->getComposer()->getConfig()->get("version");
+        
         echo shell_exec("clear");
-        echo $colors->getColoredString("SPID PHP SDK Setup\nversion 2.0\n\n", "green");
+        echo $colors->getColoredString("SPID PHP SDK Setup\nversion ".$version."\n\n", "green");
 
         // retrieve path and inputs
         $_homeDir = shell_exec('echo -n "$HOME"');
