@@ -49,6 +49,11 @@ Al termine dell'installazione tutte le configurazioni sono salvate nel file *spi
 ```
 La disinstallazione non cancella l'eventuale file *spid-php-setup.json* locale che contiene le configurazioni inserite durante il processo in installazione.
 
+## Aggiornamento Metadata IdP
+```
+# composer update-metadata
+```
+
 ## Reinstallazione / Aggiornamento
 ```
 # composer uninstall
