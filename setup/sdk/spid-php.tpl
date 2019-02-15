@@ -15,17 +15,21 @@
             $this->spid_auth->requireAuth();
         }
     
-        public function login($idp, $l) {
+        public function login($idp, $l, $returnTo="") {
             $l = ($l=="2" || $l=="3")? $l : "1";
             $spidlevel = "https://www.spid.gov.it/SpidL" . $l;
 
-            $this->spid_auth->login(array(
+            $config = array(
                 'saml:AuthnContextClassRef' => $spidlevel,
                 'saml:AuthnContextComparison' => 'SAML2\Constants::COMPARISON_EXACT',
                 'saml:idp' => $this->idps[$idp],
                 'saml:NameIDPolicy' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
                 //'ErrorURL' => '/error_handler.php'
-            ));
+            );
+            
+            if(!empty($returnTo)) $config['ReturnTo'] = $returnTo;
+            
+            $this->spid_auth->login($config);
         }
 
         public function logout() {
