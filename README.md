@@ -35,16 +35,26 @@ Se si è scelto di copiare i file di esempio, inoltre, sarà possibile verificar
 * php-xml
 * Composer (https://getcomposer.org)
 * OpenSSL 
+* OpenSSL aes-256-cbc Cipher Algorithm
 
 ## Installazione
 ```
 # composer install
 ```
+Al termine dell'installazione tutte le configurazioni sono salvate nel file *spid-php-setup.json*. In caso di reinstallazione, le informazioni di configurazione saranno recuperate automaticamente da tale file, senza la necessità di doverle reinserire nuovamente.  
 
 ## Disinstallazione
 ```
 # composer uninstall
 ```
+La disinstallazione non cancella l'eventuale file *spid-php-setup.json* locale che contiene le configurazioni inserite durante il processo in installazione.
+
+## Reinstallazione / Aggiornamento
+```
+# composer uninstall
+# composer install
+```
+Se nella directory locale è presente il file *spid-php-setup.json* l'aggiornamento non richiederà nuovamente le informazioni di configurazione. Per modificare le informazioni di configurazione precedentemente inserite, occorrerà eseguire la disinstallazione, cancellare manualmente il file *spid-php-setup.json*, quindi procedere alla nuova installazione.
 
 ## Configurazione nginx
 Per utilizzare SimpleSAMLphp su webserver nginx occorre configurare nginx come nell'esempio seguente.
@@ -126,9 +136,9 @@ stampa il codice per l'inserimento dello smart button. $size specifica la dimens
 
 ### login
 ```
-void login($idp, $level)
+void login($idp, $level, [$returnTo])
 ```
-invia una richiesta di login livello $level verso l'idp $idp.
+invia una richiesta di login livello $level verso l'idp $idp. Dopo l'autenticazione, l'utente è reindirizzato alla url eventualmente specificata in $returnTo. Se il parametro $returnTo non è specificato, l'utente è reindirizzato alla pagina di provenienza.
 
 $idp può assumere uno dei seguenti valori:
 * VALIDATOR
