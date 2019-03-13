@@ -1,9 +1,9 @@
 <?php
 
-namespace setup;
+namespace SPID_PHP;
 
 use Composer\Script\Event;
-use Colors;
+use SPID_PHP\Colors;
 
 class Setup {
 
