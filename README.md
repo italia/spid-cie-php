@@ -182,9 +182,9 @@ esegue la disconnessione
 
 ### getLogoutURL
 ```
-string getLogoutURL()
+string getLogoutURL([$returnTo])
 ```
-restituisce la url per eseguire la disconnessione
+restituisce la url per eseguire la disconnessione. Dopo la disconnessione, l'utente è reindirizzato alla url specificata in $returnTo oppure alla pagina di provenienza se $returnTo non è specificato.
 
 
 ## Esempio di integrazione
