@@ -1,8 +1,9 @@
 <?php
 
     require_once("vendor/simplesamlphp/simplesamlphp/lib/_autoload.php");
+    require_once("setup/sdk/AbstractSPID.php");
 
-    class SPID_PHP {
+    class SPID_PHP extends \SPID\AbtractSPID {
         private $spid_auth;
         private $idps = array();
 
