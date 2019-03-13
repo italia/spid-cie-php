@@ -14,6 +14,8 @@
         foreach($spidsdk->getAttributes() as $attribute=>$value) {
             echo "<p>" . $attribute . ": <b>" . $value[0] . "</b></p>";
         }
+
+        echo "<hr/><p><a href='" . $spidsdk->getLogoutURL() . "'>Logout</a></p>";
     }
 
     $spidsdk->insertSPIDButtonJS(); 
