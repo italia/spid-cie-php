@@ -205,7 +205,7 @@ if(!$spidsdk->isAuthenticated()) {
         echo "<p>" . $attribute . ": <b>" . $value[0] . "</b></p>";
     }
     
-    echo "<hr/><p><a href='" . $spidsdk->getLogoutURL("http://localhost") . "'>Logout</a></p>";
+    echo "<hr/><p><a href='" . $spidsdk->getLogoutURL() . "'>Logout</a></p>";
 }
 
 $spidsdk->insertSPIDButtonJS(); 
