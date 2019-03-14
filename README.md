@@ -192,11 +192,12 @@ restituisce la url per eseguire la disconnessione. Dopo la disconnessione, l'ute
 require_once("<path to spid-php>/spid-php.php");
 
 $spidsdk = new SPID_PHP();
-$spidsdk->insertSPIDButtonCSS();
 
 if(!$spidsdk->isAuthenticated()) {
     if(!isset($_GET['idp'])) {
-        $spidsdk->insertSPIDButton("L");               
+        $spidsdk->insertSPIDButtonCSS();
+        $spidsdk->insertSPIDButton("L");       
+        $spidsdk->insertSPIDButtonJS();         
     } else {
         $spidsdk->login($_GET['idp'], 1);                
     }
@@ -208,7 +209,6 @@ if(!$spidsdk->isAuthenticated()) {
     echo "<hr/><p><a href='" . $spidsdk->getLogoutURL() . "'>Logout</a></p>";
 }
 
-$spidsdk->insertSPIDButtonJS(); 
 
 ```
 

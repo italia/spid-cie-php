@@ -634,6 +634,10 @@ class sspmod_saml_Auth_Source_SP extends SimpleSAML_Auth_Source
 
         $idp = $state['saml:logout:IdP'];
         $nameId = $state['saml:logout:NameID'];
+
+        /* SPID CUSTOM */
+        /* nameid of SLO Request is IdP EntityID */
+        $nameId->value = $idp;
         $sessionIndex = $state['saml:logout:SessionIndex'];
 
         $idpMetadata = $this->getIdPMetadata($idp);
@@ -661,6 +665,7 @@ class sspmod_saml_Auth_Source_SP extends SimpleSAML_Auth_Source
         }
 
         $b = \SAML2\Binding::getBinding($endpoint['Binding']);
+
         $b->send($lr);
 
         assert(false);
