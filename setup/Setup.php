@@ -413,8 +413,8 @@ class Setup
         
 
         // apply simplesalphp patch for spid compliance
-        // not needed
-        // shell_exec("cp -rf " . $config['installDir'] ."/setup/simplesamlphp " . $config['installDir'] . "/vendor");
+        // needed only for templates
+        shell_exec("cp -rf " . $config['installDir'] ."/setup/simplesamlphp/simplesamlphp/templates/* " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/templates");
 
         // write example files
         if ($config['addExamples']) {

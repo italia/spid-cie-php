@@ -217,9 +217,13 @@ class SimpleSAML_Error_Error extends SimpleSAML_Error_Exception
         } else {
             $referer = 'unknown';
         }
+
+        $statusCode = (method_exists($this->getCause(), "getStatus"))? $this->getCause()->getStatus() : "";
+        $statusMessage = (method_exists($this->getCause(), "getMessage"))? $this->getCause()->getMessage() : "";
+
         $errorData = array(
-            'statusCode'     => $this->getCause()->getStatus(),
-            'statusMessage'  => $this->getCause()->getMessage(),
+            'statusCode'     => $statusCode,
+            'statusMessage'  => $statusMessage,
             'exceptionMsg'   => $emsg,
             'exceptionTrace' => $etrace,
             'reportId'       => $reportId,
