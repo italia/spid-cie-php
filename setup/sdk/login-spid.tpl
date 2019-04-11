@@ -18,6 +18,9 @@
 
     } else {
 
+        $idp = $spidsdk->getIdP();
+        echo "<p>IdP: <b>" . $idp . "</b></p>";
+        
         foreach($spidsdk->getAttributes() as $attribute=>$value) {
             echo "<p>" . $attribute . ": <b>" . $value[0] . "</b></p>";
         }

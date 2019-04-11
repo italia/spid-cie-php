@@ -12,6 +12,10 @@
             {{IDPS}}
         }
 
+        public function getIdP() {
+            return $this->spid_auth->getAuthData('saml:sp:IdP');
+        }
+        
         public function requireAuth() {
             $this->spid_auth->requireAuth();
         }
