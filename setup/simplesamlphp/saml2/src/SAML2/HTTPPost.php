@@ -83,9 +83,9 @@ class HTTPPost extends Binding
 
             // if LogoutResponse
             if($relayState==null) {
-                $relayState = openssl_decrypt(base64_decode($encryptedRelayState), "aes-256-cbc", $message->getInResponseTo());
+                $relayState = openssl_decrypt(base64_decode($encryptedRelayState), "aes-256-cbc", $msg->getInResponseTo());
             }
-            
+
             $msg->setRelayState($relayState);
         }
 
