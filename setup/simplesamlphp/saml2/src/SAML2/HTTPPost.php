@@ -80,6 +80,12 @@ class HTTPPost extends Binding
         if (array_key_exists('RelayState', $_POST)) {
             $encryptedRelayState = $_POST['RelayState'];
             $relayState = openssl_decrypt(base64_decode($encryptedRelayState), "aes-256-cbc", $msg->getId());
+
+            // if LogoutResponse
+            if($relayState==null) {
+                $relayState = openssl_decrypt(base64_decode($encryptedRelayState), "aes-256-cbc", $message->getInResponseTo());
+            }
+            
             $msg->setRelayState($relayState);
         }
 

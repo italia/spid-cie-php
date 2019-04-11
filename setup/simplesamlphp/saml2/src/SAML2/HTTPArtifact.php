@@ -147,6 +147,12 @@ class HTTPArtifact extends Binding
         if (isset($_REQUEST['RelayState'])) {
             $encryptedRelayState = $_REQUEST['RelayState'];
             $relayState = openssl_decrypt(base64_decode($encryptedRelayState), "aes-256-cbc", $samlResponse->getId());
+
+            // if LogoutResponse
+            if($relayState==null) {
+                $relayState = openssl_decrypt(base64_decode($encryptedRelayState), "aes-256-cbc", $message->getInResponseTo());
+            }
+            
             $samlResponse->setRelayState($relayState);  
         }
 

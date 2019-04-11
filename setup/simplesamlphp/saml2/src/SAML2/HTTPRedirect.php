@@ -128,6 +128,12 @@ class HTTPRedirect extends Binding
         if (array_key_exists('RelayState', $data)) {
             $encryptedRelayState = $data['RelayState'];
             $relayState = openssl_decrypt(base64_decode($encryptedRelayState), "aes-256-cbc", $message->getId());
+
+            // if LogoutResponse
+            if($relayState==null) {
+                $relayState = openssl_decrypt(base64_decode($encryptedRelayState), "aes-256-cbc", $message->getInResponseTo());
+            }
+            
             $message->setRelayState($relayState);            
         }
 
