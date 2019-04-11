@@ -15,6 +15,10 @@
         public function getIdP() {
             return $this->spid_auth->getAuthData('saml:sp:IdP');
         }
+
+        public function isIdP($idp) {
+            return ($this->idps[$idp]==$this->getIdp());
+        }
         
         public function requireAuth() {
             $this->spid_auth->requireAuth();
