@@ -1,0 +1,6 @@
+array (
+   'encryption' => false,
+   'signing' => true,
+   'type' => 'X509Certificate',
+   'X509Certificate' => '{{X509CERTIFICATE}}'
+),

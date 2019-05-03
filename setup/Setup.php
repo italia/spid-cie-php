@@ -540,7 +540,19 @@ class Setup
             $OrganizationDisplayName = trim($entity->Organization->OrganizationDisplayName);
             $OrganizationURL = trim($entity->Organization->OrganizationURL);
             $IDPentityID = trim($entity->attributes()['entityID']);
-            $X509Certificate = trim($entity->IDPSSODescriptor->KeyDescriptor->KeyInfo->X509Data->X509Certificate);
+
+            $template_keys = "array(\n";
+            $nK = 0;
+            $template_key = file_get_contents($config['installDir'].'/setup/metadata/key.ptpl', true);
+            foreach ($entity->IDPSSODescriptor->KeyDescriptor as $keyDescriptor) {
+                $X509Certificate = trim($keyDescriptor->KeyInfo->X509Data->X509Certificate);
+                $template_keys .= "\t\t" . $nK++ . " => ";
+                $vars = array("{{X509CERTIFICATE}}"=> $X509Certificate);
+                $template_keys .= str_replace(array_keys($vars), $vars, $template_key);
+            }
+            $template_keys .= "\n\t)";
+            
+
             $NameIDFormat = trim($entity->IDPSSODescriptor->NameIDFormat);
             
             $template_slo = file_get_contents($config['installDir'].'/setup/metadata/slo.ptpl', true);
@@ -607,7 +619,7 @@ class Setup
                 "{{SSO}}"=> $template_sso,
                 "{{SLO}}"=> $template_slo,
                 "{{NAMEIDFORMAT}}"=> $NameIDFormat,
-                "{{X509CERTIFICATE}}"=> $X509Certificate
+                "{{KEYS}}"=> $template_keys
             );
 
             $template_idp = file_get_contents($config['installDir'].'/setup/metadata/saml20-idp-remote.ptpl', true);

@@ -37,12 +37,5 @@ $metadata['{{ENTITYID}}'] = array (
   'NameIDFormats' => array (
     0 => '{{NAMEIDFORMAT}}',
   ),
-  'keys' => array (
-    0 => array (
-      'encryption' => false,
-      'signing' => true,
-      'type' => 'X509Certificate',
-      'X509Certificate' => '{{X509CERTIFICATE}}'
-    ),
-  ),
+  'keys' => {{KEYS}}
 );
