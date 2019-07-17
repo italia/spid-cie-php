@@ -33,6 +33,7 @@ Se si è scelto di copiare i file di esempio, inoltre, sarà possibile verificar
 * Web server
 * php >= 7
 * php-xml
+* php-mbstring
 * Composer (https://getcomposer.org)
 * OpenSSL 
 * OpenSSL aes-256-cbc Cipher Algorithm
