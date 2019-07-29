@@ -177,9 +177,9 @@ restituisce il valore per lo specifico attributo
 
 ### logout
 ```
-void logout()
+void logout([$returnTo])
 ```
-esegue la disconnessione
+esegue la disconnessione. Dopo la disconnessione, l'utente è reindirizzato alla url specificata in $returnTo oppure alla pagina di provenienza se $returnTo non è specificato.
 
 ### getLogoutURL
 ```
