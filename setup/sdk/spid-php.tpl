@@ -41,8 +41,8 @@
             $this->spid_auth->login($config);
         }
 
-        public function logout() {
-            $this->spid_auth->logout();
+        public function logout($returnTo = null) {
+            $this->spid_auth->logout($returnTo);
         }
     
         public function getLogoutURL($returnTo = null) {
