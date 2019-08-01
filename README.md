@@ -258,7 +258,7 @@ if(!$spidsdk->isAuthenticated()) {
 |HTTP-Redirect binding|✓||
 |HTTP-POST binding|✓||
 |**LogoutResponse parsing (for SP-initiated logout):**|||
-|parsing of LogoutResponse XML|?||
+|parsing of LogoutResponse XML|✓||
 |verification of `LogoutResponse/Signature` value (if any)|✓||
 |verification of `LogoutResponse/Signature` certificate (if any) against IdP metadata|✓||
 |verification of `Issuer`|✓||
