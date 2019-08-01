@@ -219,15 +219,15 @@ if(!$spidsdk->isAuthenticated()) {
 |:---|:---|:---|
 |**Metadata:**|||
 |parsing of IdP XML metadata (1.2.2.4)|✓||
-|parsing of AA XML metadata (2.2.4)|no||
+|parsing of AA XML metadata (2.2.4)|||
 |SP XML metadata generation (1.3.2)|✓||
 |**AuthnRequest generation (1.2.2.1):**|||
 |generation of AuthnRequest XML|✓||
 |HTTP-Redirect binding|✓||
 |HTTP-POST binding|✓||
-|`AssertionConsumerServiceURL` customization|no||
-|`AssertionConsumerServiceIndex` customization|no||
-|`AttributeConsumingServiceIndex` customization|no||
+|`AssertionConsumerServiceURL` customization|||
+|`AssertionConsumerServiceIndex` customization|||
+|`AttributeConsumingServiceIndex` customization|||
 |`AuthnContextClassRef` (SPID level) customization|✓||
 |`RequestedAuthnContext/@Comparison` customization|✓||
 |`RelayState` customization (1.2.2)|✓||
@@ -265,18 +265,18 @@ if(!$spidsdk->isAuthenticated()) {
 |verification of `Destination`|✓||
 |PartialLogout detection|?||
 |**LogoutRequest parsing (for third-party-initiated logout):**||
-|parsing of LogoutRequest XML|?||
-|verification of `LogoutRequest/Signature` value (if any)|?||
-|verification of `LogoutRequest/Signature` certificate (if any) against IdP metadata|?||
-|verification of `Issuer`|?||
-|verification of `Destination`|?||
-|parsing of `NameID`|?||
+|parsing of LogoutRequest XML|✓||
+|verification of `LogoutRequest/Signature` value (if any)|✓||
+|verification of `LogoutRequest/Signature` certificate (if any) against IdP metadata|✓||
+|verification of `Issuer`|✓||
+|verification of `Destination`|✓||
+|parsing of `NameID`|✓||
 |**LogoutResponse generation (for third-party-initiated logout):**||
-|generation of LogoutResponse XML|?||
-|HTTP-Redirect binding|?||
-|HTTP-POST binding|?||
-|PartialLogout customization|?||
+|generation of LogoutResponse XML|✓||
+|HTTP-Redirect binding|✓||
+|HTTP-POST binding|✓||
+|PartialLogout customization|✓||
 |**AttributeQuery generation (2.2.2.1):**||
-|generation of AttributeQuery XML|no||
-|SOAP binding (client)|no||
+|generation of AttributeQuery XML|||
+|SOAP binding (client)|||
 
