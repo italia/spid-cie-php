@@ -263,7 +263,7 @@ if(!$spidsdk->isAuthenticated()) {
 |verification of `LogoutResponse/Signature` certificate (if any) against IdP metadata|✓||
 |verification of `Issuer`|✓||
 |verification of `Destination`|✓||
-|PartialLogout detection|?||
+|PartialLogout detection|||
 |**LogoutRequest parsing (for third-party-initiated logout):**||
 |parsing of LogoutRequest XML|✓||
 |verification of `LogoutRequest/Signature` value (if any)|✓||
