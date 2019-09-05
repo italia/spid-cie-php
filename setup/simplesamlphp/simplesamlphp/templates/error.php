@@ -15,7 +15,8 @@ echo htmlspecialchars($this->t($this->data['dictDescr'], $this->data['parameters
 if($this->data['error']['statusCode']!='') { ?>
     <div style="border: 1px solid #eee; padding: 1em; margin: 1em 0">
         <p style="margin: 1px">StatusCode: <?php echo htmlspecialchars($this->data['error']['statusCode']); ?></p>
-        <p style="margin: 1px">StatusMessage: <?php echo htmlspecialchars($this->data['error']['statusMessage']); ?></p>        
+        <p style="margin: 1px">StatusMessage: <?php echo htmlspecialchars($this->data['error']['statusMessage']); ?></p>     
+        <p style="margin: 1px">ErrorMessage: <?php echo htmlspecialchars($this->data['errorMessage']); ?></p>        
     </div>
 <?php }
 
