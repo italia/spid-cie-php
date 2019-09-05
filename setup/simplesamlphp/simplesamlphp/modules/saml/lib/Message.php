@@ -598,7 +598,11 @@ class sspmod_saml_Message
         }
 
         $inResponseTo = $response->getInResponseTo();
-        $state = SimpleSAML_Auth_State::loadState($inResponseTo, 'saml:sp:sso', true);
+        
+        /* SPID-PHP CUSTOM: strip spid-php */
+        $stateID = substr($inResponseTo, 8);
+        
+        $state = SimpleSAML_Auth_State::loadState($stateID, 'saml:sp:sso', true);
         if($state==null) {
             throw new SimpleSAML_Error_Exception(
                 'State not found for ID '.$inResponseTo

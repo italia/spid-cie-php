@@ -299,6 +299,7 @@ abstract class Message implements SignedElement
     {
         assert(is_string($id));
 
+        /* SPID-PHP CUSTOM: spid-php ID watermark */
         $this->id = 'spid-php'.$id;
     }
 
