@@ -299,7 +299,7 @@ abstract class Message implements SignedElement
     {
         assert(is_string($id));
 
-        $this->id = $id;
+        $this->id = 'spid-php'.$id;
     }
 
     /**
