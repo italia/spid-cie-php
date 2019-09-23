@@ -69,7 +69,7 @@ In *myservice* inserire il nome del servizio come specificato durante l'installa
 ```
 server {  
   listen 443 ssl http2;  
-  server_name sp.exaple.com;
+  server_name sp.example.com;
   root /var/www;
   include snippets/snakeoil.conf;  
   
