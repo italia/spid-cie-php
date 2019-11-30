@@ -30,7 +30,7 @@
 
             $config = array(
                 'saml:AuthnContextClassRef' => $spidlevel,
-                'saml:AuthnContextComparison' => 'SAML2\Constants::COMPARISON_EXACT',
+                'saml:AuthnContextComparison' => \SAML2\Constants::COMPARISON_MINIMUM,
                 'saml:idp' => $this->idps[$idp],
                 'saml:NameIDPolicy' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
                 //'ErrorURL' => '/error_handler.php'
