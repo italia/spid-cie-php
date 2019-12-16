@@ -1,6 +1,9 @@
 ﻿<?php
 
 $config = array(
+    'admin' => array(
+        'core:AdminPassword',
+    ),
 
     // An authentication source 
     'service' => array(

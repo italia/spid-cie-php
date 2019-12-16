@@ -28,6 +28,9 @@ class Setup
         $_spOrganizationURL = "https://www.organization.org";
         $_entityID = "https://localhost";
         $_acsIndex = 0;
+        $_adminPassword = "admin";
+        $_technicalContactName = "";
+        $_technicalContactEmail = "";
 
         $config = file_exists("spid-php-setup.json")?
             json_decode(file_get_contents("spid-php-setup.json"), true) : array();
@@ -250,6 +253,33 @@ class Setup
         */
         $config['useSmartButton'] = false;
 
+        if (!isset($config['adminPassword'])) {
+            echo "Please insert password for SimpleSAMLphp (" .
+                $colors->getColoredString($_adminPassword, "green") . "): ";
+            $config['adminPassword'] = str_replace("'", "\'", readline());
+            if ($config['adminPassword']==null || $config['adminPassword']=="") {
+                $config['adminPassword'] = $_adminPassword;
+            }
+        }
+
+        if (!isset($config['technicalContactName'])) {
+            echo "Please insert Tachnical Contact Name (" .
+                $colors->getColoredString($_technicalContactName, "green") . "): ";
+            $config['technicalContactName'] = str_replace("'", "\'", readline());
+            if ($config['technicalContactName']==null || $config['technicalContactName']=="") {
+                $config['technicalContactName'] = $_technicalContactName;
+            }
+        }
+
+        if (!isset($config['technicalContactEmail'])) {
+            echo "Please insert Tachnical Contact Email (" .
+                $colors->getColoredString($_technicalContactEmail, "green") . "): ";
+            $config['technicalContactEmail'] = str_replace("'", "\'", readline());
+            if ($config['technicalContactEmail']==null || $config['technicalContactEmail']=="") {
+                $config['technicalContactEmail'] = $_technicalContactEmail;
+            }
+        }
+
         echo $colors->getColoredString("\nCurrent directory: " .
             $config['installDir'], "yellow");
         echo $colors->getColoredString("\nWeb root directory: " .
@@ -281,7 +311,13 @@ class Setup
         echo $colors->getColoredString(($config['addExamples'])? "Y":"N", "yellow");
         //echo $colors->getColoredString("\nUse SPID smart button: ", "yellow");
         //echo $colors->getColoredString(($config['useSmartButton'])? "Y":"N", "yellow");
-        
+        echo $colors->getColoredString("\nSimpleSAMLphp Password: " .
+            $config['adminPassword'], "yellow");
+        echo $colors->getColoredString("\nTechnical Contact Name: " .
+            $config['technicalContactName'], "yellow");
+        echo $colors->getColoredString("\nTechnical Contact Email: " .
+            $config['technicalContactEmail'], "yellow");
+    
         
         echo "\n\n";
         
@@ -331,7 +367,12 @@ class Setup
 
         // customize and copy config file
         echo $colors->getColoredString("\nWrite config file... ", "white");
-        $vars = array("{{BASEURLPATH}}"=> "'".$config['serviceName']."/'");
+        $vars = array(
+            "{{BASEURLPATH}}"=> "'".$config['serviceName']."/'",
+            "{{ADMIN_PASSWORD}}"=> "'".$config['adminPassword']."'",
+            "{{TECHCONTACT_NAME}}"=> "'".$config['technicalContactName']."'",
+            "{{TECHCONTACT_EMAIL}}"=> "'".$config['technicalContactEmail']."'"
+        );
         $template = file_get_contents($config['installDir'].'/setup/config/config.tpl', true);
         $customized = str_replace(array_keys($vars), $vars, $template);
         file_put_contents($config['installDir'] .
