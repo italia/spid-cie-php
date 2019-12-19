@@ -1,4 +1,4 @@
-$metadata['https://idp.spid.gov.it'] = array (
+$metadata['https://idptest.spid.gov.it'] = array (
   'entityid' => {{ENTITYID}},
   'description' =>
   array (
