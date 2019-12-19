@@ -511,7 +511,7 @@ class Setup
             $template_idp_test = file_get_contents($_installDir.'/setup/metadata/saml20-idp-remote-test.ptpl', true);
             $template_idp_test = str_replace(array_keys($vars), $vars, $template_idp_test);
             $IDPMetadata .= "\n\n" . $template_idp_test;
-            $IDPEntities .= "\n\t\t\t\$this->idps['TEST'] = 'https://idp.spid.gov.it';";
+            $IDPEntities .= "\n\t\t\t\$this->idps['TEST'] = 'https://idptest.spid.gov.it';";
             echo $colors->getColoredString("OK", "green");
         }
 
