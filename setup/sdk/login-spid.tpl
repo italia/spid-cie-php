@@ -3,6 +3,8 @@
     require_once("{{SDKHOME}}/spid-php.php");
     $spidsdk = new SPID_PHP();
 
+    $spidsdk->setProfessionalUse(false);
+
     if($spidsdk->isAuthenticated() 
         && isset($_GET['idp']) 
         && $spidsdk->isIdP($_GET['idp'])) {
