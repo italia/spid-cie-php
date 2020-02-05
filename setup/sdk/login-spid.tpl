@@ -24,7 +24,7 @@
             $spidsdk->insertSPIDButton("L");  
             $spidsdk->insertSPIDButtonJS(); 
         } else {
-            $spidsdk->login($_GET['idp'], 1);  
+            $spidsdk->login($_GET['idp'], 2);  
         }
     }
 ?>

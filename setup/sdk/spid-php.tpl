@@ -183,18 +183,10 @@
                     </li>
                 ";
             }
-            $button_validator = "";
-            if(array_key_exists('VALIDATOR', $this->idps)) {
-                $button_validator = "
-                    <li class=\"spid-idp-button-link\" data-idp=\"validatorid\">
-                        <a href=\"?idp=VALIDATOR\">AgID VALIDATOR</a>
-                    </li>
-                ";
-            }            
+        
             $button_li = 
                 $button_test.
-                $button_local.
-                $button_validator."
+                $button_local."
                 <li class=\"spid-idp-button-link\" data-idp=\"arubaid\">
                     <a href=\"?idp=ArubaPEC S.p.A.\"><span class=\"spid-sr-only\">Aruba ID</span><img src=\"{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.svg\" onerror=\"this.src='{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.png'; this.onerror=null;\" alt=\"Aruba ID\" /></a>
                 </li>
@@ -232,6 +224,15 @@
                     <a href=\"https://www.spid.gov.it/serve-aiuto\">Serve aiuto?</a>
                 </li>
             ";
+            
+            if(array_key_exists('VALIDATOR', $this->idps)) {
+                $button_li .= "
+                    <li class=\"spid-idp-support-link\">
+                        <a href=\"?idp=VALIDATOR\">SPID Validator</a>
+                    </li>
+                ";
+            }
+
             switch($size) {
                 case "S":
                     $button = "
