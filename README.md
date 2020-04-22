@@ -143,7 +143,7 @@ stampa il codice per l'inserimento dello smart button. $size specifica la dimens
 
 ### login
 ```
-void login($idp, $level, [$returnTo])
+void login($idp, $level, [$returnTo], [$attributeConsumingServiceIndex])
 ```
 invia una richiesta di login livello $level verso l'idp $idp. Dopo l'autenticazione, l'utente è reindirizzato alla url eventualmente specificata in $returnTo. Se il parametro $returnTo non è specificato, l'utente è reindirizzato alla pagina di provenienza.
 
