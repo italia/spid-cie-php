@@ -303,6 +303,11 @@ class sspmod_saml_Auth_Source_SP extends SimpleSAML_Auth_Source
         /* SPID CUSTOM */ 
         $b->setDestination($dst['Location']);
 
+        /* SPID CUSTOM AttributeConsumingServiceIndex on Request */
+        if(!empty($state['saml:AttributeConsumingServiceIndex'])) {
+            $ar->setAttributeConsumingServiceIndex($state['saml:AttributeConsumingServiceIndex']);
+        }
+
         $this->sendSAML2AuthnRequest($state, $b, $ar);
 
         assert(false);

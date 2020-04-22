@@ -25,6 +25,9 @@
             $spidsdk->insertSPIDButtonJS(); 
         } else {
             $spidsdk->login($_GET['idp'], 2);  
+
+            // set AttributeConsumingServiceIndex 2
+            //$spidsdk->login($_GET['idp'], 2, "", 2);
         }
     }
 ?>

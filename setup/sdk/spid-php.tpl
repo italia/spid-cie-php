@@ -29,7 +29,7 @@
             $this->spid_auth->requireAuth();
         }
     
-        public function login($idp, $l, $returnTo="") {
+        public function login($idp, $l, $returnTo="", $attributeIndex=null) {
             $l = ($l=="2" || $l=="3")? $l : "1";
             $spidlevel = "https://www.spid.gov.it/SpidL" . $l;
 
@@ -38,6 +38,7 @@
                 'saml:AuthnContextComparison' => \SAML2\Constants::COMPARISON_MINIMUM,
                 'saml:idp' => $this->idps[$idp],
                 'saml:NameIDPolicy' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
+                'saml:AttributeConsumingServiceIndex' => $attributeIndex,
                 //'ErrorURL' => '/error_handler.php'
             );
 
