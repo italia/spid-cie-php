@@ -54,8 +54,15 @@
             $this->spid_auth->login($config);
         }
 
-        public function logout($returnTo = null) {
-            $this->spid_auth->logout($returnTo);
+        public function logout($returnTo = null, $saml_logout = true) {
+            if($saml_logout) {
+                $this->spid_auth->logout($returnTo);
+            } else {
+                $session = SimpleSAML_Session::getSessionFromRequest();
+                if ($session->isValid('service')) {
+                    $session->doLogout('service');
+                }
+            }
         }
     
         public function getLogoutURL($returnTo = null) {
