@@ -61,6 +61,19 @@ $config = array(
         /* AttributeConsumingServiceIndex richiesto in AuthnRequest */
         'AttributeConsumingServiceIndex' => {{ACSINDEX}},
         'acs.Bindings' => array('urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'),
-        'NameIDPolicy' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient'
+        'NameIDPolicy' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
+
+        /* ContactPerson according to SPID Avviso n.29 v3 */
+        'contacts' => array(
+            array(
+                'contactType'       => 'other',
+                'spid'              => true,
+                'spid.codeType'     => {{ORGANIZATIONCODETYPE}},
+                'spid.codeValue'    => {{ORGANIZATIONCODE}},
+                'company'           => {{ORGANIZATIONNAME}},
+                'emailAddress'      => {{ORGANIZATIONEMAILADDRESS}},
+                'telephoneNumber'   => {{ORGANIZATIONTELEPHONENUMBER}}
+            )
+        )
     )
 );
