@@ -13,7 +13,7 @@ Durante il processo di setup lo script richiede l'inserimento delle seguenti inf
 * EntityID del service provider
 * Tipologia del service provider (pubblico o privato)
 * Informazioni del service provider da inserire nel metadata
-* Informazioni del service provider da inserire nel certificato di firma in accordo con quanto previsto dall'[Avviso SPID n°29](https://www.agid.gov.it/sites/default/files/repository_files/spid-avviso-n29-specifiche_sp_pubblici_e_privati.pdf) 
+* Informazioni del service provider da inserire nel certificato di firma in accordo con quanto previsto dall'[Avviso SPID n°29 v3](https://www.agid.gov.it/sites/default/files/repository_files/spid-avviso-n29v3-specifiche_sp_pubblici_e_privati.pdf) 
 * AttributeConsumingServiceIndex da richiedere all'IDP
 * Attributi richiesti da inserire nel metadata
 * se inserire nella configurazione i dati dell'IDP di test (https://idp.spid.gov.it)
