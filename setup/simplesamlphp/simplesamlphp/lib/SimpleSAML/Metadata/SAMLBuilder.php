@@ -698,22 +698,22 @@ class SimpleSAML_Metadata_SAMLBuilder
             $ext_dom = \SAML2\DOMDocumentFactory::create();
             
             if($details['spid.codeType']=='IPACode') {
-                $ext_elem_code = $ext_dom->createElement('spid:IPACode', $details['spid.codeValue']);
-                $ext_elem_type = $ext_dom->createElement('spid:Public', '');
+                $ext_elem_code = $ext_dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:IPACode', $details['spid.codeValue']);
+                $ext_elem_type = $ext_dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:Public', '');
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_code); 
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_type);  
             }
 
             if($details['spid.codeType']=='VATNumber') {
-                $ext_elem_code = $ext_dom->createElement('spid:VATNumber', $details['spid.codeValue']);
-                $ext_elem_type = $ext_dom->createElement('spid:Private', '');
+                $ext_elem_code = $ext_dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:VATNumber', $details['spid.codeValue']);
+                $ext_elem_type = $ext_dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:Private', '');
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_code); 
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_type);  
             }
 
             if($details['spid.codeType']=='FiscalCode') {
-                $ext_elem_code = $ext_dom->createElement('spid:FiscalCode', $details['spid.codeValue']);
-                $ext_elem_type = $ext_dom->createElement('spid:Private', '');
+                $ext_elem_code = $ext_dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:FiscalCode', $details['spid.codeValue']);
+                $ext_elem_type = $ext_dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:Private', '');
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_code); 
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_type);  
             }
