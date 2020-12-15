@@ -16,7 +16,7 @@ Durante il processo di setup lo script richiede l'inserimento delle seguenti inf
 * Informazioni del service provider da inserire nel certificato di firma in accordo con quanto previsto dall'[Avviso SPID n°29 v3](https://www.agid.gov.it/sites/default/files/repository_files/spid-avviso-n29v3-specifiche_sp_pubblici_e_privati.pdf) 
 * AttributeConsumingServiceIndex da richiedere all'IDP
 * Attributi richiesti da inserire nel metadata
-* se inserire nella configurazione i dati dell'IDP di test (https://idp.spid.gov.it)
+* se inserire nella configurazione i dati dell'IDP di test (https://idptest.spid.gov.it)
 * se inserire nella configurazione i dati dell'IDP di validazione (https://validator.spid.gov.it)
 * se copiare nella root del webserver i file di esempio per l'integrazione del bottone
 * i dati per la generazione del certificato X.509 per il service provider
@@ -29,7 +29,7 @@ e si occupa di eseguire i seguenti passi:
 * effettua tutte le necessarie configurazioni su SimpleSAMLphp
 * predispone il template e le risorse grafiche dello SPID SP Access Button per essere utilizzate con SimpleSAMLphp
 
-Al termine del processo di setup si potrà scaricare il [metadata](#Metadata) oppure utilizzare il certificato X.509 creato nella directory /cert per registrare il service provider sull'ambiente di test tramite l'interfaccia di backoffice (https://idptest.spid.gov.it:8080).
+Al termine del processo di setup si potrà scaricare il [metadata](#Metadata) oppure utilizzare il certificato X.509 creato nella directory /cert per registrare il service provider sull'ambiente di test/validazione.
 Se si è scelto di copiare i file di esempio, inoltre, sarà possibile verificare subito l'integrazione accedendo da web a /login-spid.php
 
 ## Requisiti
@@ -45,13 +45,13 @@ Se si è scelto di copiare i file di esempio, inoltre, sarà possibile verificar
 ```
 # composer install
 ```
-Al termine dell'installazione tutte le configurazioni sono salvate nel file *spid-php-setup.json*. In caso di reinstallazione, le informazioni di configurazione saranno recuperate automaticamente da tale file, senza la necessità di doverle reinserire nuovamente.  
+Al termine dell'installazione tutte le configurazioni sono salvate nei file *spid-php-setup.json* e *spid-php-openssl.cnf*. In caso di reinstallazione, le informazioni di configurazione saranno recuperate automaticamente da tali file, senza la necessità di doverle reinserire nuovamente.  
 
 ## Disinstallazione
 ```
 # composer uninstall
 ```
-La disinstallazione non cancella l'eventuale file *spid-php-setup.json* locale che contiene le configurazioni inserite durante il processo in installazione.
+La disinstallazione non cancella gli eventuali file *spid-php-setup.json* e *spid-php-openssl.cnf* locali che contengono le configurazioni inserite durante il processo in installazione.
 
 ## Aggiornamento Metadata IdP
 ```
@@ -63,7 +63,7 @@ La disinstallazione non cancella l'eventuale file *spid-php-setup.json* locale c
 # composer uninstall
 # composer install
 ```
-Se nella directory locale è presente il file *spid-php-setup.json* l'aggiornamento non richiederà nuovamente le informazioni di configurazione. Per modificare le informazioni di configurazione precedentemente inserite, occorrerà eseguire la disinstallazione, cancellare manualmente il file *spid-php-setup.json*, quindi procedere alla nuova installazione.
+Se nella directory locale sono presenti i file *spid-php-setup.json* e *spid-php-openssl.cnf* l'aggiornamento non richiederà nuovamente le informazioni di configurazione. Per modificare le informazioni di configurazione precedentemente inserite, occorrerà eseguire la disinstallazione, cancellare o modificare manualmente il file *spid-php-setup.json*, quindi procedere alla nuova installazione. Per rigenerare i certificati occorrerà eseguire la disinstallazione, rinominare o cancellare la directory /cert o i certificati *spid-sp.crt* e *spid-sp.pem* in essa presenti, quindi procedere ad una nuova installazione.
 
 ## Configurazione nginx
 Per utilizzare SimpleSAMLphp su webserver nginx occorre configurare nginx come nell'esempio seguente.
@@ -220,6 +220,9 @@ if(!$spidsdk->isAuthenticated()) {
 
 |<img src="https://github.com/italia/spid-graphics/blob/master/spid-logos/spid-logo-c-lb.png?raw=true" width="100" /><br />_Compliance with [SPID regulations](http://www.agid.gov.it/sites/default/files/circolari/spid-regole_tecniche_v1.pdf) (for Service Providers)_|status|notes|
 |:---|:---|:---|
+|**SPID Avviso n.29 v.3:**|||
+|generation of certificates|✓||
+|generation of metadata|✓||
 |**Metadata:**|||
 |parsing of IdP XML metadata (1.2.2.4)|✓||
 |parsing of AA XML metadata (2.2.4)|||
