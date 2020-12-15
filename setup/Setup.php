@@ -32,7 +32,7 @@ class Setup {
         $_spCountryName = "IT";
         $_spLocalityName = "";
         $_spIsPublicAdministration = "yes";
-        $_spOrganizationSerialNumber = "";
+        $_spOrganizationCode = "";
 
         $config = file_exists("spid-php-setup.json") ?
                 json_decode(file_get_contents("spid-php-setup.json"), true) : array();
@@ -119,7 +119,7 @@ class Setup {
         }
 
         if (!isset($config['spIsPublicAdministration'])) {
-            echo "Is your Organization URL a Public Administration (yes/no)? (" .
+            echo "Is your Organization a Public Administration (yes/no)? (" .
             $colors->getColoredString($_spIsPublicAdministration, "green") . "): ";
             $config['spIsPublicAdministration'] = readline();
             if ($config['spIsPublicAdministration'] == null || $config['spIsPublicAdministration'] == "") {
@@ -127,28 +127,32 @@ class Setup {
             }
         }
 
-        if (!isset($config['spOrganizationSerialNumber'])) {
-            switch ($config['spIsPublicAdministration']) {
-                case 'yes': echo "Please insert your Organization's IPA Code(" .
-                    $colors->getColoredString($_spOrganizationSerialNumber, "green") . "): ";
-                    $config['spOrganizationSerialNumber'] = "PA:IT-" . readline();
-                    if ($config['spOrganizationSerialNumber'] == null || $config['spOrganizationSerialNumber'] == "") {
-                        $config['spOrganizationSerialNumber'] = "PA:IT-" . $_spOrganizationSerialNumber;
+        switch ($config['spIsPublicAdministration']) {
+            case 'yes': 
+                if (!isset($config['spOrganizationCode'])) {
+                    echo "Please insert your Organization's IPA Code (" .
+                    $colors->getColoredString($_spOrganizationCode, "green") . "): ";
+                    $config['spOrganizationCode'] = readline();
+                    if ($config['spOrganizationCode'] == null || $config['spOrganizationCode'] == "") {
+                        $config['spOrganizationCode'] = $_spOrganizationCode;
                     }
-                    break;
+                    $config['spOrganizationIdentifier'] = "PA:IT-" . $config['spOrganizationCode'];
+                }
+                break;
 
-                case 'no': echo "Please insert your Organization's VAT identification number(" .
-                    $colors->getColoredString($_spOrganizationSerialNumber, "green") . "): ";
-                    $config['spOrganizationSerialNumber'] = "VATIT-" . readline();
-                    if ($config['spOrganizationSerialNumber'] == null || $config['spOrganizationSerialNumber'] == "") {
-                        $config['spOrganizationSerialNumber'] = "VATIT-" . $_spOrganizationSerialNumber;
-                    }
-                    break;
+            case 'no': 
+                echo "Please insert your Organization's VAT identification number (" .
+                $colors->getColoredString($_spOrganizationCode, "green") . "): ";
+                $config['spOrganizationCode'] = readline();
+                if ($config['spOrganizationCode'] == null || $config['spOrganizationCode'] == "") {
+                    $config['spOrganizationCode'] = $_spOrganizationCode;
+                }
+                $config['spOrganizationIdentifier'] = "VATIT-" . $config['spOrganizationCode'];
+                break;
 
-                default: echo "Your Organization type is not correctly set. Please retry installation. Found: ".$config['spIsPublicAdministration']."\n";
-                    die();
-                    break;
-            }
+            default: echo "Your Organization type is not correctly set. Please retry installation. Found: ".$config['spIsPublicAdministration']."\n";
+                die();
+                break;
         }
 
         if (!isset($config['spCountryName'])) {
@@ -393,33 +397,36 @@ class Setup {
             shell_exec("mkdir " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert");
             echo $colors->getColoredString("\nConfiguring OpenSSL... ", "white");
             if (!file_exists('openssl.cnf')) {
-                $openssl_config = fopen("openssl.cnf", "w");
-                fwrite($openssl_config, "[ req ]\n");
-                fwrite($openssl_config, "default_bits = 2048\n");
-                fwrite($openssl_config, "default_md = sha256\n");
-                fwrite($openssl_config, "prompt = no\n");
-                fwrite($openssl_config, "encrypt_key = no\n");
+                $openssl_config = fopen("spid-php-openssl.cnf", "w");
+                fwrite($openssl_config, "oid_section = spid_oids\n");
+
+                fwrite($openssl_config, "\n[ req ]\n");
+                fwrite($openssl_config, "default_bits = 3072\n");
+                fwrite($openssl_config, "default_md = sha384\n");
                 fwrite($openssl_config, "distinguished_name = dn\n");
-                fwrite($openssl_config, "x509_extensions = v3_ca\n");
-                fwrite($openssl_config, "req_extensions  = v3_req\n");
-                fwrite($openssl_config, "x509_extensions = usr_cert\n");
+                fwrite($openssl_config, "encrypt_key = no\n");
+                fwrite($openssl_config, "prompt = no\n");
+                fwrite($openssl_config, "req_extensions  = req_ext\n");
+
+                fwrite($openssl_config, "\n[ spid_oids ]\n");
+                fwrite($openssl_config, "organizationIdentifier=2.5.4.97\n");
+                fwrite($openssl_config, "spid-privatesector-SP=1.3.76.16.4.3.1\n");
+                fwrite($openssl_config, "spid-publicsector-SP=1.3.76.16.4.2.1\n");
+                fwrite($openssl_config, "uri=2.5.4.83\n");
+
                 fwrite($openssl_config, "\n[ dn ]\n");
-                fwrite($openssl_config, "C = " . $config['spCountryName'] . "\n");
-                fwrite($openssl_config, "L = " . $config['spLocalityName'] . "\n");
-                fwrite($openssl_config, "O = " . $config['spOrganizationName'] . "\n");
-                fwrite($openssl_config, "CN = " . $config['entityID'] . "\n");
-                fwrite($openssl_config, "SN = " . $config['spOrganizationSerialNumber'] . "\n");
-                fwrite($openssl_config, "\n[ usr_cert ]\n");
-                fwrite($openssl_config, "basicConstraints = CA:FALSE\n");
-                fwrite($openssl_config, "nsCertType = client, server, email\n");
-                fwrite($openssl_config, "keyUsage = nonRepudiation, digitalSignature, keyEncipherment\n");
-                fwrite($openssl_config, "extendedKeyUsage = serverAuth, clientAuth, codeSigning, emailProtection\n");
-                fwrite($openssl_config, "nsComment = \"OpenSSL Generated Certificate\"\n");
-                fwrite($openssl_config, "subjectKeyIdentifier = hash\n");
-                fwrite($openssl_config, "authorityKeyIdentifier = keyid,issuer\n");
-                fwrite($openssl_config, "\n[ v3_ca ]\n");
-                fwrite($openssl_config, "certificatePolicies = ia5org,1.2.3.4,1.5.6.7.8,@polsect\n");
-                fwrite($openssl_config, "\n[ polsect ]\n");
+                fwrite($openssl_config, "organizationName=" . $config['spOrganizationName'] . "\n");
+                fwrite($openssl_config, "commonName=" . $config['spOrganizationDisplayName'] . "\n");
+                fwrite($openssl_config, "uri=" . $config['entityID'] . "\n");
+                fwrite($openssl_config, "organizationIdentifier=" . $config['spOrganizationIdentifier'] . "\n");
+                fwrite($openssl_config, "countryName=" . $config['spCountryName'] . "\n");
+                fwrite($openssl_config, "localityName=" . $config['spLocalityName'] . "\n");
+                //fwrite($openssl_config, "serialNumber=" . $config['spOrganizationCode'] . "\n");
+
+                fwrite($openssl_config, "\n[ req_ext ]\n");
+                fwrite($openssl_config, "certificatePolicies = @spid_policies\n");
+
+                fwrite($openssl_config, "\n[ spid_policies ]\n");
                 switch ($config['spIsPublicAdministration']) {
                     case 'yes': fwrite($openssl_config, "policyIdentifier = spid-publicsector-SP\n");
                         break;
@@ -433,20 +440,13 @@ class Setup {
                         die();
                         break;
                 }
-                fwrite($openssl_config, "\n[ v3_req ]\n");
-                fwrite($openssl_config, "basicConstraints       = critical, CA:FALSE\n");
-                fwrite($openssl_config, "subjectKeyIdentifier   = hash\n");
-                fwrite($openssl_config, "authorityKeyIdentifier = keyid:always\n");
-                fwrite($openssl_config, "authorityInfoAccess    = OCSP;URI:http://ocsp.example.com, caIssuers;URI:http://cert.example.com\n");
-                fwrite($openssl_config, "keyUsage               = critical, digitalSignature, keyEncipherment\n");
-                fwrite($openssl_config, "extendedKeyUsage       = serverAuth, clientAuth\n");
-                fclose($openssl_config);
                 echo $colors->getColoredString("OK\n", "green");
             } 
             shell_exec(
-                    "openssl req -config openssl.cnf -x509 -sha256 -days 365 -newkey rsa:2048 -nodes -out " .
-                    $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert/spid-sp.crt -keyout " .
-                    $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert/spid-sp.pem"
+                    "openssl req -new -x509 -config spid-php-openssl.cnf -days 730 " .
+                    " -keyout " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert/spid-sp.pem" .
+                    " -out " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert/spid-sp.crt" . 
+                    " -extensions req_ext "
             );
 
             shell_exec("mkdir " . $config['installDir'] . "/cert");
