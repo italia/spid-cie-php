@@ -402,7 +402,7 @@ class Setup {
 
                 fwrite($openssl_config, "\n[ req ]\n");
                 fwrite($openssl_config, "default_bits = 3072\n");
-                fwrite($openssl_config, "default_md = sha384\n");
+                fwrite($openssl_config, "default_md = sha256\n");
                 fwrite($openssl_config, "distinguished_name = dn\n");
                 fwrite($openssl_config, "encrypt_key = no\n");
                 fwrite($openssl_config, "prompt = no\n");
