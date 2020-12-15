@@ -308,7 +308,7 @@ class Setup {
 
         if (!isset($config['adminPassword'])) {
             echo "Please insert password for SimpleSAMLphp (" .
-            $colors->getColoredString($_adminPassword, "green") . "): ";
+              $colors->getColoredString($_adminPassword, "green") . "): ";
             $config['adminPassword'] = str_replace("'", "\'", readline());
             if ($config['adminPassword'] == null || $config['adminPassword'] == "") {
                 $config['adminPassword'] = $_adminPassword;
@@ -317,7 +317,7 @@ class Setup {
 
         if (!isset($config['technicalContactName'])) {
             echo "Please insert Tachnical Contact Name (" .
-            $colors->getColoredString($_technicalContactName, "green") . "): ";
+              $colors->getColoredString($_technicalContactName, "green") . "): ";
             $config['technicalContactName'] = str_replace("'", "\'", readline());
             if ($config['technicalContactName'] == null || $config['technicalContactName'] == "") {
                 $config['technicalContactName'] = $_technicalContactName;
@@ -326,7 +326,7 @@ class Setup {
 
         if (!isset($config['technicalContactEmail'])) {
             echo "Please insert Tachnical Contact Email (" .
-            $colors->getColoredString($_technicalContactEmail, "green") . "): ";
+              $colors->getColoredString($_technicalContactEmail, "green") . "): ";
             $config['technicalContactEmail'] = str_replace("'", "\'", readline());
             if ($config['technicalContactEmail'] == null || $config['technicalContactEmail'] == "") {
                 $config['technicalContactEmail'] = $_technicalContactEmail;
@@ -365,13 +365,11 @@ class Setup {
         //echo $colors->getColoredString("\nUse SPID smart button: ", "yellow");
         //echo $colors->getColoredString(($config['useSmartButton'])? "Y":"N", "yellow");
         echo $colors->getColoredString("\nSimpleSAMLphp Password: " .
-                $config['adminPassword'], "yellow");
+          $config['adminPassword'], "yellow");
         echo $colors->getColoredString("\nTechnical Contact Name: " .
-                $config['technicalContactName'], "yellow");
+          $config['technicalContactName'], "yellow");
         echo $colors->getColoredString("\nTechnical Contact Email: " .
-                $config['technicalContactEmail'], "yellow");
-
-
+          $config['technicalContactEmail'], "yellow");
         echo "\n\n";
 
         // create vhost directory if not exists

@@ -6,6 +6,7 @@
     class SPID_PHP extends \SPID\AbtractSPID {
         private $spid_auth;
         private $idps = array();
+        private $professionalUse = false;
 
         function __construct() {
             $this->spid_auth = new SimpleSAML_Auth_Simple('service');
@@ -19,30 +20,49 @@
         public function isIdP($idp) {
             return ($this->idps[$idp]==$this->getIdp());
         }
+
+        public function setProfessionalUse($p) {
+            $this->professionalUse = $p;
+        }
         
         public function requireAuth() {
             $this->spid_auth->requireAuth();
         }
     
-        public function login($idp, $l, $returnTo="") {
+        public function login($idp, $l, $returnTo="", $attributeIndex=null) {
             $l = ($l=="2" || $l=="3")? $l : "1";
             $spidlevel = "https://www.spid.gov.it/SpidL" . $l;
 
             $config = array(
                 'saml:AuthnContextClassRef' => $spidlevel,
-                'saml:AuthnContextComparison' => 'SAML2\Constants::COMPARISON_EXACT',
+                'saml:AuthnContextComparison' => \SAML2\Constants::COMPARISON_MINIMUM,
                 'saml:idp' => $this->idps[$idp],
                 'saml:NameIDPolicy' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
+                'saml:AttributeConsumingServiceIndex' => $attributeIndex,
                 //'ErrorURL' => '/error_handler.php'
             );
+
+            if($this->professionalUse) {
+                $dom = \SAML2\DOMDocumentFactory::create();
+                $elem = $dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:Purpose', 'P');
+                $pExt[] = new \SAML2\XML\Chunk($elem);  
+                $config['saml:Extensions'] = $pExt;
+            } 
             
             if(!empty($returnTo)) $config['ReturnTo'] = $returnTo;
             
             $this->spid_auth->login($config);
         }
 
-        public function logout($returnTo = null) {
-            $this->spid_auth->logout($returnTo);
+        public function logout($returnTo = null, $saml_logout = true) {
+            if($saml_logout) {
+                $this->spid_auth->logout($returnTo);
+            } else {
+                $session = SimpleSAML_Session::getSessionFromRequest();
+                if ($session->isValid('service')) {
+                    $session->doLogout('service');
+                }
+            }
         }
     
         public function getLogoutURL($returnTo = null) {
@@ -171,18 +191,10 @@
                     </li>
                 ";
             }
-            $button_validator = "";
-            if(array_key_exists('VALIDATOR', $this->idps)) {
-                $button_validator = "
-                    <li class=\"spid-idp-button-link\" data-idp=\"validatorid\">
-                        <a href=\"?idp=VALIDATOR\">AgID VALIDATOR</a>
-                    </li>
-                ";
-            }            
+        
             $button_li = 
                 $button_test.
-                $button_local.
-                $button_validator."
+                $button_local."
                 <li class=\"spid-idp-button-link\" data-idp=\"arubaid\">
                     <a href=\"?idp=ArubaPEC S.p.A.\"><span class=\"spid-sr-only\">Aruba ID</span><img src=\"{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.svg\" onerror=\"this.src='{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.png'; this.onerror=null;\" alt=\"Aruba ID\" /></a>
                 </li>
@@ -220,6 +232,15 @@
                     <a href=\"https://www.spid.gov.it/serve-aiuto\">Serve aiuto?</a>
                 </li>
             ";
+            
+            if(array_key_exists('VALIDATOR', $this->idps)) {
+                $button_li .= "
+                    <li class=\"spid-idp-support-link\">
+                        <a href=\"?idp=VALIDATOR\">SPID Validator</a>
+                    </li>
+                ";
+            }
+
             switch($size) {
                 case "S":
                     $button = "

@@ -194,7 +194,7 @@ class sspmod_saml_Auth_Source_SP extends SimpleSAML_Auth_Source
         if (isset($state['saml:AuthnContextClassRef'])) {
             $accr = SimpleSAML\Utils\Arrays::arrayize($state['saml:AuthnContextClassRef']);
             $comp = SAML2\Constants::COMPARISON_EXACT;
-            if (isset($state['saml:AuthnContextComparison']) && in_array($state['AuthnContextComparison'], array(
+            if (isset($state['saml:AuthnContextComparison']) && in_array($state['saml:AuthnContextComparison'], array(
                         SAML2\Constants::COMPARISON_EXACT,
                         SAML2\Constants::COMPARISON_MINIMUM,
                         SAML2\Constants::COMPARISON_MAXIMUM,
@@ -302,6 +302,11 @@ class sspmod_saml_Auth_Source_SP extends SimpleSAML_Auth_Source
 
         /* SPID CUSTOM */ 
         $b->setDestination($dst['Location']);
+
+        /* SPID CUSTOM AttributeConsumingServiceIndex on Request */
+        if(!empty($state['saml:AttributeConsumingServiceIndex'])) {
+            $ar->setAttributeConsumingServiceIndex($state['saml:AttributeConsumingServiceIndex']);
+        }
 
         $this->sendSAML2AuthnRequest($state, $b, $ar);
 

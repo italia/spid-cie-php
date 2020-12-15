@@ -1,9 +1,10 @@
 # spid-php
 Software Development Kit for easy SPID access integration with SimpleSAMLphp.
 
-spid-php has been developed and is maintained by Michele D'Amico (@damikael), collaborator at AgID - Agenzia per l'Italia Digitale.
+spid-php has been developed and is maintained by Michele D'Amico (@damikael), collaborator at AgID - Agenzia per l'Italia Digitale. **It's highly recommended to use the latest release**.
 
-spid-php è uno script composer (https://getcomposer.org/) per Linux che semplifica e automatizza il processo di installazione e configurazione di SimpleSAMLphp (https://simplesamlphp.org/) per l'integrazione dell'autenticazione SPID all'interno di applicazioni PHP tramite lo SPID SP Access Button (https://github.com/italia/spid-sp-access-button). spid-php permette di realizzare un Service Provider per SPID in pochi secondi.
+
+spid-php è uno script composer (https://getcomposer.org/) per Linux che semplifica e automatizza il processo di installazione e configurazione di SimpleSAMLphp (https://simplesamlphp.org/) per l'integrazione dell'autenticazione SPID all'interno di applicazioni PHP tramite lo SPID SP Access Button (https://github.com/italia/spid-sp-access-button). spid-php permette di realizzare un Service Provider per SPID in pochi secondi. **Si raccomanda di mantenere sempre aggiornata la propria installazione all'ultima versione**.
 
 Durante il processo di setup lo script richiede l'inserimento delle seguenti informazioni:
 * directory di installazione (directory corrente)
@@ -71,7 +72,7 @@ In *myservice* inserire il nome del servizio come specificato durante l'installa
 ```
 server {  
   listen 443 ssl http2;  
-  server_name sp.exaple.com;
+  server_name sp.example.com;
   root /var/www;
   include snippets/snakeoil.conf;  
   
@@ -144,7 +145,7 @@ stampa il codice per l'inserimento dello smart button. $size specifica la dimens
 
 ### login
 ```
-void login($idp, $level, [$returnTo])
+void login($idp, $level, [$returnTo], [$attributeConsumingServiceIndex])
 ```
 invia una richiesta di login livello $level verso l'idp $idp. Dopo l'autenticazione, l'utente è reindirizzato alla url eventualmente specificata in $returnTo. Se il parametro $returnTo non è specificato, l'utente è reindirizzato alla pagina di provenienza.
 
@@ -229,7 +230,7 @@ if(!$spidsdk->isAuthenticated()) {
 |HTTP-POST binding|✓||
 |`AssertionConsumerServiceURL` customization|||
 |`AssertionConsumerServiceIndex` customization|||
-|`AttributeConsumingServiceIndex` customization|||
+|`AttributeConsumingServiceIndex` customization|✓||
 |`AuthnContextClassRef` (SPID level) customization|✓||
 |`RequestedAuthnContext/@Comparison` customization|✓||
 |`RelayState` customization (1.2.2)|✓||

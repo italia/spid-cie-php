@@ -3,6 +3,8 @@
     require_once("{{SDKHOME}}/spid-php.php");
     $spidsdk = new SPID_PHP();
 
+    $spidsdk->setProfessionalUse(false);
+
     if($spidsdk->isAuthenticated() 
         && isset($_GET['idp']) 
         && $spidsdk->isIdP($_GET['idp'])) {
@@ -22,7 +24,10 @@
             $spidsdk->insertSPIDButton("L");  
             $spidsdk->insertSPIDButtonJS(); 
         } else {
-            $spidsdk->login($_GET['idp'], 1);  
+            $spidsdk->login($_GET['idp'], 2);  
+
+            // set AttributeConsumingServiceIndex 2
+            //$spidsdk->login($_GET['idp'], 2, "", 2);
         }
     }
 ?>
