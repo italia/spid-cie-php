@@ -693,6 +693,36 @@ class SimpleSAML_Metadata_SAMLBuilder
         $e = new \SAML2\XML\md\ContactPerson();
         $e->contactType = $type;
 
+        if ($details['spid']) {
+            $eexts = array();
+            $ext_dom = \SAML2\DOMDocumentFactory::create();
+            
+            if($details['spid.codeType']=='IPACode') {
+                $ext_elem_code = $ext_dom->createElement('spid:IPACode', $details['spid.codeValue']);
+                $ext_elem_type = $ext_dom->createElement('spid:Public', '');
+                $eexts[] = new \SAML2\XML\Chunk($ext_elem_code); 
+                $eexts[] = new \SAML2\XML\Chunk($ext_elem_type);  
+            }
+
+            if($details['spid.codeType']=='VATNumber') {
+                $ext_elem_code = $ext_dom->createElement('spid:VATNumber', $details['spid.codeValue']);
+                $ext_elem_type = $ext_dom->createElement('spid:Private', '');
+                $eexts[] = new \SAML2\XML\Chunk($ext_elem_code); 
+                $eexts[] = new \SAML2\XML\Chunk($ext_elem_type);  
+            }
+
+            if($details['spid.codeType']=='FiscalCode') {
+                $ext_elem_code = $ext_dom->createElement('spid:FiscalCode', $details['spid.codeValue']);
+                $ext_elem_type = $ext_dom->createElement('spid:Private', '');
+                $eexts[] = new \SAML2\XML\Chunk($ext_elem_code); 
+                $eexts[] = new \SAML2\XML\Chunk($ext_elem_type);  
+            }
+              
+            foreach ($eexts as $eext) {
+                $e->Extensions[] = $eext;
+            }
+        }
+
         if (!empty($details['attributes'])) {
             $e->ContactPersonAttributes = $details['attributes'];
         }
