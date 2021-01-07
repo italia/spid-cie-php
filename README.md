@@ -7,7 +7,7 @@
 # spid-php
 Software Development Kit for easy SPID access integration with SimpleSAMLphp.
 
-spid-php has been developed and is maintained by Michele D'Amico (@damikael), collaborator at AgID - Agenzia per l'Italia Digitale. **It's highly recommended to use the latest release**.
+spid-php has been developed and is maintained by Michele D'Amico (@damikael). **It's highly recommended to use the latest release**.
 
 
 spid-php è uno script composer (https://getcomposer.org/) per Linux che semplifica e automatizza il processo di installazione e configurazione di SimpleSAMLphp (https://simplesamlphp.org/) per l'integrazione dell'autenticazione SPID all'interno di applicazioni PHP tramite lo SPID SP Access Button (https://github.com/italia/spid-sp-access-button). spid-php permette di realizzare un Service Provider per SPID in pochi secondi. **Si raccomanda di mantenere sempre aggiornata la propria installazione all'ultima versione**.
