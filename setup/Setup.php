@@ -452,7 +452,7 @@ class Setup {
                 fwrite($openssl_config, "req_extensions  = req_ext\n");
 
                 fwrite($openssl_config, "\n[ spid_oids ]\n");
-                fwrite($openssl_config, "organizationIdentifier=2.5.4.97\n");
+                //fwrite($openssl_config, "organizationIdentifier=2.5.4.97\n");
                 fwrite($openssl_config, "spid-privatesector-SP=1.3.76.16.4.3.1\n");
                 fwrite($openssl_config, "spid-publicsector-SP=1.3.76.16.4.2.1\n");
                 fwrite($openssl_config, "uri=2.5.4.83\n");
