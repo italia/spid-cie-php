@@ -228,7 +228,7 @@ if(!$spidsdk->isAuthenticated()) {
 |:---|:---|:---|
 |**SPID Avviso n.29 v.3:**|||
 |generation of certificates|✓||
-|generation of metadata|||
+|generation of metadata|✓||
 |**Metadata:**|||
 |parsing of IdP XML metadata (1.2.2.4)|✓||
 |parsing of AA XML metadata (2.2.4)|||
