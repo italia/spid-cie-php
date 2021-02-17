@@ -31,7 +31,7 @@ class Setup {
         $_technicalContactEmail = "";
         $_spCountryName = "IT";
         $_spLocalityName = "";
-        $_spIsPublicAdministration = "yes";
+        $_spIsPublicAdministration = true;
         $_spOrganizationCodeType = "VATNumber";
         $_spOrganizationCode = "";
         $_spOrganizationEmailAddress = "";
@@ -122,16 +122,19 @@ class Setup {
         }
 
         if (!isset($config['spIsPublicAdministration'])) {
-            echo "Is your Organization a Public Administration (yes/no)? (" .
-            $colors->getColoredString($_spIsPublicAdministration, "green") . "): ";
-            $config['spIsPublicAdministration'] = readline();
+            echo "Is your Organization a Public Administration (" . $colors->getColoredString("Y", "green") . "): ";
+            if (strtoupper(readline()) != "N") {
+                $config['spIsPublicAdministration'] = true;
+            } else {
+                $config['spIsPublicAdministration'] = false;
+            }
             if ($config['spIsPublicAdministration'] == null || $config['spIsPublicAdministration'] == "") {
                 $config['spIsPublicAdministration'] = $_spIsPublicAdministration;
             }
         }
 
         switch ($config['spIsPublicAdministration']) {
-            case 'yes': 
+            case true: 
                 if (!isset($config['spOrganizationCodeType']) 
                     || !isset($config['spOrganizationCode'])
                     || $config['spOrganizationCodeType']!='IPACode'
@@ -147,7 +150,7 @@ class Setup {
                 }
                 break;
 
-            case 'no': 
+            case false: 
                 if (!isset($config['spOrganizationCodeType']) 
                     || !isset($config['spOrganizationCode'])
                     || (
@@ -411,7 +414,7 @@ class Setup {
         //echo $colors->getColoredString("\nTechnical Contact Email: " . $config['technicalContactEmail'], "yellow");
         echo $colors->getColoredString("\nOrganization Contact Email Address: " . $config['spOrganizationEmailAddress'], "yellow");
         echo $colors->getColoredString("\nOrganization Contact Telephone Number: " . $config['spOrganizationTelephoneNumber'], "yellow");
-        echo $colors->getColoredString("\nIs organization a Public Administration: " . $config['spIsPublicAdministration'], "yellow");
+        echo $colors->getColoredString("\nIs organization a Public Administration: " . ($config['spIsPublicAdministration']) ? "Y" : "N", "yellow");
         echo $colors->getColoredString("\nOrganization Code Type: " . $config['spOrganizationCodeType'], "yellow");
         echo $colors->getColoredString("\nOrganization Code: " . $config['spOrganizationCode'], "yellow");
         echo $colors->getColoredString("\nOrganization Identifier: " . $config['spOrganizationIdentifier'], "yellow");
@@ -471,9 +474,9 @@ class Setup {
 
                 fwrite($openssl_config, "\n[ spid_policies ]\n");
                 switch ($config['spIsPublicAdministration']) {
-                    case 'yes': fwrite($openssl_config, "policyIdentifier = spid-publicsector-SP\n");
+                    case true: fwrite($openssl_config, "policyIdentifier = spid-publicsector-SP\n");
                         break;
-                    case 'no': fwrite($openssl_config, "policyIdentifier = spid-privatesector-SP\n");
+                    case false: fwrite($openssl_config, "policyIdentifier = spid-privatesector-SP\n");
                         break;
 
                     default:
