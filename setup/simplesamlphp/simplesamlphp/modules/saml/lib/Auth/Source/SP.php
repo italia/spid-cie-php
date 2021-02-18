@@ -185,7 +185,14 @@ class sspmod_saml_Auth_Source_SP extends SimpleSAML_Auth_Source
 
         $ar = sspmod_saml_Message::buildAuthnRequest($this->metadata, $idpMetadata);
 
-        $ar->setAssertionConsumerServiceURL(SimpleSAML\Module::getModuleURL('saml/sp/saml2-acs.php/' . $this->authId));
+        /* CUSTOM acs */
+        $globalConfig = SimpleSAML_Configuration::getInstance();
+        $custom_acs = $globalConfig->getString('acsCustomLocation');
+        $acs = !empty($custom_acs)? $custom_acs : SimpleSAML\Module::getModuleURL('saml/sp/saml2-acs.php/' . $this->authId);
+        //$acs = SimpleSAML\Module::getModuleURL('saml/sp/saml2-acs.php/' . $this->authId);
+        /* /CUSTOM acs */
+
+        $ar->setAssertionConsumerServiceURL($acs);
 
         if (isset($state['SimpleSAML_Auth_Source.ReturnURL'])) {
             $ar->setRelayState($state['SimpleSAML_Auth_Source.ReturnURL']);

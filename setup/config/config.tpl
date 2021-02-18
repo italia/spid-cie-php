@@ -26,6 +26,9 @@ $config = array(
     'loggingdir' => 'log/',
     'datadir' => 'data/',
 
+    'acsCustomLocation' => {{ACSCUSTOMLOCATION}},
+    'sloCustomLocation' => {{SLOCUSTOMLOCATION}},
+
     /*
      * A directory where SimpleSAMLphp can save temporary files.
      *

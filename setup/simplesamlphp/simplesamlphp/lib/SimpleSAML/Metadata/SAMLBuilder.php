@@ -495,15 +495,33 @@ class SimpleSAML_Metadata_SAMLBuilder
             $e->AuthnRequestsSigned = $metadata->getBoolean('validate.authnrequest');
         }
 
+        /* CUSTOM Location */
+        $globalConfig = SimpleSAML_Configuration::getInstance();
+        $custom_acs = $globalConfig->getString('acsCustomLocation');
+        $custom_slo = $globalConfig->getString('sloCustomLocation');
+        
+        $acs_endpoints = $metadata->getEndpoints('AssertionConsumerService');
+        $slo_endpoints = $metadata->getEndpoints('SingleLogoutService');
+
+        if(!empty($custom_acs)) {
+            $acs_endpoints[0]['Location'] = $custom_acs;
+        }
+
+        if(!empty($custom_slo)) {
+            $slo_endpoints[0]['Location'] = $custom_slo;
+        }
+        /* CUSTOM Location */
+
+
         $this->addExtensions($metadata, $e);
 
         $this->addCertificate($e, $metadata);
 
-        $e->SingleLogoutService = self::createEndpoints($metadata->getEndpoints('SingleLogoutService'), false);
+        $e->SingleLogoutService = self::createEndpoints($slo_endpoints, false);
 
         $e->NameIDFormat = $metadata->getArrayizeString('NameIDFormat', array());
 
-        $endpoints = $metadata->getEndpoints('AssertionConsumerService');
+        //$endpoints = $metadata->getEndpoints('AssertionConsumerService');
         foreach ($metadata->getArrayizeString('AssertionConsumerService.artifact', array()) as $acs) {
             $endpoints[] = array(
                 'Binding'  => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact',
@@ -511,7 +529,8 @@ class SimpleSAML_Metadata_SAMLBuilder
             );
         }
         $endpoints[0]['isDefault'] = TRUE;
-        $e->AssertionConsumerService = self::createEndpoints($endpoints, true);
+
+        $e->AssertionConsumerService = self::createEndpoints($acs_endpoints, true);
 
         $this->addAttributeConsumingService($e, $metadata);
 
@@ -693,10 +712,11 @@ class SimpleSAML_Metadata_SAMLBuilder
         $e = new \SAML2\XML\md\ContactPerson();
         $e->contactType = $type;
 
-        if ($details['spid']) {
-            $eexts = array();
-            $ext_dom = \SAML2\DOMDocumentFactory::create();
-            
+        $eexts = array();
+        $ext_dom = \SAML2\DOMDocumentFactory::create();
+
+        
+        if($details['spid']) {
             if($details['spid.codeType']=='IPACode') {
                 $ext_elem_code = $ext_dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:IPACode', $details['spid.codeValue']);
                 $ext_elem_type = $ext_dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:Public', '');
@@ -717,11 +737,54 @@ class SimpleSAML_Metadata_SAMLBuilder
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_code); 
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_type);  
             }
-              
-            foreach ($eexts as $eext) {
-                $e->Extensions[] = $eext;
-            }
         }
+
+        // SPID Avviso n.29 v.3 - Private
+        if($details['fpa']) {
+            $ext_elem_IdPaese = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:IdPaese', $details['fpa.IdPaese']);
+            $ext_elem_IdCodice = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:IdCodice', $details['fpa.IdCodice']);
+
+            $ext_elem_IdFiscaleIVA = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:IdFiscaleIVA');
+            $ext_elem_IdFiscaleIVA->appendChild($ext_elem_IdPaese);
+            $ext_elem_IdFiscaleIVA->appendChild($ext_elem_IdCodice);
+
+            $ext_elem_Denominazione = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:Denominazione', $details['fpa.Denominazione']);
+            
+            $ext_elem_Anagrafica = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:Anagrafica');
+            $ext_elem_Anagrafica->appendChild($ext_elem_Denominazione);
+
+            $ext_elem_DatiAnagrafici = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:DatiAnagrafici');
+            $ext_elem_DatiAnagrafici->appendChild($ext_elem_IdFiscaleIVA);
+            $ext_elem_DatiAnagrafici->appendChild($ext_elem_Anagrafica);
+            
+            $ext_elem_Indirizzo = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:Indirizzo', $details['fpa.Indirizzo']);
+            $ext_elem_NumeroCivico = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:NumeroCivico', $details['fpa.NumeroCivico']);
+            $ext_elem_CAP = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:CAP', $details['fpa.CAP']);
+            $ext_elem_Comune = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:Comune', $details['fpa.Comune']);
+            $ext_elem_Provincia = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:Provincia', $details['fpa.Provincia']);
+            $ext_elem_Nazione = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:Nazione', $details['fpa.Nazione']);
+
+            $ext_elem_Sede = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:Sede');
+            $ext_elem_Sede->appendChild($ext_elem_Indirizzo);
+            $ext_elem_Sede->appendChild($ext_elem_NumeroCivico);
+            $ext_elem_Sede->appendChild($ext_elem_CAP);
+            $ext_elem_Sede->appendChild($ext_elem_Comune);
+            $ext_elem_Sede->appendChild($ext_elem_Provincia);
+            $ext_elem_Sede->appendChild($ext_elem_Nazione);
+
+            $ext_elem_CessionarioCommittente = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:CessionarioCommittente');
+            $ext_elem_CessionarioCommittente->appendChild($ext_elem_DatiAnagrafici);
+            $ext_elem_CessionarioCommittente->appendChild($ext_elem_Sede);
+
+            $eexts[] = new \SAML2\XML\Chunk($ext_elem_CessionarioCommittente); 
+        }
+
+
+
+        foreach ($eexts as $eext) {
+            $e->Extensions[] = $eext;
+        }
+
 
         if (!empty($details['attributes'])) {
             $e->ContactPersonAttributes = $details['attributes'];

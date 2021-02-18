@@ -46,7 +46,17 @@ class Metadata
         'attributes',
         'spid',
         'spid.codeType',
-        'spid.codeValue'
+        'spid.codeValue',
+        'fpa',
+        'fpa.IdPaese',
+        'fpa.IdCodice',
+        'fpa.Denominazione',
+        'fpa.Indirizzo',
+        'fpa.NumeroCivico',
+        'fpa.CAP',
+        'fpa.Comune',
+        'fpa.Provincia',
+        'fpa.Nazione'
     );
 
 
