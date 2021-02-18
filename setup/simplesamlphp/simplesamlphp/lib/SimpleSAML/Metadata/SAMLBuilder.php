@@ -529,6 +529,8 @@ class SimpleSAML_Metadata_SAMLBuilder
             );
         }
         $endpoints[0]['isDefault'] = TRUE;
+        
+        $acs_endpoints[0]['isDefault'] = TRUE;
 
         $e->AssertionConsumerService = self::createEndpoints($acs_endpoints, true);
 
