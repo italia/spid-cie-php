@@ -34,14 +34,13 @@ class Setup {
         $_technicalContactEmail = "";
         $_spCountryName = "IT";
         $_spLocalityName = "";
-        $_spIsPublicAdministration = true;
         $_spOrganizationCodeType = "VATNumber";
         $_spOrganizationCode = "";
         $_spOrganizationEmailAddress = "";
         $_spOrganizationTelephoneNumber = "";
 
         // ContactPerson billing
-        $_fpaIdPaese = "";
+        $_fpaIdPaese = "IT";
         $_fpaIdCodice = "";
         $_fpaDenominazione = "";
         $_fpaIndirizzo = "";
@@ -49,7 +48,7 @@ class Setup {
         $_fpaCAP = "";
         $_fpaComune = "";
         $_fpaProvincia = "";
-        $_fpaNazione = "";
+        $_fpaNazione = "IT";
         $_fpaOrganizationName = "";
         $_fpaOrganizationEmailAddress = "";
         $_fpaOrganizationTelephoneNumber = "";
@@ -146,15 +145,11 @@ class Setup {
         }
 
         if (!isset($config['spIsPublicAdministration'])) {
-            echo "Is your Organization a Public Administration (" . $colors->getColoredString("Y", "green") . "): ";
-            if (strtoupper(readline()) != "N") {
-                $config['spIsPublicAdministration'] = true;
-            } else {
-                $config['spIsPublicAdministration'] = false;
-            }
-            if ($config['spIsPublicAdministration'] == null || $config['spIsPublicAdministration'] == "") {
-                $config['spIsPublicAdministration'] = $_spIsPublicAdministration;
-            }
+            echo "Is your Organization a Public Administration (" .
+            $colors->getColoredString("Y", "green") . "): ";
+            $config['spIsPublicAdministration'] = readline();
+            $config['spIsPublicAdministration'] = ($config['spIsPublicAdministration'] != null &&
+                    strtoupper($config['spIsPublicAdministration']) == "N") ? false : true;
         }
 
         switch ($config['spIsPublicAdministration']) {
@@ -200,6 +195,7 @@ class Setup {
                         $config['spOrganizationCode'] = $_spOrganizationCode;
                     }
                     $config['spOrganizationIdentifier'] = ($_organizationCodeTypeChoice==1? "VATIT-" : "CF:IT-") . $config['spOrganizationCode'];
+                    $_fpaIdCodice = $config['spOrganizationCode'];
                 }
 
                 if (!isset($config['fpaIdPaese'])) {
