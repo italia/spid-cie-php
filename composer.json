@@ -29,7 +29,7 @@
         }
     },
     "require": {
-        "simplesamlphp/simplesamlphp": "1.16.3",
+        "simplesamlphp/simplesamlphp": "1.19.0",
         "italia/spid-smart-button": "*",
         "italia/spid-sp-access-button": "*"
     },
