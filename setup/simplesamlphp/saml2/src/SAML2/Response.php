@@ -113,6 +113,14 @@ class Response extends StatusResponse
             $req_authnContextComparison = $state["saml:AuthnContextComparison"];
             $res_authnContextClassRef = $authnContextClassRef[0]->nodeValue;
 
+            if($req_authnContextClassRef==null) {
+                throw new \Exception('Request AuthnContextClassRef can not be null. ' . $req_authnContextClassRef);
+            }
+
+            if($res_authnContextClassRef==null) {
+                throw new \Exception('Response AuthnContextClassRef can not be null. ' . $res_authnContextClassRef);
+            }
+
             $req_level = intval(substr($req_authnContextClassRef, -1));
             $res_level = intval(substr($res_authnContextClassRef, -1));
 

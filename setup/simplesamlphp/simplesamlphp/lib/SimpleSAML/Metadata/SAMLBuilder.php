@@ -375,7 +375,7 @@ class SAMLBuilder
         $ret = [];
 
         foreach ($endpoints as &$ep) {
-//            if ($indexed) {
+            if ($indexed) {
                 $t = new IndexedEndpointType();
                 if (!isset($ep['index'])) {
                     // Find the maximum index
@@ -394,13 +394,13 @@ class SAMLBuilder
                 }
 
                 $t->setIndex($ep['index']);
-//            } else {
-//                $t = new EndpointType();
-//            }
+                $t->setIsDefault(isset($ep['isDefault']) ? $ep['isDefault'] : NULL);
+            } else {
+                $t = new EndpointType();
+            }
 
             $t->setBinding($ep['Binding']);
             $t->setLocation($ep['Location']);
-            $t->setIsDefault(isset($ep['isDefault']) ? $ep['isDefault'] : NULL);
             if (isset($ep['ResponseLocation'])) {
                 $t->setResponseLocation($ep['ResponseLocation']);
             }
