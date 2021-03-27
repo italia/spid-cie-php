@@ -6,7 +6,7 @@
     class SPID_PHP extends \SPID\AbtractSPID {
         private $spid_auth;
         private $idps = array();
-        private $professionalUse = false;
+        private $purpose = null;
 
         function __construct() {
             $this->spid_auth = new SimpleSAML_Auth_Simple('service');
@@ -22,9 +22,13 @@
         }
 
         public function setProfessionalUse($p) {
-            $this->professionalUse = $p;
+            $this->purpose = "P";
         }
-        
+
+        public function setPurpose($p) {
+            $this->purpose = $p;
+        }
+
         public function requireAuth() {
             $this->spid_auth->requireAuth();
         }
@@ -42,9 +46,11 @@
                 //'ErrorURL' => '/error_handler.php'
             );
 
-            if($this->professionalUse) {
+            if($this->purpose!=null
+                && in_array($this->purpose, array('P', 'LP', 'PG', 'PF', 'PX'))
+            ) {
                 $dom = \SAML2\DOMDocumentFactory::create();
-                $elem = $dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:Purpose', 'P');
+                $elem = $dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:Purpose', $this->purpose);
                 $pExt[] = new \SAML2\XML\Chunk($elem);  
                 $config['saml:Extensions'] = $pExt;
             } 
