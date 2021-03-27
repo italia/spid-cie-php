@@ -15,8 +15,8 @@ echo htmlspecialchars($this->t($this->data['dictDescr'], $this->data['parameters
 if($this->data['error']['statusCode']!='') { ?>
     <div style="border: 1px solid #eee; padding: 1em; margin: 1em 0">
         <p style="margin: 1px">StatusCode: <?php echo htmlspecialchars($this->data['error']['statusCode']); ?></p>
-        <p style="margin: 1px">StatusMessage: <?php echo htmlspecialchars($this->data['error']['statusMessage']); ?></p>     
-        <p style="margin: 1px">ErrorMessage: <?php echo htmlspecialchars($this->data['errorMessage']); ?></p>        
+        <p style="margin: 1px">StatusMessage: <?php echo htmlspecialchars($this->data['error']['statusMessage']); ?></p>
+        <p style="margin: 1px">ErrorMessage: <?php echo htmlspecialchars($this->data['errorMessage']); ?></p>
     </div>
 <?php }
 
@@ -36,12 +36,12 @@ if (isset($this->data['includeTemplate'])) {
         </div>
     </div>
 <?php
-
 // print out exception only if the exception is available
 if ($this->data['showerrors']) {
 ?>
     <h2><?php echo $this->t('debuginfo_header'); ?></h2>
     <p><?php echo $this->t('debuginfo_text'); ?></p>
+
     <div style="border: 1px solid #eee; padding: 1em; font-size: x-small">
         <p style="margin: 1px"><?php echo htmlspecialchars($this->data['error']['exceptionMsg']); ?></p>
         <pre style="padding: 1em; font-family: monospace;"><?php
@@ -76,7 +76,7 @@ if (isset($this->data['errorReportAddress'])) {
     <h2 style="clear: both"><?php echo $this->t('howto_header'); ?></h2>
     <p><?php echo $this->t('howto_text'); ?></p>
     <script type="text/javascript">
-        var clipboard = new Clipboard('#btntrackid');
+        var clipboard = new ClipboardJS('#btntrackid');
     </script>
 <?php
 $this->includeAtTemplateBase('includes/footer.php');
