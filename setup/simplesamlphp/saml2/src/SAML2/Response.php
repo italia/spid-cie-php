@@ -1,6 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SAML2;
+
+use DOMElement;
+use SAML2\Compat\Ssp\Logger;
+use SimpleSAML\Auth\State;
 
 /**
  * Class for SAML 2 Response messages.
@@ -11,26 +17,31 @@ class Response extends StatusResponse
 {
     /**
      * The assertions in this response.
+     *
+     * @var (Assertion|EncryptedAssertion)[]
      */
     private $assertions;
+
 
     /**
      * Constructor for SAML 2 response messages.
      *
      * @param \DOMElement|null $xml The input message.
      */
-    public function __construct(\DOMElement $xml = null)
+    public function __construct(DOMElement $xml = null)
     {
         parent::__construct('Response', $xml);
 
-        $this->assertions = array();
+        $this->assertions = [];
 
         if ($xml === null) {
             return;
         }
 
-        for ($node = $xml->firstChild; $node !== null; $node = $node->nextSibling) {
+        foreach ($xml->childNodes as $node) {
             if ($node->namespaceURI !== Constants::NS_SAML) {
+                continue;
+            } else if (!($node instanceof DOMElement)) {
                 continue;
             }
 
@@ -43,22 +54,24 @@ class Response extends StatusResponse
 
         $statusCodeNode = Utils::xpQuery($xml, './saml_protocol:Status/saml_protocol:StatusCode');
         $statusCode = $statusCodeNode[0]->getAttribute("Value");
-        $statusMessageNode = Utils::xpQuery($xml, './saml_protocol:Status/saml_protocol:StatusMessage');
-        $statusMessage = $statusMessageNode[0]->nodeValue;
+        // $statusMessageNode = Utils::xpQuery($xml, './saml_protocol:Status/saml_protocol:StatusMessage');
+        // $statusMessage = $statusMessageNode[0]->nodeValue;
 
         if($statusCode=="urn:oasis:names:tc:SAML:2.0:status:Success") {
 
             /* SPID CUSTOM : Assertion Issuer cannot be blank */
             $assertionIssuer = Utils::xpQuery($xml, './saml_assertion:Assertion/saml_assertion:Issuer');
             $this->assertionIssuer = new XML\saml\Issuer($assertionIssuer[0]);
-            if($assertionIssuer[0]!=null) $this->assertionIssuer->Format = $assertionIssuer[0]->getAttribute('Format');
+            if($assertionIssuer[0]!=null) {
+                $this->assertionIssuer->setFormat($assertionIssuer[0]->getAttribute('Format'));
+            }
 
-            if($this->assertionIssuer->value == null || $this->assertionIssuer->value == "") {
+            if($this->assertionIssuer->getValue() == null || $this->assertionIssuer->getValue() == "") {
                 throw new \Exception('Missing Issuer on Assertion');
             }
 
             /* SPID CUSTOM : Attribute Format of Assertion Issuer */
-            if($this->assertionIssuer->Format == null || $this->assertionIssuer->Format != "urn:oasis:names:tc:SAML:2.0:nameid-format:entity") {
+            if($this->assertionIssuer->getFormat() == null || $this->assertionIssuer->getFormat() != "urn:oasis:names:tc:SAML:2.0:nameid-format:entity") {
                 throw new \Exception('Attribute Format of Issuer on Assertion was not valid.');
             }
 
@@ -75,7 +88,7 @@ class Response extends StatusResponse
             }
 
             /* SPID CUSTOM : check attributes */
-            $attributeStatement = Utils::xpQuery($xml, './saml_assertion:Assertion/saml_assertion:AttributeStatement');        
+            $attributeStatement = Utils::xpQuery($xml, './saml_assertion:Assertion/saml_assertion:AttributeStatement');
             if($attributeStatement==null || $attributeStatement[0]->nodeValue==null || trim($attributeStatement[0]->nodeValue)=="") {
                 throw new \Exception('Missing AttributeStatement on Assertion');
             }
@@ -94,7 +107,8 @@ class Response extends StatusResponse
             $inResponseTo = $xml->getAttribute('InResponseTo');
             $stateID = substr($inResponseTo, 8);
 
-            $state = \SimpleSAML_Auth_State::loadState($stateID, 'saml:sp:sso', true);
+            // Disco non funziona, vedi pure AuthnRequest
+            $state = State::loadState($stateID, 'saml:sp:sso', true);
             $req_authnContextClassRef = $state["saml:AuthnContextClassRef"];
             $req_authnContextComparison = $state["saml:AuthnContextComparison"];
             $res_authnContextClassRef = $authnContextClassRef[0]->nodeValue;
@@ -122,7 +136,7 @@ class Response extends StatusResponse
                 break;
 
             }
-            
+
         } else {
             //throw new \Exception($statusMessage);
         }
@@ -133,27 +147,30 @@ class Response extends StatusResponse
      *
      * @return \SAML2\Assertion[]|\SAML2\EncryptedAssertion[]
      */
-    public function getAssertions()
+    public function getAssertions() : array
     {
         return $this->assertions;
     }
 
+
     /**
      * Set the assertions that should be included in this response.
      *
-     * @param \SAML2\Assertion[]|\SAML2\EncryptedAssertion[] The assertions.
+     * @param \SAML2\Assertion[]|\SAML2\EncryptedAssertion[] $assertions The assertions.
+     * @return void
      */
-    public function setAssertions(array $assertions)
+    public function setAssertions(array $assertions) : void
     {
         $this->assertions = $assertions;
     }
+
 
     /**
      * Convert the response message to an XML element.
      *
      * @return \DOMElement This response.
      */
-    public function toUnsignedXML()
+    public function toUnsignedXML() : DOMElement
     {
         $root = parent::toUnsignedXML();
 
