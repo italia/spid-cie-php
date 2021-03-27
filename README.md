@@ -233,7 +233,8 @@ if(!$spidsdk->isAuthenticated()) {
 
 |<img src="https://github.com/italia/spid-graphics/blob/master/spid-logos/spid-logo-c-lb.png?raw=true" width="100" /><br />_Compliance with [SPID regulations](http://www.agid.gov.it/sites/default/files/circolari/spid-regole_tecniche_v1.pdf) (for Service Providers)_|status|notes|
 |:---|:---|:---|
-|**SPID Avviso n.29 v.3:**|||
+|**SPID Avviso n.18 v.2:**|✓||
+|**SPID Avviso n.29 v.3:**|✓||
 |generation of certificates|✓||
 |generation of metadata|✓||
 |**Metadata:**|||
