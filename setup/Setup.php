@@ -36,8 +36,8 @@ class Setup {
         $_spLocalityName = "";
         $_spOrganizationCodeType = "VATNumber";
         $_spOrganizationCode = "";
-        $_spOrganizationEmailAddress = "";
-        $_spOrganizationTelephoneNumber = "";
+        $_spOrganizationEmailAddress = "info@organization.org"; // must be not null otherwise metadata will not generated 
+        $_spOrganizationTelephoneNumber = "12345678"; // must be not null otherwise metadata will not generated 
 
         // ContactPerson billing
         $_fpaIdPaese = "IT";
@@ -427,6 +427,31 @@ class Setup {
             if (strtoupper(readline()) != "N") {
                 $config['attr'][] = "'digitalAddress'";
             }
+
+            echo "Request attribute domicileStreetAddress (" . $colors->getColoredString("Y", "green") . "): ";
+            if (strtoupper(readline()) != "N") {
+                $config['attr'][] = "'domicileStreetAddress'";
+            }
+
+            echo "Request attribute domicilePostalCode (" . $colors->getColoredString("Y", "green") . "): ";
+            if (strtoupper(readline()) != "N") {
+                $config['attr'][] = "'domicilePostalCode'";
+            }
+
+            echo "Request attribute domicileMunicipality (" . $colors->getColoredString("Y", "green") . "): ";
+            if (strtoupper(readline()) != "N") {
+                $config['attr'][] = "'domicileMunicipality'";
+            }
+
+            echo "Request attribute domicileProvince (" . $colors->getColoredString("Y", "green") . "): ";
+            if (strtoupper(readline()) != "N") {
+                $config['attr'][] = "'domicileProvince'";
+            }
+
+            echo "Request attribute domicileNation (" . $colors->getColoredString("Y", "green") . "): ";
+            if (strtoupper(readline()) != "N") {
+                $config['attr'][] = "'domicileNation'";
+            }
         }
 
         if (!isset($config['addTestIDP'])) {
@@ -545,7 +570,8 @@ class Setup {
         //echo $colors->getColoredString("\nTechnical Contact Email: " . $config['technicalContactEmail'], "yellow");
         echo $colors->getColoredString("\nOrganization Contact Email Address: " . $config['spOrganizationEmailAddress'], "yellow");
         echo $colors->getColoredString("\nOrganization Contact Telephone Number: " . $config['spOrganizationTelephoneNumber'], "yellow");
-        echo $colors->getColoredString("\nIs organization a Public Administration: " . ($config['spIsPublicAdministration']) ? "Y" : "N", "yellow");
+        echo $colors->getColoredString("\nIs organization a Public Administration: ", "yellow");
+        echo $colors->getColoredString(($config['spIsPublicAdministration']) ? "Y" : "N", "yellow");
         echo $colors->getColoredString("\nOrganization Code Type: " . $config['spOrganizationCodeType'], "yellow");
         echo $colors->getColoredString("\nOrganization Code: " . $config['spOrganizationCode'], "yellow");
         echo $colors->getColoredString("\nOrganization Identifier: " . $config['spOrganizationIdentifier'], "yellow");
