@@ -70,6 +70,11 @@ class Response extends StatusResponse
                 throw new \Exception('Missing Issuer on Assertion');
             }
 
+            /* SPID CUSTOM : Attribute Format of Response */
+            if($this->getIssuer()->getFormat() == null || $this->getIssuer()->getFormat() != "urn:oasis:names:tc:SAML:2.0:nameid-format:entity") {
+                throw new \Exception('Attribute Format of Issuer on Response was not valid.');
+            }
+
             /* SPID CUSTOM : Attribute Format of Assertion Issuer */
             if($this->assertionIssuer->getFormat() == null || $this->assertionIssuer->getFormat() != "urn:oasis:names:tc:SAML:2.0:nameid-format:entity") {
                 throw new \Exception('Attribute Format of Issuer on Assertion was not valid.');
