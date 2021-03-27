@@ -149,6 +149,13 @@ void insertSPIDButton(string $size)
 ```
 stampa il codice per l'inserimento dello smart button. $size specifica la dimensione del pulsante (S|M|L|XL)
 
+### setPurpose
+```
+void setPurpose(string $purpose)
+```
+imposta l'estensione "Purpose" nell'AuthenticationRequest per inviare una richiesta di autenticazione per identità digitale ad uso professionale ([Avviso SPID n.18 v.2](https://www.agid.gov.it/sites/default/files/repository_files/spid-avviso-n18_v.2-_autenticazione_persona_giuridica_o_uso_professionale_per_la_persona_giuridica.pdf)).
+$purpose specifica il valore dell'estensione Purpose (P|LP|PG|PF|PX)
+
 ### login
 ```
 void login($idp, $level, [$returnTo], [$attributeConsumingServiceIndex])
