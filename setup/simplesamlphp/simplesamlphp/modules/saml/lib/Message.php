@@ -647,14 +647,14 @@ class Message
         $inResponseTo = $response->getInResponseTo();
         
         /* SPID-PHP CUSTOM: strip spid-php */
-        $stateID = substr($inResponseTo, 8);
+        /*$stateID = substr($inResponseTo, 8);
         
         $state = State::loadState($stateID, 'saml:sp:sso', true);
         if($state==null) {
             throw new SSP_Error\Exception(
                 'State not found for ID '.$inResponseTo
             );
-        }
+        }*/
 
         /* END SPID CUSTOM */
 
