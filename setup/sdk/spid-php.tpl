@@ -17,8 +17,16 @@
             return $this->spid_auth->getAuthData('saml:sp:IdP');
         }
 
+        public function isIdPAvailable($idp) {
+            return ($this->idps[$idp]!=null);
+        }
+
         public function isIdP($idp) {
-            return ($this->idps[$idp]==$this->getIdp());
+            return (
+                $idp!=null
+                && $this->getIdp()!=null
+                && ($this->idps[$idp]==$this->getIdp())
+            );
         }
 
         public function setProfessionalUse($p) {

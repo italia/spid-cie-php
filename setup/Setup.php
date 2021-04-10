@@ -484,6 +484,25 @@ class Setup {
                     strtoupper($config['addExamples']) == "N") ? false : true;
         }
 
+        if (!isset($config['addProxyExample'])) {
+            echo "Add proxy example php files proxy-spid.php, proxy-sample.php to www ? (" .
+            $colors->getColoredString("N", "green") . "): ";
+            $config['addProxyExample'] = readline();
+            $config['addProxyExample'] = ($config['addProxyExample'] != null &&
+                    strtoupper($config['addProxyExample']) == "Y") ? true : false;
+
+            if($config['addProxyExample']) {
+                echo "Insert URL to register as redirect_uri: ";
+                $proxyRedirectURI = readline();
+                $proxyClientID = uniqid();
+                echo "your client_id: " . $colors->getColoredString($proxyClientID, "red");
+                echo "\n" . $colors->getColoredString("remember to configure client_id, redirect_uri and idp on button link", "green");
+                echo "\ngrab your client_id then press a key to continue";
+                readline();
+                $config['proxyConfig'] = [ $proxyClientID => [$proxyRedirectURI] ];
+            }
+        }
+
         /*
           if (empty($config[''])) {
           echo "Use SPID smart button ? (" . $colors->getColoredString("N", "green") . "): ";
@@ -563,6 +582,8 @@ class Setup {
         echo $colors->getColoredString(($config['addValidatorIDP']) ? "Y" : "N", "yellow");
         echo $colors->getColoredString("\nAdd example php files: ", "yellow");
         echo $colors->getColoredString(($config['addExamples']) ? "Y" : "N", "yellow");
+        echo $colors->getColoredString("\nAdd proxy example php files: ", "yellow");
+        echo $colors->getColoredString(($config['addProxyExample']) ? "Y" : "N", "yellow");
         //echo $colors->getColoredString("\nUse SPID smart button: ", "yellow");
         //echo $colors->getColoredString(($config['useSmartButton'])? "Y":"N", "yellow");
         echo $colors->getColoredString("\nSimpleSAMLphp Password: " . $config['adminPassword'], "yellow");
@@ -815,6 +836,29 @@ class Setup {
             echo $colors->getColoredString("OK", "green");
         }
 
+        // write proxy example files
+        if ($config['addProxyExample']) {
+            echo $colors->getColoredString("\nWrite proxy example files to www (proxy-spid.php, proxy-sample.php)... ", "white");
+
+            // configuration for proxy
+            $vars = array(
+                "{{SDKHOME}}" => $config['installDir'],
+                "{{PROXY_CLIENT_CONFIG}}" => var_export($config['proxyConfig'], true),
+                "{{PROXY_CLIENT_ID}}" => array_keys($config['proxyConfig'])[0],
+                "{{PROXY_REDIRECT_URI}}" => $config['proxyConfig'][array_keys($config['proxyConfig'])[0]][0]
+            );
+
+            $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-spid.tpl', true);
+            $customized = str_replace(array_keys($vars), $vars, $template);
+            file_put_contents($config['wwwDir'] . "/proxy-spid.php", $customized);
+
+            $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-sample.tpl', true);
+            $customized = str_replace(array_keys($vars), $vars, $template);
+            file_put_contents($config['wwwDir'] . "/proxy-sample.php", $customized);
+
+            echo $colors->getColoredString("OK", "green");
+        }
+
         // reset permissions
         echo $colors->getColoredString("\nSetting directories and files permissions... ", "white");
         shell_exec("find " . $config['installDir'] . "/. -type d -exec chmod 0755 {} \;");
@@ -823,6 +867,10 @@ class Setup {
 
         if ($config['addExamples']) {
             shell_exec("chmod 0644 " . $config['wwwDir'] . "/login-spid.php");
+        }
+        if ($config['addProxyExample']) {
+            shell_exec("chmod 0644 " . $config['wwwDir'] . "/proxy-spid.php");
+            shell_exec("chmod 0644 " . $config['wwwDir'] . "/proxy-sample.php");
         }
         echo $colors->getColoredString("OK", "green");
 
@@ -1101,7 +1149,7 @@ class Setup {
         echo $colors->getColoredString("\nRemove composer lock file... ", "white");
         shell_exec("rm " . $installDir . "/composer.lock");
         echo $colors->getColoredString("OK", "green");
-
+        echo $colors->getColoredString("\nExample files NOT removed... ", "white");
 
         echo $colors->getColoredString("\n\nSPID PHP SDK successfully removed\n\n", "green");
     }
