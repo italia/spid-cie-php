@@ -25,6 +25,7 @@ Durante il processo di setup lo script richiede l'inserimento delle seguenti inf
 * se inserire nella configurazione i dati dell'IDP di test (https://idptest.spid.gov.it)
 * se inserire nella configurazione i dati dell'IDP di validazione (https://validator.spid.gov.it)
 * se copiare nella root del webserver i file di esempio per l'integrazione del bottone
+* se copiare nella root del webserver i file di esempio per l'utilizzo come proxy
 * i dati per la generazione del certificato X.509 per il service provider
 
 e si occupa di eseguire i seguenti passi:
@@ -36,7 +37,10 @@ e si occupa di eseguire i seguenti passi:
 * predispone il template e le risorse grafiche dello SPID SP Access Button per essere utilizzate con SimpleSAMLphp
 
 Al termine del processo di setup si potrà scaricare il [metadata](#Metadata) oppure utilizzare il certificato X.509 creato nella directory /cert per registrare il service provider sull'ambiente di test/validazione.
-Se si è scelto di copiare i file di esempio, inoltre, sarà possibile verificare subito l'integrazione accedendo da web a /login-spid.php
+
+Se si è scelto di copiare i file di esempio, sarà possibile verificare subito l'integrazione accedendo da web a /login-spid.php.
+
+Se si è scelto di copiare i file di esempio come proxy, sarà possibile verificare il funzionamento come proxy accedendo da web a /proxy-spid.php
 
 ## Requisiti
 * Web server
@@ -124,6 +128,18 @@ new SPID_PHP()
 bool isAuthenticated()
 ```
 restituisce true se l'utente è autenticato, false altrimenti
+
+### isIdPAvailable
+```
+bool isIdPAvailable($idp)
+```
+restituisce true se il valore di $idp è tra quelli previsti (vedi login) 
+
+### isIdP
+```
+bool isIdP($idp)
+```
+restituisce true se l'utente è autenticato con l'idp $idp (vedi login)
 
 ### requireAuth
 ```
@@ -225,6 +241,89 @@ if(!$spidsdk->isAuthenticated()) {
     
     echo "<hr/><p><a href='" . $spidsdk->getLogoutURL() . "'>Logout</a></p>";
 }
+
+
+```
+
+## Esempio di utilizzo come proxy
+```
+require_once("<path to spid-php>/spid-php.php");
+
+$spidsdk = new SPID_PHP();
+
+$client = [
+    <allowed client_id> = [ <allowed redirect_uri> ]
+];
+
+$action         = $_GET['action'];
+$client_id      = $_GET['client_id'];
+$redirect_uri   = $_GET['redirect_uri'];
+$state          = $_GET['state'];
+$idp            = $_GET['idp'];
+
+
+switch($action) {
+
+    case "login":
+
+        if(!$spidsdk->isIdPAvailable($idp)) {
+            // idp not found
+            http_response_code(404);
+            die(); 
+        }
+
+        if(in_array($client_id, array_keys($client))) {
+            if(in_array($redirect_uri, $client[$client_id])) {
+
+                if($spidsdk->isAuthenticated() 
+                && isset($_GET['idp']) 
+                && $spidsdk->isIdP($_GET['idp'])) {
+
+                    echo "<form name='spidauth' action='".$redirect_uri."' method='POST'>"; 
+
+                    foreach($spidsdk->getAttributes() as $attribute=>$value) {
+                        echo "<input type='hidden' name='".$attribute."' value='".$value[0]."' />";
+                    }
+                    echo "<input type='hidden' name='state' value='".$state."' />";
+                    echo "</form>";
+                    echo "<script type='text/javascript'>";
+                    echo "  document.spidauth.submit();";
+                    echo "</script>";
+
+                } else {
+                    $spidsdk->login($idp, 1);
+                }
+
+            } else {
+                // redirect_uri not found in configuration
+                http_response_code(404); 
+                die();
+            }
+
+        } else {
+            // client not found in configuration
+            http_response_code(404);
+            die();
+        }
+
+    break;
+
+    case "logout":
+
+        if($spidsdk->isAuthenticated()) {
+            $spidsdk->logout();
+            die();
+        } else {
+            header("location: " . $client[$client_id][0]);
+            die();
+        }
+
+    break;
+}
+
+// action not valid
+http_response_code(404);
+die(); 
 
 
 ```
