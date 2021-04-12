@@ -29,8 +29,10 @@
             );
         }
 
-        public function setProfessionalUse($p) {
-            $this->purpose = "P";
+        public function setProfessionalUse($professionalUse) {
+            if($professionalUse===true) {
+                $this->purpose = "P";
+            }
         }
 
         public function setPurpose($p) {
