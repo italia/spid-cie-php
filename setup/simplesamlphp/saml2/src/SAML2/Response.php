@@ -114,6 +114,10 @@ class Response extends StatusResponse
 
             // Disco non funziona, vedi pure AuthnRequest
             $state = State::loadState($stateID, 'saml:sp:sso', true);
+            if($state==null) {
+                throw new \Exception('State not found for id  ' . $stateID);
+            }
+
             $req_authnContextClassRef = $state["saml:AuthnContextClassRef"];
             $req_authnContextComparison = $state["saml:AuthnContextComparison"];
             $res_authnContextClassRef = $authnContextClassRef[0]->nodeValue;

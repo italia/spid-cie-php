@@ -28,6 +28,7 @@ class Setup {
         $_spOrganizationDisplayName = "Organization Display Name";
         $_spOrganizationURL = "https://www.organization.org";
         $_entityID = "https://localhost";
+        $_spDomain = "localhost";
         $_acsIndex = 0;
         $_adminPassword = "admin";
         $_technicalContactName = "";
@@ -91,11 +92,39 @@ class Setup {
         }
 
         if (!isset($config['entityID'])) {
-            echo "Please insert your EntityID (" .
+            echo "Please insert your EntityID, must start with http:// or https:// (" .
             $colors->getColoredString($_entityID, "green") . "): ";
             $config['entityID'] = readline();
             if ($config['entityID'] == null || $config['entityID'] == "") {
                 $config['entityID'] = $_entityID;
+            }
+        }
+
+        if (!isset($config['spDomain'])) {
+            $lowerEntityId = strtolower($config['entityID']);
+            
+            if(substr($lowerEntityId, 0, 8)==='https://') {
+                $_spDomain = substr($config['entityID'], 8);
+            }
+    
+            if(substr($lowerEntityId, 0, 7)==='http://') {
+                $_spDomain = substr($config['entityID'], 7);
+            }
+    
+            if(substr(strtolower($_spDomain), 0, 4)==='www.') {
+                $_spDomain = substr($_spDomain, 4);
+            }
+    
+
+            echo "Please insert your Service Provider Domain, without www. (" .
+            $colors->getColoredString($_spDomain, "green") . "): ";
+            $config['spDomain'] = readline();
+            if ($config['spDomain'] == null || $config['spDomain'] == "") {
+                $config['spDomain'] = $_spDomain;
+            }
+
+            if($config['spDomain']!=$_spDomain) {
+                echo $colors->getColoredString("WARNING: the EntityID must be related to organization's domain", "yellow");
             }
         }
 
@@ -568,6 +597,7 @@ class Setup {
         echo $colors->getColoredString("\nWeb root directory: " . $config['wwwDir'], "yellow");
         echo $colors->getColoredString("\nService Name: " . $config['serviceName'], "yellow");
         echo $colors->getColoredString("\nEntity ID: " . $config['entityID'], "yellow");
+        echo $colors->getColoredString("\nService Provider Domain: " . $config['spDomain'], "yellow");
         echo $colors->getColoredString("\nService Provider Name: " . $config['spName'], "yellow");
         echo $colors->getColoredString("\nService Provider Description: " . $config['spDescription'], "yellow");
         echo $colors->getColoredString("\nOrganization Name: " . $config['spOrganizationName'], "yellow");
@@ -715,7 +745,8 @@ class Setup {
             "{{TECHCONTACT_NAME}}" => "'" . $config['technicalContactName'] . "'",
             "{{TECHCONTACT_EMAIL}}" => "'" . $config['technicalContactEmail'] . "'",
             "{{ACSCUSTOMLOCATION}}" => "'" . $config['acsCustomLocation'] . "'",
-            "{{SLOCUSTOMLOCATION}}" => "'" . $config['sloCustomLocation'] . "'"
+            "{{SLOCUSTOMLOCATION}}" => "'" . $config['sloCustomLocation'] . "'",
+            "{{SP_DOMAIN}}" => "'." . $config['spDomain'] . "'"
         );
         $template = file_get_contents($config['installDir'] . '/setup/config/config.tpl', true);
         $customized = str_replace(array_keys($vars), $vars, $template);

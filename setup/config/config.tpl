@@ -339,7 +339,7 @@ $config = array(
      * Example:
      *  'session.cookie.domain' => '.example.org',
      */
-    'session.cookie.domain' => null,
+    'session.cookie.domain' => {{SP_DOMAIN}},
 
     /*
      * Set the secure flag in the cookie.
