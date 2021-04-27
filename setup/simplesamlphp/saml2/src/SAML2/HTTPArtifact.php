@@ -175,7 +175,7 @@ class HTTPArtifact extends Binding
             $globalConfig = Configuration::getInstance();
             $secretSalt = $globalConfig->getString('secretsalt');
 
-            $encryptedRelayState = $_POST['RelayState'];
+            $encryptedRelayState = $_REQUEST['RelayState'];
 
             $ivSize = openssl_cipher_iv_length("aes-256-cbc");
             $decodedData = base64_decode($encryptedRelayState);
