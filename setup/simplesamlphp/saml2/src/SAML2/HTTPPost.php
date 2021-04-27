@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SAML2;
 
+use SimpleSAML\Configuration;
+
 /**
  * Class which implements the HTTP-POST binding.
  *
@@ -30,8 +32,14 @@ class HTTPPost extends Binding
             $destination = $this->destination;
         }
 
+        $globalConfig = Configuration::getInstance();
+        $secretSalt = $globalConfig->getString('secretsalt');
+
         $encryptedRelayState = $message->getRelayState();
-        $relayState = base64_encode(openssl_encrypt($encryptedRelayState, "aes-256-cbc", $message->getId()));
+
+        $ivSize = openssl_cipher_iv_length("aes-256-cbc");
+        $iv = openssl_random_pseudo_bytes($ivSize);
+        $relayState = base64_encode($iv . openssl_encrypt($encryptedRelayState, "aes-256-cbc", $secretSalt, 0, $iv));
 
         $msgStr = $message->toSignedXML();
 
@@ -90,17 +98,17 @@ class HTTPPost extends Binding
         $msg = Message::fromXML($document->firstChild);
 
         if (array_key_exists('RelayState', $_POST)) {
+
+            $globalConfig = Configuration::getInstance();
+            $secretSalt = $globalConfig->getString('secretsalt');
+
             $encryptedRelayState = $_POST['RelayState'];
-            $ivSize = openssl_cipher_iv_length("AES-128-CBC");
+
+            $ivSize = openssl_cipher_iv_length("aes-256-cbc");
             $decodedData = base64_decode($encryptedRelayState);
             $iv = substr($decodedData, 0, $ivSize);
 
-            $relayState = openssl_decrypt(substr($decodedData, $ivSize), "aes-256-cbc", $msg->getId(), 0, $iv);
-
-            // if LogoutResponse
-            if($relayState==null) {
-                $relayState = openssl_decrypt(substr($decodedData, $ivSize), "aes-256-cbc", $msg->getInResponseTo(), 0, $iv);
-            }
+            $relayState = openssl_decrypt(substr($decodedData, $ivSize), "aes-256-cbc", $secretSalt, 0, $iv);
 
             $msg->setRelayState($relayState);
         }

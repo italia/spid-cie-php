@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SAML2;
 
 use RobRichards\XMLSecLibs\XMLSecurityKey;
+use SimpleSAML\Configuration;
 use Webmozart\Assert\Assert;
 
 /**
@@ -33,11 +34,14 @@ class HTTPRedirect extends Binding
             $destination = $this->destination;
         }
 
+        $globalConfig = Configuration::getInstance();
+        $secretSalt = $globalConfig->getString('secretsalt');
+
         $encryptedRelayState = $message->getRelayState();
 
-        $ivSize = openssl_cipher_iv_length("AES-128-CBC");
+        $ivSize = openssl_cipher_iv_length("aes-256-cbc");
         $iv = openssl_random_pseudo_bytes($ivSize);
-        $relayState = base64_encode($iv . openssl_encrypt($encryptedRelayState, "aes-256-cbc", $message->getId(), 0, $iv));
+        $relayState = base64_encode($iv . openssl_encrypt($encryptedRelayState, "aes-256-cbc", $secretSalt, 0, $iv));
 
         $key = $message->getSignatureKey();
 
@@ -138,18 +142,16 @@ class HTTPRedirect extends Binding
         $message = Message::fromXML($document->firstChild);
 
         if (array_key_exists('RelayState', $data)) {
+            $globalConfig = Configuration::getInstance();
+            $secretSalt = $globalConfig->getString('secretsalt');
+
             $encryptedRelayState = $data['RelayState'];
-            $ivSize = openssl_cipher_iv_length("AES-128-CBC");
+
+            $ivSize = openssl_cipher_iv_length("aes-256-cbc");
             $decodedData = base64_decode($encryptedRelayState);
             $iv = substr($decodedData, 0, $ivSize);
 
-
-            $relayState = openssl_decrypt(substr($decodedData, $ivSize), "aes-256-cbc", $message->getId(), 0, $iv);
-
-            // if LogoutResponse
-            if($relayState==null) {
-                $relayState = openssl_decrypt(substr($decodedData, $ivSize), "aes-256-cbc", $message->getInResponseTo(), 0, $iv);
-            }
+            $relayState = openssl_decrypt(substr($decodedData, $ivSize), "aes-256-cbc", $secretSalt, 0, $iv);
 
             $message->setRelayState($relayState);
         }
