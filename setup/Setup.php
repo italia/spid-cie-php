@@ -4,19 +4,27 @@ namespace SPID_PHP;
 
 use Composer\Script\Event;
 use SPID_PHP\Colors;
+use Symfony\Component\Filesystem\Filesystem;
 
 class Setup {
 
     public static function setup(Event $event) {
+        $filesystem = new Filesystem();
         $colors = new Colors();
         $version = $event->getComposer()->getConfig()->get("version");
 
-        echo shell_exec("clear");
+        if ($colors->hasColorSupport()) {
+            // Clear the screen
+            echo "\e[H\e[J";
+        }
+
         echo $colors->getColoredString("SPID PHP SDK Setup\nversion " . $version . "\n\n", "green");
 
         // retrieve path and inputs
-        $_homeDir = shell_exec('echo -n "$HOME"');
-        $_wwwDir = shell_exec('echo -n "$HOME/public_html"');
+        $_homeDir = PHP_OS_FAMILY === "Windows"
+          ? getenv("HOMEDRIVE") . getenv("HOMEPATH")
+          : getenv("HOME");
+        $_wwwDir = $_homeDir . "/public_html";
         $_installDir = getcwd();
         $_acsCustomLocation = "";
         $_sloCustomLocation = "";
@@ -651,20 +659,24 @@ class Setup {
             echo $colors->getColoredString("\nWebroot directory not found. Making directory " .
                     $config['wwwDir'], "yellow");
             echo $colors->getColoredString("\nPlease remember to configure your virtual host.\n\n", "yellow");
-            shell_exec("mkdir " . $config['wwwDir']);
+            $filesystem->mkdir($config['wwwDir']);
         }
 
         // create log directory
-        shell_exec("mkdir " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/log");
+        $filesystem->mkdir(
+            $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/log"
+        );
 
         // create certificates
         if (file_exists($config['installDir'] . "/cert/spid-sp.crt") && file_exists($config['installDir'] . "/cert/spid-sp.pem")) {
             echo $colors->getColoredString("\nSkipping certificates generation", "white");
-            shell_exec("mkdir " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert");
-            shell_exec("cp " . $config['installDir'] . "/cert/* " .
-                    $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert");
+            $dest = $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert";
+            $filesystem->mkdir($dest);
+            $filesystem->mirror($config['installDir'] . "/cert", $dest);
         } else {
-            shell_exec("mkdir " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert");
+            $filesystem->mkdir(
+                $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert"
+            );
             echo $colors->getColoredString("\nConfiguring OpenSSL... ", "white");
             if (!file_exists('openssl.cnf')) {
                 $openssl_config = fopen("spid-php-openssl.cnf", "w");
@@ -719,9 +731,12 @@ class Setup {
                     " -extensions req_ext "
             );
 
-            shell_exec("mkdir " . $config['installDir'] . "/cert");
-            shell_exec("cp " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert/* " .
-                    $config['installDir'] . "/cert");
+            $dest = $config['installDir'] . "/cert";
+            $filesystem->mkdir($dest);
+            $filesystem->mirror(
+                $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert",
+                $dest
+            );
         }
 
 
@@ -816,46 +831,53 @@ class Setup {
             $vars = array("{{SERVICENAME}}" => $config['serviceName']);
             $template = file_get_contents($config['installDir'] . '/setup/www/js/agid-spid-enter.tpl', true);
             $customized = str_replace(array_keys($vars), $vars, $template);
-            shell_exec("mkdir " . $config['installDir'] .
-                    "/vendor/simplesamlphp/simplesamlphp/www/js");
+            $filesystem->mkdir(
+                $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/js"
+            );
             file_put_contents($config['installDir'] .
                     "/vendor/simplesamlphp/simplesamlphp/www/js/agid-spid-enter.js", $customized);
             echo $colors->getColoredString("OK", "green");
 
             // copy smart button css and img
             echo $colors->getColoredString("\nCopy smart-button resurces... ", "white");
-            shell_exec("cp -rf " . $config['installDir'] . "/vendor/italia/spid-smart-button/css " .
-                    $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/css");
-            shell_exec("cp -rf " . $config['installDir'] . "/vendor/italia/spid-smart-button/img " .
-                    $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/img");
+            $dest = $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/css";
+            $filesystem->mkdir($dest);
+            $filesystem->mirror(
+                $config['installDir'] . "/vendor/italia/spid-smart-button/css",
+                $dest
+            );
+            $dest = $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/img";
+            $filesystem->mkdir($dest);
+            $filesystem->mirror(
+                $config['installDir'] . "/vendor/italia/spid-smart-button/img",
+                $dest
+            );
             echo $colors->getColoredString("OK", "green");
         } else {
             // overwrite template file
             echo $colors->getColoredString("\nWrite spid button template... ", "white");
-            shell_exec("mkdir " . $config['installDir'] .
-                    "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button");
-            shell_exec("mkdir " . $config['installDir'] .
-                    "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button/css");
-            shell_exec("mkdir " . $config['installDir'] .
-                    "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button/img");
-            shell_exec("mkdir " . $config['installDir'] .
-                    "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button/js");
-            shell_exec("cp -rf " . $config['installDir'] .
-                    "/vendor/italia/spid-sp-access-button/src/production/css " .
-                    $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button");
-            shell_exec("cp -rf " . $config['installDir'] .
-                    "/vendor/italia/spid-sp-access-button/src/production/img " .
-                    $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button");
-            shell_exec("cp -rf " . $config['installDir'] .
-                    "/vendor/italia/spid-sp-access-button/src/production/js " .
-                    $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button");
+            $path = $config['installDir'] .
+                "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button";
+
+            foreach (["/css", "/img", "/js"] as $value) {
+                $dest = $path . $value;
+                $filesystem->mkdir($dest);
+                $filesystem->mirror(
+                    $config['installDir'] . "/vendor/italia/spid-sp-access-button/src/production" . $value,
+                    $dest
+                );
+            }
+
             echo $colors->getColoredString("OK", "green");
         }
 
 
-        // apply simplesalphp patch for spid compliance
+        // apply simplesamlphp patch for spid compliance
         // needed only for templates
-        shell_exec("cp -rf " . $config['installDir'] . "/setup/simplesamlphp/simplesamlphp/templates/* " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/templates");
+        $filesystem->mirror(
+            $config['installDir'] . "/setup/simplesamlphp/simplesamlphp/templates",
+            $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/templates"
+        );
 
         // write example files
         if ($config['addExamples']) {
@@ -892,16 +914,39 @@ class Setup {
 
         // reset permissions
         echo $colors->getColoredString("\nSetting directories and files permissions... ", "white");
-        shell_exec("find " . $config['installDir'] . "/. -type d -exec chmod 0755 {} \;");
-        shell_exec("find " . $config['installDir'] . "/. -type f -exec chmod 0644 {} \;");
-        shell_exec("chmod 777 " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/log");
+
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator(
+                $config['installDir'],
+                \RecursiveDirectoryIterator::SKIP_DOTS
+            ),
+            \RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        foreach ($iterator as $item) {
+            if ($item->isLink()) {
+              continue;
+            }
+
+            if ($item->isDir()) {
+                $filesystem->chmod($item, 0755);
+            } else {
+                $filesystem->chmod($item, 0644);
+            }
+        }
+
+        $filesystem->chmod($config['installDir'], 0755);
+        $filesystem->chmod(
+            $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/log",
+            0777
+        );
 
         if ($config['addExamples']) {
-            shell_exec("chmod 0644 " . $config['wwwDir'] . "/login-spid.php");
+            $filesystem->chmod($config['wwwDir'] . "/login-spid.php", 0644);
         }
         if ($config['addProxyExample']) {
-            shell_exec("chmod 0644 " . $config['wwwDir'] . "/proxy-spid.php");
-            shell_exec("chmod 0644 " . $config['wwwDir'] . "/proxy-sample.php");
+            $filesystem->chmod($config['wwwDir'] . "/proxy-spid.php", 0644);
+            $filesystem->chmod($config['wwwDir'] . "/proxy-sample.php", 0644);
         }
         echo $colors->getColoredString("OK", "green");
 
@@ -1120,13 +1165,17 @@ class Setup {
     }
 
     public static function remove() {
+        $filesystem = new Filesystem();
         $colors = new Colors();
         $config = file_exists("spid-php-setup.json") ?
                 json_decode(file_get_contents("spid-php-setup.json"), true) : array();
 
         // retrieve path and inputs
         $_installDir = getcwd();
-        $_wwwDir = shell_exec('echo -n "$HOME/public_html"');
+        $_homeDir = PHP_OS_FAMILY === "Windows"
+          ? getenv("HOMEDRIVE") . getenv("HOMEPATH")
+          : getenv("HOME");
+        $_wwwDir = $_homeDir . "/public_html";
         $_serviceName = "myservice";
 
         if (!empty($config['installDir'])) {
@@ -1164,21 +1213,21 @@ class Setup {
 
         echo $colors->getColoredString("\nRemove vendor directory [" .
                 $installDir . "]... ", "white");
-        shell_exec("rm -Rf " . $installDir . "/vendor");
+        $filesystem->remove($installDir . "/vendor");
         echo $colors->getColoredString("OK", "green");
         //echo $colors->getColoredString("\nRemove cert directory [" . $installDir . "/cert]... ", "white");
         //shell_exec("rm -Rf " . $installDir . "/cert");
         //echo $colors->getColoredString("OK", "green");
         echo $colors->getColoredString("\nRemove simplesamlphp service symlink [" .
                 $wwwDir . "/" . $serviceName . "]... ", "white");
-        shell_exec("rm " . $wwwDir . "/'" . $serviceName."'");
+        $filesystem->remove($wwwDir . "/" . $serviceName);
         echo $colors->getColoredString("OK", "green");
         echo $colors->getColoredString("\nRemove sdk file [" .
                 $installDir . "/spid-php.php]... ", "white");
-        shell_exec("rm " . $installDir . "/spid-php.php");
+        $filesystem->remove($installDir . "/spid-php.php");
         echo $colors->getColoredString("OK", "green");
         echo $colors->getColoredString("\nRemove composer lock file... ", "white");
-        shell_exec("rm " . $installDir . "/composer.lock");
+        $filesystem->remove($installDir . "/composer.lock");
         echo $colors->getColoredString("OK", "green");
         echo $colors->getColoredString("\nExample files NOT removed... ", "white");
 

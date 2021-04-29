@@ -6,6 +6,7 @@ class Colors
 {
     private $foreground_colors = array();
     private $background_colors = array();
+    private $hasColorSupport = null;
 
     public function __construct()
     {
@@ -35,11 +36,17 @@ class Colors
         $this->background_colors['magenta'] = '45';
         $this->background_colors['cyan'] = '46';
         $this->background_colors['light_gray'] = '47';
+
+        $colors_supported = $this->hasColorSupport();
     }
 
     // Returns colored string
     public function getColoredString($string, $foreground_color = null, $background_color = null)
     {
+        if (!$this->hasColorSupport()) {
+            return $string;
+        }
+
         $colored_string = "";
 
         // Check if given foreground color found
@@ -67,5 +74,33 @@ class Colors
     public function getBackgroundColors()
     {
         return array_keys($this->background_colors);
+    }
+
+    // Copied from https://github.com/symfony/console/blob/v5.2.6/Output/StreamOutput.php#L94-L114
+    // under the MIT license
+    public function hasColorSupport()
+    {
+        if ($this->hasColorSupport !== null) {
+            return $this->hasColorSupport;
+        }
+
+        // Follow https://no-color.org/
+        if (isset($_SERVER['NO_COLOR']) || false !== getenv('NO_COLOR')) {
+            return false;
+        }
+
+        if ('Hyper' === getenv('TERM_PROGRAM')) {
+            return true;
+        }
+
+        if (\DIRECTORY_SEPARATOR === '\\') {
+            return (\function_exists('sapi_windows_vt100_support')
+                && @sapi_windows_vt100_support(STDOUT))
+                || false !== getenv('ANSICON')
+                || 'ON' === getenv('ConEmuANSI')
+                || 'xterm' === getenv('TERM');
+        }
+
+        return stream_isatty(STDOUT);
     }
 }
