@@ -777,7 +777,7 @@ class SAMLBuilder
         $ext_dom = \SAML2\DOMDocumentFactory::create();
 
 
-        if($details['spid']) {
+        if(isset($details['spid'])) {
             if($details['spid.codeType']=='IPACode') {
                 $ext_elem_code = $ext_dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:IPACode', $details['spid.codeValue']);
                 $ext_elem_type = $ext_dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:Public', '');
@@ -801,7 +801,7 @@ class SAMLBuilder
         }
 
         // SPID Avviso n.29 v.3 - Private
-        if($details['fpa']) {
+        if(isset($details['fpa'])) {
             $ext_elem_IdPaese = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:IdPaese', $details['fpa.IdPaese']);
             $ext_elem_IdCodice = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:IdCodice', $details['fpa.IdCodice']);
 
