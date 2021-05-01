@@ -31,6 +31,7 @@ class Setup {
         $_spDomain = "localhost";
         $_acsIndex = 0;
         $_adminPassword = "admin";
+        $_secretsalt = bin2hex(random_bytes(16)); 
         $_technicalContactName = "";
         $_technicalContactEmail = "";
         $_spCountryName = "IT";
@@ -550,6 +551,15 @@ class Setup {
             }
         }
 
+        if (!isset($config['secretsalt'])) {
+            echo "Please insert secretsalt for SimpleSAMLphp (" .
+              $colors->getColoredString($_secretsalt, "green") . "): ";
+            $config['secretsalt'] = str_replace("'", "\'", readline());
+            if ($config['secretsalt'] == null || $config['secretsalt'] == "") {
+                $config['secretsalt'] = $_secretsalt;
+            }
+        }
+
         /* Technical ContactPerson into metadata is not compliant with Avviso SPID n.29 v3 */
         $config['technicalContactName'] = $_technicalContactName;
         $config['technicalContactEmail'] = $_technicalContactEmail;
@@ -617,6 +627,7 @@ class Setup {
         //echo $colors->getColoredString("\nUse SPID smart button: ", "yellow");
         //echo $colors->getColoredString(($config['useSmartButton'])? "Y":"N", "yellow");
         echo $colors->getColoredString("\nSimpleSAMLphp Password: " . $config['adminPassword'], "yellow");
+        echo $colors->getColoredString("\nSimpleSAMLphp secretsalt: " . $config['secretsalt'], "yellow");
         //echo $colors->getColoredString("\nTechnical Contact Name: " . $config['technicalContactName'], "yellow");
         //echo $colors->getColoredString("\nTechnical Contact Email: " . $config['technicalContactEmail'], "yellow");
         echo $colors->getColoredString("\nOrganization Contact Email Address: " . $config['spOrganizationEmailAddress'], "yellow");
@@ -742,6 +753,7 @@ class Setup {
         $vars = array(
             "{{BASEURLPATH}}" => "'" . $config['serviceName'] . "/'",
             "{{ADMIN_PASSWORD}}" => "'" . $config['adminPassword'] . "'",
+            "{{SECRETSALT}}" => "'" . $config['secretsalt'] . "'",
             "{{TECHCONTACT_NAME}}" => "'" . $config['technicalContactName'] . "'",
             "{{TECHCONTACT_EMAIL}}" => "'" . $config['technicalContactEmail'] . "'",
             "{{ACSCUSTOMLOCATION}}" => "'" . $config['acsCustomLocation'] . "'",

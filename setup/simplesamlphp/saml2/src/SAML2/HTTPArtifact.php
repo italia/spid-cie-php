@@ -58,8 +58,14 @@ class HTTPArtifact extends Binding
             'SAMLart' => $artifact,
         );
 
+        $globalConfig = Configuration::getInstance();
+        $secretSalt = $globalConfig->getString('secretsalt');
+
         $encryptedRelayState = $message->getRelayState();
-        $relayState = base64_encode(openssl_encrypt($encryptedRelayState, "aes-256-cbc", $message->getId()));
+
+        $ivSize = openssl_cipher_iv_length("aes-256-cbc");
+        $iv = openssl_random_pseudo_bytes($ivSize);
+        $relayState = base64_encode($iv . openssl_encrypt($encryptedRelayState, "aes-256-cbc", $secretSalt, 0, $iv));
 
         if ($relayState !== null) {
             $params['RelayState'] = $relayState;
@@ -166,13 +172,16 @@ class HTTPArtifact extends Binding
         $samlResponse->addValidator([get_class($this), 'validateSignature'], $artifactResponse);
 
         if (isset($_REQUEST['RelayState'])) {
-            $encryptedRelayState = $_REQUEST['RelayState'];
-            $relayState = openssl_decrypt(base64_decode($encryptedRelayState), "aes-256-cbc", $samlResponse->getId());
+            $globalConfig = Configuration::getInstance();
+            $secretSalt = $globalConfig->getString('secretsalt');
 
-            // if LogoutResponse
-            if($relayState==null) {
-                $relayState = openssl_decrypt(base64_decode($encryptedRelayState), "aes-256-cbc", $samlResponse->getInResponseTo());
-            }
+            $encryptedRelayState = $_REQUEST['RelayState'];
+
+            $ivSize = openssl_cipher_iv_length("aes-256-cbc");
+            $decodedData = base64_decode($encryptedRelayState);
+            $iv = substr($decodedData, 0, $ivSize);
+
+            $relayState = openssl_decrypt(substr($decodedData, $ivSize), "aes-256-cbc", $secretSalt, 0, $iv);
 
             $samlResponse->setRelayState($relayState);
         }
