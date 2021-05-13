@@ -37,7 +37,7 @@ class Colors
         $this->background_colors['cyan'] = '46';
         $this->background_colors['light_gray'] = '47';
 
-        $colors_supported = $this->hasColorSupport();
+        $this->hasColorSupport = $this->hasColorSupport();
     }
 
     // Returns colored string
