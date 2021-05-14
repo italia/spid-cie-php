@@ -249,10 +249,10 @@ class Error extends Exception
             case 'Responder/AuthnFailed: ErrorCode nr19': $data['errorMessage'] = 'Autenticazione fallita per ripetuta sottomissione di credenziali errate (superato numero tentativi secondo le policy adottate)'; break;
             case 'Responder/AuthnFailed: ErrorCode nr20': $data['errorMessage'] = 'Utente privo di credenziali compatibili con il livello richiesto dal fornitore del servizio'; break;
             case 'Responder/AuthnFailed: ErrorCode nr21': $data['errorMessage'] = 'Timeout durante l’autenticazione utente'; break;
-            case 'Responder/AuthnFailed: ErrorCode nr22': $data['errorMessage'] = 'Utente nega il consenso all’ invio di dati al SP in caso di sessione vigente'; break;
+            case 'Responder/AuthnFailed: ErrorCode nr22': $data['errorMessage'] = 'Utente nega il consenso all’invio di dati al SP in caso di sessione vigente'; break;
             case 'Responder/AuthnFailed: ErrorCode nr23': $data['errorMessage'] = 'Utente con identità sospesa/revocata o con credenziali bloccate'; break;
-            case 'Responder/AuthnFailed: ErrorCode nr25': $data['errorMessage'] = 'Processo di autenticazione annullato dall’ utente'; break;
-            case 'Responder/RequestUnsupported: ErrorCode nr25': $data['errorMessage'] = 'Processo di autenticazione annullato dall’ utente'; break;
+            case 'Responder/AuthnFailed: ErrorCode nr25': $data['errorMessage'] = 'Processo di autenticazione annullato dall’utente'; break;
+            case 'Responder/RequestUnsupported: ErrorCode nr25': $data['errorMessage'] = 'Processo di autenticazione annullato dall’utente'; break;
             case 'Responder/AuthnFailed: ErrorCode nr30': $data['errorMessage'] = 'Il SP ha richiesto di autenticare l’utente con una identità digitale diversa da quella utilizzata dall’utente'; break;
             default: $data['errorMessage'] = 'Errore non identificato'; break;
         }
