@@ -79,8 +79,8 @@ $config = array(
      * You can also put a hash here; run "bin/pwgen.php" to generate one.
      */
     'auth.adminpassword' => {{ADMIN_PASSWORD}},
-    'admin.protectindexpage' => false,
-    'admin.protectmetadata' => false,
+    'admin.protectindexpage' => true,
+    'admin.protectmetadata' => true,
 
     /**
      * This is a secret salt used by SimpleSAMLphp when it needs to generate a secure hash
@@ -351,6 +351,12 @@ $config = array(
     'session.cookie.secure' => false,
 
     /*
+     * When set to FALSE fallback to transient session on session initialization
+     * failure, throw exception otherwise.
+     */
+     'session.disable_fallback' => true,
+     
+    /*
      * Enable secure POST from HTTPS to HTTP.
      *
      * If you have some SP's on HTTP and IdP is normally on HTTPS, this option
@@ -403,13 +409,9 @@ $config = array(
     /*
      * Languages available, RTL languages, and what language is default
      */
-    'language.available' => array(
-        'en', 'no', 'nn', 'se', 'da', 'de', 'sv', 'fi', 'es', 'fr', 'it', 'nl', 'lb', 'cs',
-        'sl', 'lt', 'hr', 'hu', 'pl', 'pt', 'pt-br', 'tr', 'ja', 'zh', 'zh-tw', 'ru', 'et',
-        'he', 'id', 'sr', 'lv', 'ro', 'eu'
-    ),
+    'language.available' => array('it'),
     'language.rtl' => array('ar', 'dv', 'fa', 'ur', 'he'),
-    'language.default' => 'en',
+    'language.default' => 'it',
 
     /*
      * Options to override the default settings for the language parameter
