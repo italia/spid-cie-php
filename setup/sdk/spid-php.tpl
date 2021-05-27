@@ -99,12 +99,12 @@
         }
 
         public function insertSPIDButtonCSS() {
-            echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"{{SERVICENAME}}/spid-sp-access-button/css/spid-sp-access-button.min.css\" />";
+            echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/{{SERVICENAME}}/spid-sp-access-button/css/spid-sp-access-button.min.css\" />";
         }
 
         public function insertSPIDButtonJS() {
-            echo "<script type=\"text/javascript\" src=\"{{SERVICENAME}}/spid-sp-access-button/js/jquery.min.js\"></script>";
-            echo "<script type=\"text/javascript\" src=\"{{SERVICENAME}}/spid-sp-access-button/js/spid-sp-access-button.min.js\"></script>";
+            echo "<script type=\"text/javascript\" src=\"/{{SERVICENAME}}/spid-sp-access-button/js/jquery.min.js\"></script>";
+            echo "<script type=\"text/javascript\" src=\"/{{SERVICENAME}}/spid-sp-access-button/js/spid-sp-access-button.min.js\"></script>";
             echo "
                 <script>
                     $(document).ready(function(){
@@ -212,31 +212,31 @@
                 $button_test.
                 $button_local."
                 <li class=\"spid-idp-button-link\" data-idp=\"arubaid\">
-                    <a href=\"?idp=ArubaPEC S.p.A.\"><span class=\"spid-sr-only\">Aruba ID</span><img src=\"{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.svg\" onerror=\"this.src='{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.png'; this.onerror=null;\" alt=\"Aruba ID\" /></a>
+                    <a href=\"?idp=ArubaPEC S.p.A.\"><span class=\"spid-sr-only\">Aruba ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.png'; this.onerror=null;\" alt=\"Aruba ID\" /></a>
                 </li>
                 <li class=\"spid-idp-button-link\" data-idp=\"infocertid\">
-                    <a href=\"?idp=InfoCert S.p.A.\"><span class=\"spid-sr-only\">Infocert ID</span><img src=\"{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-infocertid.svg\" onerror=\"this.src='{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-infocertid.png'; this.onerror=null;\" alt=\"Infocert ID\" /></a>
+                    <a href=\"?idp=InfoCert S.p.A.\"><span class=\"spid-sr-only\">Infocert ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-infocertid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-infocertid.png'; this.onerror=null;\" alt=\"Infocert ID\" /></a>
                 </li>
                 <li class=\"spid-idp-button-link\" data-idp=\"intesaid\">
-                    <a href=\"?idp=IN.TE.S.A. S.p.A.\"><span class=\"spid-sr-only\">Intesa ID</span><img src=\"{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-intesaid.svg\" onerror=\"this.src='{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-intesaid.png'; this.onerror=null;\" alt=\"Intesa ID\" /></a>
+                    <a href=\"?idp=IN.TE.S.A. S.p.A.\"><span class=\"spid-sr-only\">Intesa ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-intesaid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-intesaid.png'; this.onerror=null;\" alt=\"Intesa ID\" /></a>
                 </li>
                 <li class=\"spid-idp-button-link\" data-idp=\"lepidaid\">
-                    <a href=\"?idp=Lepida S.p.A.\"><span class=\"spid-sr-only\">Lepida ID</span><img src=\"{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-lepidaid.svg\" onerror=\"this.src='{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-lepidaid.png'; this.onerror=null;\" alt=\"Lepida ID\" /></a>
+                    <a href=\"?idp=Lepida S.p.A.\"><span class=\"spid-sr-only\">Lepida ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-lepidaid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-lepidaid.png'; this.onerror=null;\" alt=\"Lepida ID\" /></a>
                 </li>
                 <li class=\"spid-idp-button-link\" data-idp=\"namirialid\">
-                    <a href=\"?idp=Namirial\"><span class=\"spid-sr-only\">Namirial ID</span><img src=\"{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-namirialid.svg\" onerror=\"this.src='{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-namirialid.png'; this.onerror=null;\" alt=\"Namirial ID\" /></a>
+                    <a href=\"?idp=Namirial\"><span class=\"spid-sr-only\">Namirial ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-namirialid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-namirialid.png'; this.onerror=null;\" alt=\"Namirial ID\" /></a>
                 </li>
                 <li class=\"spid-idp-button-link\" data-idp=\"posteid\">
-                    <a href=\"?idp=Poste Italiane SpA\"><span class=\"spid-sr-only\">Poste ID</span><img src=\"{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-posteid.svg\" onerror=\"this.src='{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-posteid.png'; this.onerror=null;\" alt=\"Poste ID\" /></a>
+                    <a href=\"?idp=Poste Italiane SpA\"><span class=\"spid-sr-only\">Poste ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-posteid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-posteid.png'; this.onerror=null;\" alt=\"Poste ID\" /></a>
                 </li>
                 <li class=\"spid-idp-button-link\" data-idp=\"sielteid\">
-                    <a href=\"?idp=Sielte S.p.A.\"><span class=\"spid-sr-only\">Sielte ID</span><img src=\"{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-sielteid.svg\" onerror=\"this.src='{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-sielteid.png'; this.onerror=null;\" alt=\"Sielte ID\" /></a>
+                    <a href=\"?idp=Sielte S.p.A.\"><span class=\"spid-sr-only\">Sielte ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-sielteid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-sielteid.png'; this.onerror=null;\" alt=\"Sielte ID\" /></a>
                 </li>
                 <li class=\"spid-idp-button-link\" data-idp=\"spiditalia\">
-                    <a href=\"?idp=Register.it S.p.A.\"><span class=\"spid-sr-only\">SPIDItalia Register.it</span><img src=\"{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-spiditalia.svg\" onerror=\"this.src='{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-spiditalia.png'; this.onerror=null;\" alt=\"SpidItalia\" /></a>
+                    <a href=\"?idp=Register.it S.p.A.\"><span class=\"spid-sr-only\">SPIDItalia Register.it</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-spiditalia.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-spiditalia.png'; this.onerror=null;\" alt=\"SpidItalia\" /></a>
                 </li>
                 <li class=\"spid-idp-button-link\" data-idp=\"timid\">
-                    <a href=\"?idp=TI Trust Technologies srl\"><span class=\"spid-sr-only\">Tim ID</span><img src=\"{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-timid.svg\" onerror=\"this.src='{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-timid.png'; this.onerror=null;\" alt=\"Tim ID\" /></a>
+                    <a href=\"?idp=TI Trust Technologies srl\"><span class=\"spid-sr-only\">Tim ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-timid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-timid.png'; this.onerror=null;\" alt=\"Tim ID\" /></a>
                 </li>
                 <li class=\"spid-idp-support-link\">
                     <a href=\"https://www.spid.gov.it\">Maggiori informazioni</a>
@@ -262,7 +262,7 @@
                     $button = "
                         <!-- AGID - SPID IDP BUTTON SMALL \"ENTRA CON SPID\" * begin * -->
                         <a href=\"#\" class=\"italia-it-button italia-it-button-size-s button-spid\" spid-idp-button=\"#spid-idp-button-small-get\" aria-haspopup=\"true\" aria-expanded=\"false\">
-                            <span class=\"italia-it-button-icon\"><img src=\"{{SERVICENAME}}/spid-sp-access-button/img/spid-ico-circle-bb.svg\" onerror=\"this.src='{{SERVICENAME}}/spid-sp-access-button/img/spid-ico-circle-bb.png'; this.onerror=null;\" alt=\"\" /></span>
+                            <span class=\"italia-it-button-icon\"><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-ico-circle-bb.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-ico-circle-bb.png'; this.onerror=null;\" alt=\"\" /></span>
                             <span class=\"italia-it-button-text\">Entra con SPID</span>
                         </a>
                         <div id=\"spid-idp-button-small-get\" class=\"spid-idp-button spid-idp-button-tip spid-idp-button-relative\">
@@ -278,7 +278,7 @@
                     $button = "
                         <!-- AGID - SPID IDP BUTTON MEDIUM \"ENTRA CON SPID\" * begin * -->
                         <a href=\"#\" class=\"italia-it-button italia-it-button-size-m button-spid\" spid-idp-button=\"#spid-idp-button-medium-get\" aria-haspopup=\"true\" aria-expanded=\"false\">
-                            <span class=\"italia-it-button-icon\"><img src=\"{{SERVICENAME}}/spid-sp-access-button/img/spid-ico-circle-bb.svg\" onerror=\"this.src='{{SERVICENAME}}/spid-sp-access-button/img/spid-ico-circle-bb.png'; this.onerror=null;\" alt=\"\" /></span>
+                            <span class=\"italia-it-button-icon\"><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-ico-circle-bb.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-ico-circle-bb.png'; this.onerror=null;\" alt=\"\" /></span>
                             <span class=\"italia-it-button-text\">Entra con SPID</span>
                         </a>
                         <div id=\"spid-idp-button-medium-get\" class=\"spid-idp-button spid-idp-button-tip spid-idp-button-relative\">
@@ -294,7 +294,7 @@
                     $button = "
                         <!-- AGID - SPID IDP BUTTON LARGE \"ENTRA CON SPID\" * begin * -->
                         <a href=\"#\" class=\"italia-it-button italia-it-button-size-l button-spid\" spid-idp-button=\"#spid-idp-button-large-get\" aria-haspopup=\"true\" aria-expanded=\"false\">
-                            <span class=\"italia-it-button-icon\"><img src=\"{{SERVICENAME}}/spid-sp-access-button/img/spid-ico-circle-bb.svg\" onerror=\"this.src='{{SERVICENAME}}/spid-sp-access-button/img/spid-ico-circle-bb.png'; this.onerror=null;\" alt=\"\" /></span>
+                            <span class=\"italia-it-button-icon\"><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-ico-circle-bb.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-ico-circle-bb.png'; this.onerror=null;\" alt=\"\" /></span>
                             <span class=\"italia-it-button-text\">Entra con SPID</span>
                         </a>
                         <div id=\"spid-idp-button-large-get\" class=\"spid-idp-button spid-idp-button-tip spid-idp-button-relative\">
@@ -310,7 +310,7 @@
                     $button = "
                         <!-- AGID - SPID IDP BUTTON XLARGE \"ENTRA CON SPID\" * begin * -->
                         <a href=\"#\" class=\"italia-it-button italia-it-button-size-xl button-spid\" spid-idp-button=\"#spid-idp-button-xlarge-get\" aria-haspopup=\"true\" aria-expanded=\"false\">
-                            <span class=\"italia-it-button-icon\"><img src=\"{{SERVICENAME}}/spid-sp-access-button/img/spid-ico-circle-bb.svg\" onerror=\"this.src='{{SERVICENAME}}/spid-sp-access-button/img/spid-ico-circle-bb.png'; this.onerror=null;\" alt=\"\" /></span>
+                            <span class=\"italia-it-button-icon\"><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-ico-circle-bb.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-ico-circle-bb.png'; this.onerror=null;\" alt=\"\" /></span>
                             <span class=\"italia-it-button-text\">Entra con SPID</span>
                         </a>
                         <div id=\"spid-idp-button-xlarge-get\" class=\"spid-idp-button spid-idp-button-tip spid-idp-button-relative\">
