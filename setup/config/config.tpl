@@ -337,9 +337,9 @@ $config = array(
      * Can be used to make the session cookie available to several domains.
      *
      * Example:
-     *  'session.cookie.domain' => '.example.org',
+     *  'session.cookie.domain' => '.example.org', {{SP_DOMAIN}}
      */
-    'session.cookie.domain' => {{SP_DOMAIN}},
+    'session.cookie.domain' => null,
 
     /*
      * Set the secure flag in the cookie.
