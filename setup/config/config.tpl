@@ -80,7 +80,7 @@ $config = array(
      */
     'auth.adminpassword' => {{ADMIN_PASSWORD}},
     'admin.protectindexpage' => true,
-    'admin.protectmetadata' => true,
+    'admin.protectmetadata' => false,
 
     /**
      * This is a secret salt used by SimpleSAMLphp when it needs to generate a secure hash
