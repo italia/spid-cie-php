@@ -23,8 +23,9 @@ Durante il processo di setup lo script richiede l'inserimento delle seguenti inf
 * Informazioni del service provider da inserire nel certificato di firma in accordo con quanto previsto dall'[Avviso SPID n°29 v3](https://www.agid.gov.it/sites/default/files/repository_files/spid-avviso-n29v3-specifiche_sp_pubblici_e_privati.pdf) 
 * AttributeConsumingServiceIndex da richiedere all'IDP
 * Attributi richiesti da inserire nel metadata
-* se inserire nella configurazione i dati dell'IDP di test (https://idptest.spid.gov.it)
-* se inserire nella configurazione i dati dell'IDP di validazione (https://validator.spid.gov.it)
+* se inserire nella configurazione i dati dell'IDP SPID Demo (https://demo.spid.gov.it)
+* se inserire nella configurazione i dati dell'IDP SPID Demo in modalità Validator (https://demo.spid.gov.it/validator)
+* se inserire nella configurazione i dati dell'IDP per la validazione di AgID (https://validator.spid.gov.it)
 * se copiare nella root del webserver i file di esempio per l'integrazione del bottone
 * se copiare nella root del webserver i file di esempio per l'utilizzo come proxy
 * i dati per la generazione del certificato X.509 per il service provider
