@@ -492,12 +492,30 @@ class Setup {
             }
         }
 
+        /* DEPRECATED
         if (!isset($config['addTestIDP'])) {
             echo "Add configuration for Public Test IDP idp.spid.gov.it ? (" .
             $colors->getColoredString("Y", "green") . "): ";
             $config['addTestIDP'] = readline();
             $config['addTestIDP'] = ($config['addTestIDP'] != null &&
                     strtoupper($config['addTestIDP']) == "N") ? false : true;
+        }
+        */
+
+        if (!isset($config['addDemoIDP'])) {
+            echo "Add configuration for Public Demo IDP demo.spid.gov.it ? (" .
+            $colors->getColoredString("Y", "green") . "): ";
+            $config['addDemoIDP'] = readline();
+            $config['addDemoIDP'] = ($config['addDemoIDP'] != null &&
+                    strtoupper($config['addDemoIDP']) == "N") ? false : true;
+        }
+
+        if (!isset($config['addDemoValidatorIDP'])) {
+            echo "Add configuration for Public Demo IDP demo.spid.gov.it (Validator mode) ? (" .
+            $colors->getColoredString("Y", "green") . "): ";
+            $config['addDemoValidatorIDP'] = readline();
+            $config['addDemoValidatorIDP'] = ($config['addDemoValidatorIDP'] != null &&
+                    strtoupper($config['addDemoValidatorIDP']) == "N") ? false : true;
         }
 
         if (!isset($config['addLocalTestIDP'])) {
@@ -623,7 +641,9 @@ class Setup {
         echo $colors->getColoredString("\nOrganization URL: " . $config['spOrganizationURL'], "yellow");
         echo $colors->getColoredString("\nAttribute Consuming Service Index: " . $config['acsIndex'], "yellow");
         echo $colors->getColoredString("\nAdd configuration for Test IDP idp.spid.gov.it: ", "yellow");
-        echo $colors->getColoredString(($config['addTestIDP']) ? "Y" : "N", "yellow");
+        //echo $colors->getColoredString(($config['addTestIDP']) ? "Y" : "N", "yellow");
+        echo $colors->getColoredString(($config['addDemoIDP']) ? "Y" : "N", "yellow");
+        echo $colors->getColoredString(($config['addDemoValidatorIDP']) ? "Y" : "N", "yellow");
         echo $colors->getColoredString("\nAdd configuration for local test IDP: ", "yellow");
         echo $colors->getColoredString(($config['addLocalTestIDP'] != "") ? $config['addLocalTestIDP'] : "N", "yellow");
         echo $colors->getColoredString("\nAdd configuration for AgID Validator validator.spid.gov.it: ", "yellow");
@@ -992,6 +1012,7 @@ class Setup {
         $IDPMetadata = "";
         $IDPEntities = "";
 
+        /* DEPRECATED
         // add configuration for public test IDP
         if ($config['addTestIDP']) {
             echo $colors->getColoredString("\nWrite metadata for public test IDP... ", "white");
@@ -1000,6 +1021,29 @@ class Setup {
             $template_idp_test = str_replace(array_keys($vars), $vars, $template_idp_test);
             $IDPMetadata .= "\n\n" . $template_idp_test;
             $IDPEntities .= "\n\t\t\t\$this->idps['TEST'] = 'https://idptest.spid.gov.it';";
+            echo $colors->getColoredString("OK", "green");
+        }
+        */
+
+        // add configuration for public demo IDP
+        if ($config['addDemoIDP']) {
+            echo $colors->getColoredString("\nWrite metadata for public Demo IDP... ", "white");
+            $vars = array("{{ENTITYID}}" => "'" . $config['entityID'] . "'");
+            $template_idp_demo = file_get_contents($_installDir . '/setup/metadata/saml20-idp-remote-demo.ptpl', true);
+            $template_idp_demo = str_replace(array_keys($vars), $vars, $template_idp_demo);
+            $IDPMetadata .= "\n\n" . $template_idp_demo;
+            $IDPEntities .= "\n\t\t\t\$this->idps['DEMO'] = 'https://demo.spid.gov.it';";
+            echo $colors->getColoredString("OK", "green");
+        }
+
+        // add configuration for public demo IDP (Validator mode)
+        if ($config['addDemoValidatorIDP']) {
+            echo $colors->getColoredString("\nWrite metadata for public Demo IDP (Validator mode)... ", "white");
+            $vars = array("{{ENTITYID}}" => "'" . $config['entityID'] . "'");
+            $template_idp_demovalidator = file_get_contents($_installDir . '/setup/metadata/saml20-idp-remote-demovalidator.ptpl', true);
+            $template_idp_demovalidator = str_replace(array_keys($vars), $vars, $template_idp_demovalidator);
+            $IDPMetadata .= "\n\n" . $template_idp_demovalidator;
+            $IDPEntities .= "\n\t\t\t\$this->idps['DEMOVALIDATOR'] = 'https://demo.spid.gov.it/validator';";
             echo $colors->getColoredString("OK", "green");
         }
 
