@@ -190,27 +190,8 @@
             ";            
         }
 
-        public function insertSPIDButton($size) {
-            $button_test = "";
-            if(array_key_exists('TEST', $this->idps)) {
-                $button_test = "
-                    <li class=\"spid-idp-button-link\" data-idp=\"testid\">
-                        <a href=\"?idp=TEST\">IDP TEST</a>
-                    </li>
-                ";
-            }
-            $button_local = "";
-            if(array_key_exists('LOCAL', $this->idps)) {
-                $button_local = "
-                    <li class=\"spid-idp-button-link\" data-idp=\"localid\">
-                        <a href=\"?idp=LOCAL\">IDP LOCAL</a>
-                    </li>
-                ";
-            }
-        
-            $button_li = 
-                $button_test.
-                $button_local."
+        public function insertSPIDButton($size) {        
+            $button_li = "
                 <li class=\"spid-idp-button-link\" data-idp=\"arubaid\">
                     <a href=\"?idp=ArubaPEC S.p.A.\"><span class=\"spid-sr-only\">Aruba ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.png'; this.onerror=null;\" alt=\"Aruba ID\" /></a>
                 </li>
@@ -248,7 +229,25 @@
                     <a href=\"https://www.spid.gov.it/serve-aiuto\">Serve aiuto?</a>
                 </li>
             ";
-            
+
+
+            $button_test = "";
+            if(array_key_exists('TEST', $this->idps)) {
+                $button_test = "
+                    <li class=\"spid-idp-button-link\" data-idp=\"testid\">
+                        <a href=\"?idp=TEST\">IDP TEST</a>
+                    </li>
+                ";
+            }
+            $button_local = "";
+            if(array_key_exists('LOCAL', $this->idps)) {
+                $button_local = "
+                    <li class=\"spid-idp-button-link\" data-idp=\"localid\">
+                        <a href=\"?idp=LOCAL\">IDP LOCAL</a>
+                    </li>
+                ";
+            }
+
             if(array_key_exists('VALIDATOR', $this->idps)) {
                 $button_li .= "
                     <li class=\"spid-idp-support-link\">
@@ -256,6 +255,31 @@
                     </li>
                 ";
             }
+
+            if(array_key_exists('DEMO', $this->idps)) {
+                $button_li .= "
+                    <li class=\"spid-idp-support-link\">
+                        <a href=\"?idp=DEMO\">SPID Demo</a>
+                    </li>
+                ";
+            }
+
+            if(array_key_exists('DEMOVALIDATOR', $this->idps)) {
+                $button_li .= "
+                    <li class=\"spid-idp-support-link\">
+                        <a href=\"?idp=DEMOVALIDATOR\">SPID Demo (Validator mode)</a>
+                    </li>
+                ";
+            }
+
+            if(array_key_exists('TEST', $this->idps)) {
+                $button_li .= "
+                    <li class=\"spid-idp-support-link\">
+                        <a href=\"?idp=TEST\">SPID Test</a>
+                    </li>
+                ";
+            }
+
 
             switch($size) {
                 case "S":

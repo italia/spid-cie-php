@@ -640,9 +640,11 @@ class Setup {
         echo $colors->getColoredString("\nOrganization Display Name: " . $config['spOrganizationDisplayName'], "yellow");
         echo $colors->getColoredString("\nOrganization URL: " . $config['spOrganizationURL'], "yellow");
         echo $colors->getColoredString("\nAttribute Consuming Service Index: " . $config['acsIndex'], "yellow");
-        echo $colors->getColoredString("\nAdd configuration for Test IDP idp.spid.gov.it: ", "yellow");
+        //echo $colors->getColoredString("\nAdd configuration for Test IDP idp.spid.gov.it: ", "yellow");
         //echo $colors->getColoredString(($config['addTestIDP']) ? "Y" : "N", "yellow");
+        echo $colors->getColoredString("\nAdd configuration for SPID Demo (demo.spid.gov.it): ", "yellow");
         echo $colors->getColoredString(($config['addDemoIDP']) ? "Y" : "N", "yellow");
+        echo $colors->getColoredString("\nAdd configuration for SPID Demo Validator (demo.spid.gov.it/validator): ", "yellow");
         echo $colors->getColoredString(($config['addDemoValidatorIDP']) ? "Y" : "N", "yellow");
         echo $colors->getColoredString("\nAdd configuration for local test IDP: ", "yellow");
         echo $colors->getColoredString(($config['addLocalTestIDP'] != "") ? $config['addLocalTestIDP'] : "N", "yellow");
