@@ -1268,6 +1268,31 @@ class Setup {
                 $serviceName = $_serviceName;
             }
         }
+		
+		if (file_exists("{$installDir}/vendor/simplesamlphp/simplesamlphp/log/simplesamlphp.log")) {
+			$scelta = "NOT_SET";
+			$logbackupdirname = "log-backup";
+			while($scelta != "Y" && $scelta != "N"){ 
+				echo "\nBackup simplesamlphp.log file in {$logbackupdirname} folder? [" .
+					$colors->getColoredString("Y", "green") . "/n]: ";
+					$scelta = strtoupper(readline());
+					if ($scelta == null || $scelta == "") { 
+						$scelta ="Y";
+					}
+			}
+			if($scelta == "Y"){
+				if (!file_exists("{$installDir}/{$logbackupdirname}")) {
+					echo $colors->getColoredString("\nLog backup directory not found. Making directory [" .
+							"{$installDir}/{$logbackupdirname}]... ", "white");
+					$filesystem->mkdir("{$installDir}/{$logbackupdirname}");
+					echo $colors->getColoredString("OK", "green");
+				}	
+				$now = new \DateTime("now");
+				echo $colors->getColoredString("\nMove simplesaml log into {$logbackupdirname} directory... ", "white");
+				$filesystem->rename("{$installDir}/vendor/simplesamlphp/simplesamlphp/log/simplesamlphp.log", "{$installDir}/{$logbackupdirname}/simplesamlphp-{$now->format( 'Ymd-His' )}.log");
+				echo $colors->getColoredString("OK", "green");
+			}
+		}
 
         echo $colors->getColoredString("\nRemove vendor directory [" .
                 $installDir . "]... ", "white");
