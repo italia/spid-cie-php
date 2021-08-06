@@ -928,12 +928,7 @@ class Setup {
             echo $colors->getColoredString("\nWrite proxy example files to www (proxy-spid.php, proxy-sample.php)... ", "white");
 
             // configuration for proxy
-            $vars = array(
-                "{{SDKHOME}}" => $config['installDir'],
-                "{{PROXY_CLIENT_CONFIG}}" => var_export($config['proxyConfig'], true),
-                "{{PROXY_CLIENT_ID}}" => array_keys($config['proxyConfig'])[0],
-                "{{PROXY_REDIRECT_URI}}" => $config['proxyConfig'][array_keys($config['proxyConfig'])[0]][0]
-            );
+            $vars = self::proxyVariables($config);
 
             $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-spid.tpl', true);
             $customized = str_replace(array_keys($vars), $vars, $template);
@@ -1218,6 +1213,14 @@ class Setup {
         $template = file_get_contents($config['installDir'] . '/setup/sdk/spid-php.tpl', true);
         $customized = str_replace(array_keys($vars), $vars, $template);
         file_put_contents($config['installDir'] . "/spid-php.php", $customized);
+
+        if ($config['addProxyExample']) {
+            $vars = array_merge($vars, self::proxyVariables($config));
+            $template_proxy = file_get_contents($config['installDir'] . '/setup/sdk/proxy-spid-php.tpl', true);
+            $customized_proxy = str_replace(array_keys($vars), $vars, $template_proxy);
+            file_put_contents($config['installDir'] . "/proxy-spid-php.php", $customized_proxy);
+        }
+
         echo $colors->getColoredString("OK", "green");
         echo "\n\n";
     }
@@ -1315,6 +1318,20 @@ class Setup {
         echo $colors->getColoredString("\nExample files NOT removed... ", "white");
 
         echo $colors->getColoredString("\n\nSPID PHP SDK successfully removed\n\n", "green");
+    }
+
+    /**
+     * @param $config
+     * @return array
+     */
+    private static function proxyVariables($config): array
+    {
+        return array(
+            "{{SDKHOME}}" => $config['installDir'],
+            "{{PROXY_CLIENT_CONFIG}}" => var_export($config['proxyConfig'], true),
+            "{{PROXY_CLIENT_ID}}" => array_keys($config['proxyConfig'])[0],
+            "{{PROXY_REDIRECT_URI}}" => $config['proxyConfig'][array_keys($config['proxyConfig'])[0]][0]
+        );
     }
 
 }

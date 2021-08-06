@@ -1,6 +1,6 @@
 <?php
-    require_once("{{SDKHOME}}/spid-php.php");
-    $spidsdk = new SPID_PHP();
+    require_once("{{SDKHOME}}/proxy-spid-php.php");
+    $spidsdk = new PROXY_SPID_PHP();
 
     $client = {{PROXY_CLIENT_CONFIG}};
 
