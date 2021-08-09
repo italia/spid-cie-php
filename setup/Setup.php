@@ -66,6 +66,9 @@ class Setup {
         $config = file_exists("spid-php-setup.json") ?
                 json_decode(file_get_contents("spid-php-setup.json"), true) : array();
 
+        $proxy_config = file_exists("spid-php-proxy.json") ?
+            json_decode(file_get_contents("spid-php-proxy.json"), true) : array();
+
         if (!isset($config['acsCustomLocation'])) {
             $config['acsCustomLocation'] = $_acsCustomLocation;
         }
@@ -548,9 +551,6 @@ class Setup {
                     strtoupper($config['addProxyExample']) == "Y";
 
             if($config['addProxyExample']) {
-                $proxy_config = file_exists("spid-php-proxy.json") ?
-                    json_decode(file_get_contents("spid-php-proxy.json"), true) : array();
-
                 echo "Insert URL to register as redirect_uri: ";
                 $proxyRedirectURI = readline();
 
@@ -958,7 +958,7 @@ class Setup {
             echo $colors->getColoredString("\nWrite proxy example files to www (proxy-spid.php, proxy-sample.php)... ", "white");
 
             // configuration for proxy
-            $vars = self::proxyVariables($config);
+            $vars = self::proxyVariables($config,$proxy_config);
 
             $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-spid.tpl', true);
             $customized = str_replace(array_keys($vars), $vars, $template);
@@ -1019,6 +1019,8 @@ class Setup {
         $_installDir = getcwd();
         $config = file_exists("spid-php-setup.json") ?
                 json_decode(file_get_contents("spid-php-setup.json"), true) : array();
+        $proxy_config = file_exists("spid-php-proxy.json") ?
+            json_decode(file_get_contents("spid-php-proxy.json"), true) : array();
         
         $arrContextOptions = array("ssl" => array(
                 "verify_peer" => false,
@@ -1245,7 +1247,7 @@ class Setup {
         file_put_contents($config['installDir'] . "/spid-php.php", $customized);
 
         if ($config['addProxyExample']) {
-            $vars = array_merge($vars, self::proxyVariables($config));
+            $vars = array_merge($vars, self::proxyVariables($config,$proxy_config));
             $template_proxy = file_get_contents($config['installDir'] . '/setup/sdk/proxy-spid-php.tpl', true);
             $customized_proxy = str_replace(array_keys($vars), $vars, $template_proxy);
             file_put_contents($config['installDir'] . "/proxy-spid-php.php", $customized_proxy);
@@ -1352,15 +1354,19 @@ class Setup {
 
     /**
      * @param $config
+     * @param $proxy_config
      * @return array
      */
-    private static function proxyVariables($config): array
+    private static function proxyVariables($config,$proxy_config): array
     {
         return array(
             "{{SDKHOME}}" => $config['installDir'],
-            "{{PROXY_CLIENT_CONFIG}}" => var_export($config['proxyConfig'], true),
-            "{{PROXY_CLIENT_ID}}" => array_keys($config['proxyConfig'])[0],
-            "{{PROXY_REDIRECT_URI}}" => $config['proxyConfig'][array_keys($config['proxyConfig'])[0]][0]
+            "{{PROXY_CLIENT_CONFIG}}" => var_export($proxy_config['clients'], true),
+            "{{PROXY_CLIENT_ID}}" => array_keys($proxy_config['clients'])[0],
+            "{{PROXY_REDIRECT_URI}}" => $proxy_config['clients'][array_keys($proxy_config['clients'])[0]][0],
+            "{{PROXY_SIGN_RESPONSE}}" => $proxy_config['signProxyResponse'],
+            "{{PROXY_ENCRYPT_RESPONSE}}" => $proxy_config['encryptProxyResponse'],
+            "{{PROXY_TOKEN_EXP}}" => $proxy_config['tokenExpTime']
         );
     }
 
