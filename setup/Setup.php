@@ -66,9 +66,6 @@ class Setup {
         $config = file_exists("spid-php-setup.json") ?
                 json_decode(file_get_contents("spid-php-setup.json"), true) : array();
 
-        $proxy_config = file_exists("spid-php-proxy.json") ?
-            json_decode(file_get_contents("spid-php-proxy.json"), true) : array();
-
         if (!isset($config['acsCustomLocation'])) {
             $config['acsCustomLocation'] = $_acsCustomLocation;
         }
@@ -559,15 +556,12 @@ class Setup {
                 $config['signProxyResponse'] = readline();
                 $config['signProxyResponse'] = $config['signProxyResponse'] != null &&
                     strtoupper($config['signProxyResponse']) == "Y";
-                $proxy_config['signProxyResponse'] = $config['signProxyResponse'];
 
                 echo "Encrypt proxy response ? (" .
                     $colors->getColoredString("N", "green") . "): ";
                 $config['encryptProxyResponse'] = readline();
                 $config['encryptProxyResponse'] = !(($config['encryptProxyResponse'] != null &&
                     strtoupper($config['addExamples']) == "N"));
-                $proxy_config['encryptProxyResponse'] = $config['encryptProxyResponse'];
-
 
                 $proxyClientID = uniqid();
                 echo "your client_id: " . $colors->getColoredString($proxyClientID, "red");
@@ -575,11 +569,6 @@ class Setup {
                 echo "\ngrab your client_id then press a key to continue";
                 readline();
                 $config['proxyConfig'] = [ $proxyClientID => [$proxyRedirectURI] ];
-                $proxy_config['clients'] = [ $proxyClientID => [$proxyRedirectURI] ];
-
-                $proxy_config['tokenExpTime'] = 1200; //20 minutes as default
-                //TODO @emre: shall we delete the file in case of uninstall?
-                file_put_contents("spid-php-proxy.json", json_encode($proxy_config));
             }
         }
 
@@ -806,6 +795,7 @@ class Setup {
         //echo $colors->getColoredString("\n\nReady to setup. Press a key to continue or CTRL-C to exit\n", "white");
         //readline();
 
+        self::saveProxyConfigurations($config);
         file_put_contents("spid-php-setup.json", json_encode($config));
 
         // set link to simplesamlphp
@@ -955,10 +945,10 @@ class Setup {
 
         // write proxy example files
         if ($config['addProxyExample']) {
-            echo $colors->getColoredString("\nWrite proxy example files to www (proxy-spid.php, proxy-sample.php)... ", "white");
+            echo $colors->getColoredString("\nWrite proxy example files to www (proxy-spid.php, proxy-sample.php, proxy-redirect.php, proxy-login-spid.php)... ", "white");
 
             // configuration for proxy
-            $vars = self::proxyVariables($config,$proxy_config);
+            $vars = self::proxyVariables($config);
 
             $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-spid.tpl', true);
             $customized = str_replace(array_keys($vars), $vars, $template);
@@ -967,6 +957,14 @@ class Setup {
             $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-sample.tpl', true);
             $customized = str_replace(array_keys($vars), $vars, $template);
             file_put_contents($config['wwwDir'] . "/proxy-sample.php", $customized);
+
+            $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-redirect.tpl', true);
+            $customized = str_replace(array_keys($vars), $vars, $template);
+            file_put_contents($config['wwwDir'] . "/proxy-redirect.php", $customized);
+
+            $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-login-spid.tpl', true);
+            $customized = str_replace(array_keys($vars), $vars, $template);
+            file_put_contents($config['wwwDir'] . "/proxy-login-spid.php", $customized);
 
             echo $colors->getColoredString("OK", "green");
         }
@@ -1019,8 +1017,6 @@ class Setup {
         $_installDir = getcwd();
         $config = file_exists("spid-php-setup.json") ?
                 json_decode(file_get_contents("spid-php-setup.json"), true) : array();
-        $proxy_config = file_exists("spid-php-proxy.json") ?
-            json_decode(file_get_contents("spid-php-proxy.json"), true) : array();
         
         $arrContextOptions = array("ssl" => array(
                 "verify_peer" => false,
@@ -1247,7 +1243,7 @@ class Setup {
         file_put_contents($config['installDir'] . "/spid-php.php", $customized);
 
         if ($config['addProxyExample']) {
-            $vars = array_merge($vars, self::proxyVariables($config,$proxy_config));
+            $vars = array_merge($vars, self::proxyVariables($config));
             $template_proxy = file_get_contents($config['installDir'] . '/setup/sdk/proxy-spid-php.tpl', true);
             $customized_proxy = str_replace(array_keys($vars), $vars, $template_proxy);
             file_put_contents($config['installDir'] . "/proxy-spid-php.php", $customized_proxy);
@@ -1354,20 +1350,31 @@ class Setup {
 
     /**
      * @param $config
-     * @param $proxy_config
      * @return array
      */
-    private static function proxyVariables($config,$proxy_config): array
+    private static function proxyVariables($config): array
     {
         return array(
             "{{SDKHOME}}" => $config['installDir'],
-            "{{PROXY_CLIENT_CONFIG}}" => var_export($proxy_config['clients'], true),
-            "{{PROXY_CLIENT_ID}}" => array_keys($proxy_config['clients'])[0],
-            "{{PROXY_REDIRECT_URI}}" => $proxy_config['clients'][array_keys($proxy_config['clients'])[0]][0],
-            "{{PROXY_SIGN_RESPONSE}}" => $proxy_config['signProxyResponse'],
-            "{{PROXY_ENCRYPT_RESPONSE}}" => $proxy_config['encryptProxyResponse'],
-            "{{PROXY_TOKEN_EXP}}" => $proxy_config['tokenExpTime']
+            "{{PROXY_CLIENT_CONFIG}}" => var_export($config['proxyConfig'], true),
+            "{{PROXY_CLIENT_ID}}" => array_keys($config['proxyConfig'])[0],
+            "{{PROXY_REDIRECT_URI}}" => $config['proxyConfig'][array_keys($config['proxyConfig'])[0]][0],
+            "{{PROXY_SIGN_RESPONSE}}" => $config['signProxyResponse'],
+            "{{PROXY_ENCRYPT_RESPONSE}}" => $config['encryptProxyResponse']
         );
+    }
+
+    private static function saveProxyConfigurations($config)
+    {
+        $proxy_config = file_exists("spid-php-proxy.json") ?
+            json_decode(file_get_contents("spid-php-proxy.json"), true) : array();
+
+        $proxy_config['clients'] = $config['proxyConfig'];
+        $proxy_config['signProxyResponse'] = $config['signProxyResponse'];
+        $proxy_config['encryptProxyResponse'] = $config['encryptProxyResponse'];
+        $proxy_config['tokenExpTime'] = 1200; //20 minutes as default
+        file_put_contents("spid-php-proxy.json", json_encode($proxy_config));
+
     }
 
 }

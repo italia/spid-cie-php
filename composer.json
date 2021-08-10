@@ -32,7 +32,8 @@
         "simplesamlphp/simplesamlphp": "1.19.0",
         "italia/spid-smart-button": "*",
         "italia/spid-sp-access-button": "*",
-        "symfony/filesystem": "5.2.6"
+        "symfony/filesystem": "5.2.6",
+      "ext-json": "*"
     },
     "scripts": {
         "post-update-cmd": [
