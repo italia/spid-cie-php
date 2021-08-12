@@ -1,9 +1,11 @@
 <?php
     require_once("{{SDKHOME}}/proxy-spid-php.php");
+    use Firebase\JWT\JWT;
+
+    const DEFAULT_TOKEN_EXPIRATION_TIME = 1200;
+
     $spidsdk = new PROXY_SPID_PHP();
-
     $client = {{PROXY_CLIENT_CONFIG}};
-
     $action         = $_GET['action'];
     $client_id      = $_GET['client_id'];
     $redirect_uri   = $_GET['redirect_uri'];
@@ -27,11 +29,17 @@
                     if($spidsdk->isAuthenticated() 
                     && isset($_GET['idp']) 
                     && $spidsdk->isIdP($_GET['idp'])) {
-            
-                        echo "<form name='spidauth' action='".$redirect_uri."' method='POST'>"; 
-                        
-                        foreach($spidsdk->getAttributes() as $attribute=>$value) {
-                            echo "<input type='hidden' name='".$attribute."' value='".$value[0]."' />";
+                        $proxy_config = file_exists("spid-php-proxy.json") ?
+                            json_decode(file_get_contents("spid-php-proxy.json"), true) : array();
+
+                        echo "<form name='spidauth' action='".$redirect_uri."' method='POST'>";
+
+                        if($proxy_config['encryptProxyResponse']) {
+                            echo "<input type='hidden' name='data' value='".authenticatedDataAsJWT($spidsdk->getAttributes(),$proxy_config,$redirect_uri)."' />";
+                        }else{
+                            foreach($spidsdk->getAttributes() as $attribute=>$value) {
+                                echo "<input type='hidden' name='".$attribute."' value='".$value[0]."' />";
+                            }
                         }
                         echo "<input type='hidden' name='state' value='".$state."' />";
                         echo "</form>";
@@ -73,6 +81,32 @@
     http_response_code(404);
     //echo "action not valid"; 
     die(); 
+
+    function authenticatedDataAsJWT($payload,$proxy_config,$redirect_uri): string
+    {
+        $privateKey = file_get_contents(__DIR__ . '/cert/spid-sp.pem', true);
+        //$publicKey = file_get_contents(__DIR__ . '/cert/spid-sp.crt', true);
+
+        $issuedAt   = new DateTimeImmutable();
+        $tokenExpTime = $proxy_config['tokenExpTime'] ?: DEFAULT_TOKEN_EXPIRATION_TIME;
+        $expire     = $issuedAt->modify("+".$tokenExpTime." seconds")->getTimestamp();      // Add 300 days for test purposes
+        $serverName = $proxy_config['spDomain'];
+
+        $data = [
+            'iss'  => $serverName,                              // Issuer - spDomain
+            'aud'  => $redirect_uri,                            // Audience - Redirect_uri
+            'iat'  => $issuedAt->getTimestamp(),                // Issued at: time when the token was generated
+            'nbf'  => $issuedAt->getTimestamp(),                // Not before
+            'exp'  => $expire,                                  // Expire
+            'data' => $payload,                                 // Authentication Data
+        ];
+
+        $jwt = JWT::encode($data, $privateKey, 'RS256');
+        //echo "Encoded: " . print_r($jwt, true) . "<br>";
+        //$decoded = JWT::decode($jwt, $publicKey, array('RS256'));
+        //echo "Decoded: " . print_r($decoded, true) . "<br>";
+        return $jwt;
+    }
 
 ?>
 

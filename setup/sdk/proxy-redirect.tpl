@@ -1,5 +1,5 @@
 <!--
-    PROXY SAMPLE
+    PROXY REDIRECT SAMPLE
     This is only a sample of redirect page when we utilize proxy.
 -->
 

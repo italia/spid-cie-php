@@ -1368,7 +1368,7 @@ class Setup {
     {
         $proxy_config = file_exists("spid-php-proxy.json") ?
             json_decode(file_get_contents("spid-php-proxy.json"), true) : array();
-
+        $proxy_config['spDomain'] = $config['spDomain'];
         $proxy_config['clients'] = $config['proxyConfig'];
         $proxy_config['signProxyResponse'] = $config['signProxyResponse'];
         $proxy_config['encryptProxyResponse'] = $config['encryptProxyResponse'];

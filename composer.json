@@ -33,7 +33,8 @@
         "italia/spid-smart-button": "*",
         "italia/spid-sp-access-button": "*",
         "symfony/filesystem": "5.2.6",
-      "ext-json": "*"
+        "firebase/php-jwt": "5.4.0",
+        "ext-json": "*"
     },
     "scripts": {
         "post-update-cmd": [
