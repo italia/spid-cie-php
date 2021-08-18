@@ -50,7 +50,7 @@ Se si è scelto di copiare i file di esempio come proxy, sarà possibile verific
 * php-xml
 * php-mbstring
 * Composer (https://getcomposer.org)
-* OpenSSL 
+* OpenSSL >= 1.1.1
 * OpenSSL aes-256-cbc Cipher Algorithm
 
 ## Installazione
