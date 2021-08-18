@@ -2,7 +2,13 @@
 
 require_once("spid-php.php");
 
-
+/**
+ * Class PROXY_SPID_PHP
+ * It extends the SPID_PHP to utilize SDK as proxy.
+ * URL to call proxy login is formed as follow:
+   /proxy-spid.php?client_id=<client_id>&action=login&redirect_uri=<redirect_uri>&idp=<idp>&state=<state>
+ * <client_id> and <redirect_uri> are configured during setup
+ */
 class PROXY_SPID_PHP extends SPID_PHP {
 
     public function __construct() {

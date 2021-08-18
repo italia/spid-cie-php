@@ -541,7 +541,7 @@ class Setup {
         }
 
         if (!isset($config['addProxyExample'])) {
-            echo "Add proxy example php files proxy-spid.php, proxy-sample.php to www ? (" .
+            echo "Add proxy example php files proxy-spid.php, proxy-redirect.php, proxy-login-spid.php to www ? (" .
             $colors->getColoredString("N", "green") . "): ";
             $config['addProxyExample'] = readline();
             $config['addProxyExample'] = $config['addProxyExample'] != null &&
@@ -945,7 +945,7 @@ class Setup {
 
         // write proxy example files
         if ($config['addProxyExample']) {
-            echo $colors->getColoredString("\nWrite proxy example files to www (proxy-spid.php, proxy-sample.php, proxy-redirect.php, proxy-login-spid.php)... ", "white");
+            echo $colors->getColoredString("\nWrite proxy example files to www (proxy-spid.php, proxy-redirect.php, proxy-login-spid.php)... ", "white");
 
             // configuration for proxy
             $vars = self::proxyVariables($config);
@@ -953,10 +953,6 @@ class Setup {
             $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-spid.tpl', true);
             $customized = str_replace(array_keys($vars), $vars, $template);
             file_put_contents($config['wwwDir'] . "/proxy-spid.php", $customized);
-
-            $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-sample.tpl', true);
-            $customized = str_replace(array_keys($vars), $vars, $template);
-            file_put_contents($config['wwwDir'] . "/proxy-sample.php", $customized);
 
             $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-redirect.tpl', true);
             $customized = str_replace(array_keys($vars), $vars, $template);
@@ -1003,7 +999,8 @@ class Setup {
         }
         if ($config['addProxyExample']) {
             $filesystem->chmod($config['wwwDir'] . "/proxy-spid.php", 0644);
-            $filesystem->chmod($config['wwwDir'] . "/proxy-sample.php", 0644);
+            $filesystem->chmod($config['wwwDir'] . "/proxy-redirect.php", 0644);
+            $filesystem->chmod($config['wwwDir'] . "/proxy-login-spid.php", 0644);
         }
         echo $colors->getColoredString("OK", "green");
 

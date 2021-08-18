@@ -1,6 +1,11 @@
 <!--
     PROXY REDIRECT SAMPLE
-    This is only a sample of redirect page when we utilize proxy.
+    This is only a sample of redirect page when we utilize the proxy.
+
+    URL to call proxy logout is formed as follow
+    /proxy-logout.php?client_id=<client_id>&action=logout
+
+    <client_id> is configured during setup
 -->
 
 <html>
