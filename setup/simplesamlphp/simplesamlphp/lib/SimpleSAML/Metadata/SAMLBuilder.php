@@ -431,9 +431,10 @@ class SAMLBuilder
         Configuration $metadata
     ): void {
         $attributes = $metadata->getArray('attributes', []);
+        $AttributeConsumingService = $metadata->getArray('AttributeConsumingService', []);
         $name = $metadata->getLocalizedString('name', null);
 
-        if ($name === null || count($attributes) == 0) {
+        if (count($attributes)==0 && count($AttributeConsumingService)==0) {
             // we cannot add an AttributeConsumingService without name and attributes
             return;
         }
@@ -444,34 +445,83 @@ class SAMLBuilder
          * Add an AttributeConsumingService element with information as name and description and list
          * of requested attributes
          */
-        $attributeconsumer = new AttributeConsumingService();
+        /* 
+         * spid-php updated
+         * only if it's not present AttributeConsumingService array
+         */
+        if(count($metadata->getArray('AttributeConsumingService'))==0) {
+            $attributeconsumer = new AttributeConsumingService();
 
-        $attributeconsumer->setIndex($metadata->getInteger('attributes.index', 0));
+            $attributeconsumer->setIndex($metadata->getInteger('attributes.index', 0));
 
-        if ($metadata->hasValue('attributes.isDefault')) {
-            $attributeconsumer->setIsDefault($metadata->getBoolean('attributes.isDefault', false));
+            if ($metadata->hasValue('attributes.isDefault')) {
+                $attributeconsumer->setIsDefault($metadata->getBoolean('attributes.isDefault', false));
+            }
+
+            $attributeconsumer->setServiceName($name);
+            $attributeconsumer->setServiceDescription($metadata->getLocalizedString('description', []));
+
+            $nameFormat = $metadata->getString('attributes.NameFormat', Constants::NAMEFORMAT_UNSPECIFIED);
+            foreach ($attributes as $friendlyName => $attribute) {
+                $t = new RequestedAttribute();
+                $t->setName($attribute);
+                if (!is_int($friendlyName)) {
+                    $t->setFriendlyName($friendlyName);
+                }
+                if ($nameFormat !== Constants::NAMEFORMAT_UNSPECIFIED) {
+                    $t->setNameFormat($nameFormat);
+                }
+                if (in_array($attribute, $attributesrequired, true)) {
+                    $t->setIsRequired(true);
+                }
+                $attributeconsumer->addRequestedAttribute($t);
+            }
+
+            $spDesc->addAttributeConsumingService($attributeconsumer);
+        } 
+
+
+
+        /*
+         * Add all AttributeConsumingService element with information as name and description and list
+         * of requested attributes
+         */
+        foreach($AttributeConsumingService as $index=>$atcs) {
+
+            $name = $atcs['name'];
+            $description = $atcs['description'];
+            $NameFormat = $atcs['NameFormat'];
+            $attributes = $atcs['attributes'];
+            $isDefault = $atcs['isDefault'];
+
+            $attributeconsumer = new AttributeConsumingService();
+            $attributeconsumer->setIndex($index);
+
+            if($isDefault) {
+                $attributeconsumer->setIsDefault($isDefault, false);
+            }
+
+            if($name) $attributeconsumer->setServiceName($name);
+            if($description) $attributeconsumer->setServiceDescription($description);
+            $nameFormat = $NameFormat;
+
+            foreach ($attributes as $friendlyName => $attribute) {
+                $t = new RequestedAttribute();
+                $t->setName($attribute);
+                if(!is_int($friendlyName)) {
+                    $t->setFriendlyName($friendlyName);
+                }
+                if($nameFormat !== Constants::NAMEFORMAT_UNSPECIFIED) {
+                    $t->setNameFormat($nameFormat);
+                }
+                if(in_array($attribute, $attributesrequired, true)) {
+                    $t->setIsRequired(true);
+                }
+                $attributeconsumer->addRequestedAttribute($t);
+            }
+    
+            $spDesc->addAttributeConsumingService($attributeconsumer);
         }
-
-        $attributeconsumer->setServiceName($name);
-        $attributeconsumer->setServiceDescription($metadata->getLocalizedString('description', []));
-
-        $nameFormat = $metadata->getString('attributes.NameFormat', Constants::NAMEFORMAT_UNSPECIFIED);
-        foreach ($attributes as $friendlyName => $attribute) {
-            $t = new RequestedAttribute();
-            $t->setName($attribute);
-            if (!is_int($friendlyName)) {
-                $t->setFriendlyName($friendlyName);
-            }
-            if ($nameFormat !== Constants::NAMEFORMAT_UNSPECIFIED) {
-                $t->setNameFormat($nameFormat);
-            }
-            if (in_array($attribute, $attributesrequired, true)) {
-                $t->setIsRequired(true);
-            }
-            $attributeconsumer->addRequestedAttribute($t);
-        }
-
-        $spDesc->addAttributeConsumingService($attributeconsumer);
     }
 
 
