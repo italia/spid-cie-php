@@ -449,7 +449,7 @@ class SAMLBuilder
          * spid-php updated
          * only if it's not present AttributeConsumingService array
          */
-        if(count($metadata->getArray('AttributeConsumingService'))==0) {
+        if(!$AttributeConsumingService || count($AttributeConsumingService)==0) {
             $attributeconsumer = new AttributeConsumingService();
 
             $attributeconsumer->setIndex($metadata->getInteger('attributes.index', 0));
