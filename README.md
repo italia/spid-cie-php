@@ -46,7 +46,7 @@ Se si è scelto di copiare i file di esempio come proxy, sarà possibile verific
 
 ## Requisiti
 * Web server
-* php >= 7.2.5
+* php >= 7.2.5 < 8.0
 * php-xml
 * php-mbstring
 * Composer (https://getcomposer.org)

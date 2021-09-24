@@ -6,3 +6,4 @@ spid-php.php
 spid-php-setup*.json
 spid-php-openssl.cnf
 .idea
+log-backup
