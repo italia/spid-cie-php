@@ -32,7 +32,9 @@
         "simplesamlphp/simplesamlphp": "1.19.0",
         "italia/spid-smart-button": "*",
         "italia/spid-sp-access-button": "*",
-        "symfony/filesystem": "5.2.6"
+        "symfony/filesystem": "5.2.6",
+        "firebase/php-jwt": "5.4.0",
+        "ext-json": "*"
     },
     "scripts": {
         "post-update-cmd": [
