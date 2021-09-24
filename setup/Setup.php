@@ -795,7 +795,10 @@ class Setup {
         //echo $colors->getColoredString("\n\nReady to setup. Press a key to continue or CTRL-C to exit\n", "white");
         //readline();
 
-        self::saveProxyConfigurations($config);
+        if($config['addProxyExample']) {
+            self::saveProxyConfigurations($config);
+        }
+        
         file_put_contents("spid-php-setup.json", json_encode($config));
 
         // set link to simplesamlphp
@@ -1349,8 +1352,7 @@ class Setup {
      * @param $config
      * @return array
      */
-    private static function proxyVariables($config): array
-    {
+    private static function proxyVariables($config): array {
         return array(
             "{{SDKHOME}}" => $config['installDir'],
             "{{PROXY_CLIENT_CONFIG}}" => var_export($config['proxyConfig'], true),
@@ -1361,8 +1363,7 @@ class Setup {
         );
     }
 
-    private static function saveProxyConfigurations($config)
-    {
+    private static function saveProxyConfigurations($config) {
         $proxy_config = file_exists("spid-php-proxy.json") ?
             json_decode(file_get_contents("spid-php-proxy.json"), true) : array();
         $proxy_config['spDomain'] = $config['spDomain'];
