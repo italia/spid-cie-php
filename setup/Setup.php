@@ -554,14 +554,14 @@ class Setup {
                 echo "Sign proxy response ? (" .
                     $colors->getColoredString("Y", "green") . "): ";
                 $config['signProxyResponse'] = readline();
-                $config['signProxyResponse'] = $config['signProxyResponse'] != null &&
-                    strtoupper($config['signProxyResponse']) == "Y";
+                $config['signProxyResponse'] = ($config['signProxyResponse'] != null &&
+                    strtoupper($config['signProxyResponse']) == "N") ? false : true;
 
                 echo "Encrypt proxy response ? (" .
                     $colors->getColoredString("N", "green") . "): ";
                 $config['encryptProxyResponse'] = readline();
-                $config['encryptProxyResponse'] = !(($config['encryptProxyResponse'] != null &&
-                    strtoupper($config['addExamples']) == "N"));
+                $config['encryptProxyResponse'] = ($config['encryptProxyResponse'] != null &&
+                    strtoupper($config['encryptProxyResponse']) == "Y") ? true : false;
 
                 $proxyClientID = uniqid();
                 echo "your client_id: " . $colors->getColoredString($proxyClientID, "red");
@@ -798,7 +798,7 @@ class Setup {
         if($config['addProxyExample']) {
             self::saveProxyConfigurations($config);
         }
-        
+
         file_put_contents("spid-php-setup.json", json_encode($config));
 
         // set link to simplesamlphp
