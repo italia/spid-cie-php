@@ -33,8 +33,11 @@
         "italia/spid-smart-button": "*",
         "italia/spid-sp-access-button": "*",
         "symfony/filesystem": "5.2.6",
-        "firebase/php-jwt": "5.4.0",
-        "ext-json": "*"
+        "web-token/jwt-core": "2.2.11",
+        "web-token/jwt-key-mgmt": "2.2.11",
+        "web-token/jwt-signature": "2.2.11",
+        "web-token/jwt-encryption": "2.2.11",
+        "web-token/jwt-signature-algorithm-rsa": "2.2.11"
     },
     "scripts": {
         "post-update-cmd": [
