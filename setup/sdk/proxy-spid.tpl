@@ -2,10 +2,13 @@
     require_once("{{SDKHOME}}/proxy-spid-php.php");
     use Firebase\JWT\JWT;
 
+    $proxy_config_json = "{{SDKHOME}}/spid-php-proxy.json";
+    $proxy_config = file_exists($proxy_config_json)? json_decode(file_get_contents($proxy_config_json), true) : array();
+
     const DEFAULT_TOKEN_EXPIRATION_TIME = 1200;
 
-    $spidsdk = new PROXY_SPID_PHP();
-    $client = {{PROXY_CLIENT_CONFIG}};
+    $spidsdk        = new SPID_PHP();
+    $clients        = $proxy_config['clients'];
     $action         = $_GET['action'];
     $client_id      = $_GET['client_id'];
     $redirect_uri   = $_GET['redirect_uri'];
@@ -23,20 +26,18 @@
                 die(); 
             }
 
-            if(in_array($client_id, array_keys($client))) {
-                if(in_array($redirect_uri, $client[$client_id])) {
+            if(in_array($client_id, array_keys($clients))) {
+                if(in_array($redirect_uri, $clients[$client_id])) {
 
                     if($spidsdk->isAuthenticated() 
                     && isset($_GET['idp']) 
                     && $spidsdk->isIdP($_GET['idp'])) {
-                        $proxy_config = file_exists("spid-php-proxy.json") ?
-                            json_decode(file_get_contents("spid-php-proxy.json"), true) : array();
 
                         echo "<form name='spidauth' action='".$redirect_uri."' method='POST'>";
 
                         if($proxy_config['encryptProxyResponse']) {
                             echo "<input type='hidden' name='data' value='".authenticatedDataAsJWT($spidsdk->getAttributes(),$proxy_config,$redirect_uri)."' />";
-                        }else{
+                        } else {
                             foreach($spidsdk->getAttributes() as $attribute=>$value) {
                                 echo "<input type='hidden' name='".$attribute."' value='".$value[0]."' />";
                             }
@@ -66,12 +67,11 @@
         break;
 
         case "logout":
-
             if($spidsdk->isAuthenticated()) {
                 $spidsdk->logout();
                 die();
             } else {
-                header("location: " . $client[$client_id][0]);
+                header("location: " . $clients[$client_id][0]);
                 die();
             }
 
@@ -82,8 +82,7 @@
     //echo "action not valid"; 
     die(); 
 
-    function authenticatedDataAsJWT($payload,$proxy_config,$redirect_uri): string
-    {
+    function authenticatedDataAsJWT($payload,$proxy_config,$redirect_uri): string {
         $privateKey = file_get_contents(__DIR__ . '/cert/spid-sp.pem', true);
         //$publicKey = file_get_contents(__DIR__ . '/cert/spid-sp.crt', true);
 

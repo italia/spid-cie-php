@@ -531,34 +531,42 @@ class Setup {
         }
 
         if (!isset($config['addProxyExample'])) {
-            echo "Add proxy example php files proxy-spid.php, proxy-redirect.php, proxy-login-spid.php to www ? (" .
+            echo "Add proxy example php files proxy-spid.php, proxy-sample.php, proxy-login-spid.php to www ? (" .
             $colors->getColoredString("N", "green") . "): ";
             $config['addProxyExample'] = readline();
             $config['addProxyExample'] = $config['addProxyExample'] != null &&
                     strtoupper($config['addProxyExample']) == "Y";
 
             if($config['addProxyExample']) {
-                echo "Insert URL to register as redirect_uri: ";
+                echo "Insert URL to register as redirect_uri (/proxy-sample.php): ";
                 $proxyRedirectURI = readline();
+                $proxyRedirectURI = ($proxyRedirectURI == null || $proxyRedirectURI == '')? 
+                    '/proxy-sample.php' : $proxyRedirectURI;
 
                 echo "Sign proxy response ? (" .
                     $colors->getColoredString("Y", "green") . "): ";
-                $config['signProxyResponse'] = readline();
-                $config['signProxyResponse'] = ($config['signProxyResponse'] != null &&
-                    strtoupper($config['signProxyResponse']) == "N") ? false : true;
+                $signProxyResponse = readline();
+                $signProxyResponse = ($signProxyResponse != null &&
+                    strtoupper($signProxyResponse) == "N") ? false : true;
 
                 echo "Encrypt proxy response ? (" .
                     $colors->getColoredString("N", "green") . "): ";
-                $config['encryptProxyResponse'] = readline();
-                $config['encryptProxyResponse'] = ($config['encryptProxyResponse'] != null &&
-                    strtoupper($config['encryptProxyResponse']) == "Y") ? true : false;
+                $encryptProxyResponse = readline();
+                $encryptProxyResponse = ($encryptProxyResponse != null &&
+                    strtoupper($encryptProxyResponse) == "Y") ? true : false;
 
                 $proxyClientID = uniqid();
                 echo "your client_id: " . $colors->getColoredString($proxyClientID, "red");
                 echo "\n" . $colors->getColoredString("remember to configure client_id, redirect_uri and idp on button link", "green");
                 echo "\ngrab your client_id then press a key to continue";
                 readline();
-                $config['proxyConfig'] = [ $proxyClientID => [$proxyRedirectURI] ];
+                $config['proxyConfig'] = array(
+                    'clients'=> array(
+                        $proxyClientID => [$proxyRedirectURI]
+                    ),
+                    'signProxyResponse'=> $signProxyResponse,
+                    'encryptProxyResponse'=> $encryptProxyResponse
+                );
             }
         }
 
@@ -657,9 +665,9 @@ class Setup {
         echo $colors->getColoredString(($config['addProxyExample']) ? "Y" : "N", "yellow");
         if($config['addProxyExample']) {
             echo $colors->getColoredString("\nSign proxy response: ", "yellow");
-            echo $colors->getColoredString(($config['signProxyResponse']) ? "Y" : "N", "yellow");
+            echo $colors->getColoredString(($config['proxyConfig']['signProxyResponse']) ? "Y" : "N", "yellow");
             echo $colors->getColoredString("\nEncrypt proxy response: ", "yellow");
-            echo $colors->getColoredString(($config['encryptProxyResponse']) ? "Y" : "N", "yellow");
+            echo $colors->getColoredString(($config['proxyConfig']['encryptProxyResponse']) ? "Y" : "N", "yellow");
         }
         //echo $colors->getColoredString("\nUse SPID smart button: ", "yellow");
         //echo $colors->getColoredString(($config['useSmartButton'])? "Y":"N", "yellow");
@@ -936,7 +944,7 @@ class Setup {
 
         // write proxy example files
         if ($config['addProxyExample']) {
-            echo $colors->getColoredString("\nWrite proxy example files to www (proxy-spid.php, proxy-redirect.php, proxy-login-spid.php)... ", "white");
+            echo $colors->getColoredString("\nWrite proxy example files to www (proxy-spid.php, proxy-sample.php, proxy-login-spid.php)... ", "white");
 
             // configuration for proxy
             $vars = self::proxyVariables($config);
@@ -945,9 +953,9 @@ class Setup {
             $customized = str_replace(array_keys($vars), $vars, $template);
             file_put_contents($config['wwwDir'] . "/proxy-spid.php", $customized);
 
-            $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-redirect.tpl', true);
+            $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-sample.tpl', true);
             $customized = str_replace(array_keys($vars), $vars, $template);
-            file_put_contents($config['wwwDir'] . "/proxy-redirect.php", $customized);
+            file_put_contents($config['wwwDir'] . "/proxy-sample.php", $customized);
 
             $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-login-spid.tpl', true);
             $customized = str_replace(array_keys($vars), $vars, $template);
@@ -990,7 +998,7 @@ class Setup {
         }
         if ($config['addProxyExample']) {
             $filesystem->chmod($config['wwwDir'] . "/proxy-spid.php", 0644);
-            $filesystem->chmod($config['wwwDir'] . "/proxy-redirect.php", 0644);
+            $filesystem->chmod($config['wwwDir'] . "/proxy-sample.php", 0644);
             $filesystem->chmod($config['wwwDir'] . "/proxy-login-spid.php", 0644);
         }
         echo $colors->getColoredString("OK", "green");
@@ -1331,10 +1339,10 @@ class Setup {
         return array(
             "{{SDKHOME}}" => $config['installDir'],
             "{{PROXY_CLIENT_CONFIG}}" => var_export($config['proxyConfig'], true),
-            "{{PROXY_CLIENT_ID}}" => array_keys($config['proxyConfig'])[0],
-            "{{PROXY_REDIRECT_URI}}" => $config['proxyConfig'][array_keys($config['proxyConfig'])[0]][0],
-            "{{PROXY_SIGN_RESPONSE}}" => $config['signProxyResponse'],
-            "{{PROXY_ENCRYPT_RESPONSE}}" => $config['encryptProxyResponse']
+            "{{PROXY_CLIENT_ID}}" => array_keys($config['proxyConfig']['clients'])[0],
+            "{{PROXY_REDIRECT_URI}}" => $config['proxyConfig']['clients'][array_keys($config['proxyConfig']['clients'])[0]][0],
+            "{{PROXY_SIGN_RESPONSE}}" => $config['proxyConfig']['signProxyResponse'],
+            "{{PROXY_ENCRYPT_RESPONSE}}" => $config['proxyConfig']['encryptProxyResponse']
         );
     }
 
@@ -1342,9 +1350,13 @@ class Setup {
         $proxy_config = file_exists("spid-php-proxy.json") ?
             json_decode(file_get_contents("spid-php-proxy.json"), true) : array();
         $proxy_config['spDomain'] = $config['spDomain'];
-        $proxy_config['clients'] = $config['proxyConfig'];
-        $proxy_config['signProxyResponse'] = $config['signProxyResponse'];
-        $proxy_config['encryptProxyResponse'] = $config['encryptProxyResponse'];
+
+        $configProxyClientID = array_keys($config['proxyConfig']['clients'])[0];
+        $configProxyClientValue = $config['proxyConfig']['clients'][$configProxyClientID];
+        $proxy_config['clients'][$configProxyClientID] = $configProxyClientValue;
+
+        $proxy_config['signProxyResponse'] = $config['proxyConfig']['signProxyResponse'];
+        $proxy_config['encryptProxyResponse'] = $config['proxyConfig']['encryptProxyResponse'];
         $proxy_config['tokenExpTime'] = 1200; //20 minutes as default
         file_put_contents("spid-php-proxy.json", json_encode($proxy_config));
 

@@ -1,7 +1,7 @@
 <?php 
 
     require_once("{{SDKHOME}}/proxy-spid-php.php");
-    $spidsdk = new PROXY_SPID_PHP();
+    $spidsdk = new PROXY_SPID_PHP('{{PROXY_CLIENT_ID}}', '{{PROXY_REDIRECT_URI}}');
 
     //$spidsdk->setPurpose("P");
 
