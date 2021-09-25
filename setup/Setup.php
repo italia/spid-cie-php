@@ -1323,6 +1323,10 @@ class Setup {
                 $installDir . "/spid-php.php]... ", "white");
         $filesystem->remove($installDir . "/spid-php.php");
         echo $colors->getColoredString("OK", "green");
+        echo $colors->getColoredString("\nRemove sdk proxy file [" .
+        $installDir . "/proxy-spid-php.php]... ", "white");
+        $filesystem->remove($installDir . "/proxy-spid-php.php");
+        echo $colors->getColoredString("OK", "green");
         echo $colors->getColoredString("\nRemove composer lock file... ", "white");
         $filesystem->remove($installDir . "/composer.lock");
         echo $colors->getColoredString("OK", "green");
