@@ -1355,8 +1355,14 @@ class Setup {
         $configProxyClientValue = $config['proxyConfig']['clients'][$configProxyClientID];
         $proxy_config['clients'][$configProxyClientID] = $configProxyClientValue;
 
-        $proxy_config['signProxyResponse'] = $config['proxyConfig']['signProxyResponse'];
-        $proxy_config['encryptProxyResponse'] = $config['proxyConfig']['encryptProxyResponse'];
+        if(!array_key_exists('signProxyResponse', $proxy_config) || $proxy_config['signProxyResponse']==null) {
+            $proxy_config['signProxyResponse'] = $config['proxyConfig']['signProxyResponse'];
+        }
+
+        if(!array_key_exists('encryptProxyResponse', $proxy_config) || $proxy_config['encryptProxyResponse']==null) {
+            $proxy_config['encryptProxyResponse'] = $config['proxyConfig']['encryptProxyResponse'];
+        }
+
         $proxy_config['tokenExpTime'] = 1200; //20 minutes as default
         file_put_contents("spid-php-proxy.json", json_encode($proxy_config));
 

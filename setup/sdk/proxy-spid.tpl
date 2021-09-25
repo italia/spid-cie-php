@@ -36,7 +36,7 @@
                         echo "<form name='spidauth' action='".$redirect_uri."' method='POST'>";
 
                         if($proxy_config['encryptProxyResponse']) {
-                            echo "<input type='hidden' name='data' value='".authenticatedDataAsJWT($spidsdk->getAttributes(),$proxy_config,$redirect_uri)."' />";
+                            echo "<input type='hidden' name='data' value='".authenticatedDataAsJWT($spidsdk->getAttributes(), $proxy_config,$redirect_uri)."' />";
                         } else {
                             foreach($spidsdk->getAttributes() as $attribute=>$value) {
                                 echo "<input type='hidden' name='".$attribute."' value='".$value[0]."' />";
@@ -82,13 +82,13 @@
     //echo "action not valid"; 
     die(); 
 
-    function authenticatedDataAsJWT($payload,$proxy_config,$redirect_uri): string {
-        $privateKey = file_get_contents(__DIR__ . '/cert/spid-sp.pem', true);
-        //$publicKey = file_get_contents(__DIR__ . '/cert/spid-sp.crt', true);
+    function authenticatedDataAsJWT($payload, $proxy_config, $redirect_uri): string {
+        $privateKey = file_get_contents('{{SDKHOME}}/cert/spid-sp.pem', true);
+        //$publicKey = file_get_contents('{{SDKHOME}}/cert/spid-sp.crt', true);
 
         $issuedAt   = new DateTimeImmutable();
         $tokenExpTime = $proxy_config['tokenExpTime'] ?: DEFAULT_TOKEN_EXPIRATION_TIME;
-        $expire     = $issuedAt->modify("+".$tokenExpTime." seconds")->getTimestamp();      // Add 300 days for test purposes
+        $expire     = $issuedAt->modify("+".$tokenExpTime." seconds")->getTimestamp();
         $serverName = $proxy_config['spDomain'];
 
         $data = [
