@@ -1,11 +1,18 @@
 <?php
     require_once("{{SDKHOME}}/proxy-spid-php.php");
-    use Firebase\JWT\JWT;
+    use Jose\Component\Core\AlgorithmManager;
+    use Jose\Component\Core\JWK;
+    use Jose\Component\KeyManagement\JWKFactory;
+    use Jose\Component\Signature\Algorithm\RS256;  
+    use Jose\Component\Signature\JWSBuilder;
+    use Jose\Component\Signature\Serializer\CompactSerializer;
 
-    $proxy_config_json = "{{SDKHOME}}/spid-php-proxy.json";
-    $proxy_config = file_exists($proxy_config_json)? json_decode(file_get_contents($proxy_config_json), true) : array();
-
+    const PROXY_CONFIG_FILE = "{{SDKHOME}}/spid-php-proxy.json";
+    const TOKEN_PRIVATE_KEY = "{{SDKHOME}}/cert/spid-sp.pem";
     const DEFAULT_TOKEN_EXPIRATION_TIME = 1200;
+
+
+    $proxy_config = file_exists(PROXY_CONFIG_FILE)? json_decode(file_get_contents(PROXY_CONFIG_FILE), true) : array();
 
     $spidsdk        = new SPID_PHP();
     $clients        = $proxy_config['clients'];
@@ -35,11 +42,17 @@
 
                         echo "<form name='spidauth' action='".$redirect_uri."' method='POST'>";
 
-                        if($proxy_config['encryptProxyResponse']) {
-                            echo "<input type='hidden' name='data' value='".authenticatedDataAsJWT($spidsdk->getAttributes(), $proxy_config,$redirect_uri)."' />";
+                        // dearray values
+                        $data = array();
+                        foreach($spidsdk->getAttributes() as $attribute=>$value) {
+                            $data[$attribute] = $value[0];
+                        }
+
+                        if($proxy_config['signProxyResponse']) {
+                            echo "<input type='hidden' name='data' value='".authenticatedDataAsJWT($data, $proxy_config, $redirect_uri)."' />";
                         } else {
-                            foreach($spidsdk->getAttributes() as $attribute=>$value) {
-                                echo "<input type='hidden' name='".$attribute."' value='".$value[0]."' />";
+                            foreach($data as $attribute=>$value) {
+                                echo "<input type='hidden' name='".$attribute."' value='".$value."' />";
                             }
                         }
                         echo "<input type='hidden' name='state' value='".$state."' />";
@@ -83,9 +96,7 @@
     die(); 
 
     function authenticatedDataAsJWT($payload, $proxy_config, $redirect_uri): string {
-        $privateKey = file_get_contents('{{SDKHOME}}/cert/spid-sp.pem', true);
-        //$publicKey = file_get_contents('{{SDKHOME}}/cert/spid-sp.crt', true);
-
+        
         $issuedAt   = new DateTimeImmutable();
         $tokenExpTime = $proxy_config['tokenExpTime'] ?: DEFAULT_TOKEN_EXPIRATION_TIME;
         $expire     = $issuedAt->modify("+".$tokenExpTime." seconds")->getTimestamp();
@@ -100,11 +111,19 @@
             'data' => $payload,                                 // Authentication Data
         ];
 
-        $jwt = JWT::encode($data, $privateKey, 'RS256');
-        //echo "Encoded: " . print_r($jwt, true) . "<br>";
-        //$decoded = JWT::decode($jwt, $publicKey, array('RS256'));
-        //echo "Decoded: " . print_r($decoded, true) . "<br>";
-        return $jwt;
+        $algorithmManager = new AlgorithmManager([new RS256()]);
+        $jwk = JWKFactory::createFromKeyFile(TOKEN_PRIVATE_KEY);
+        $jwsBuilder = new JWSBuilder($algorithmManager);
+        $jws = $jwsBuilder
+            ->create() 
+            ->withPayload(json_encode($data)) 
+            ->addSignature($jwk, ['alg' => 'RS256']) 
+            ->build(); 
+        
+        $serializer = new CompactSerializer(); 
+        $token = $serializer->serialize($jws, 0); 
+    
+        return $token;
     }
 
 ?>
