@@ -558,11 +558,29 @@ class Setup {
                 $proxyClientID = uniqid();
                 echo "your client_id: " . $colors->getColoredString($proxyClientID, "red");
                 echo "\n" . $colors->getColoredString("remember to configure client_id, redirect_uri and idp on button link", "green");
-                echo "\ngrab your client_id then press a key to continue";
+
+                $proxyClientSecret = '';
+                if($encryptProxyResponse) {
+                    $proxyClientSecret = uniqid();
+                    echo "\nyour client_secret: " . $colors->getColoredString($proxyClientSecret, "red");
+                    echo "\n" . $colors->getColoredString("use client_secret to decrypt JWE inside JWS response from proxy", "green");
+
+                    echo "\ngrab your client_id and client_secret, then press a key to continue";
+
+                } else {
+
+                    echo "\ngrab your client_id, then press a key to continue";
+                }
+
                 readline();
                 $config['proxyConfig'] = array(
                     'clients'=> array(
-                        $proxyClientID => [$proxyRedirectURI]
+                        $proxyClientID => array(
+                            "name"=> "Default client",
+                            "client_id"=> $proxyClientID,
+                            "client_secret"=> $proxyClientSecret,
+                            "redirect_uri"=> [$proxyRedirectURI]
+                        )
                     ),
                     'signProxyResponse'=> $signProxyResponse,
                     'encryptProxyResponse'=> $encryptProxyResponse
@@ -1344,7 +1362,7 @@ class Setup {
             "{{SDKHOME}}" => $config['installDir'],
             "{{PROXY_CLIENT_CONFIG}}" => var_export($config['proxyConfig'], true),
             "{{PROXY_CLIENT_ID}}" => array_keys($config['proxyConfig']['clients'])[0],
-            "{{PROXY_REDIRECT_URI}}" => $config['proxyConfig']['clients'][array_keys($config['proxyConfig']['clients'])[0]][0],
+            "{{PROXY_REDIRECT_URI}}" => $config['proxyConfig']['clients'][array_keys($config['proxyConfig']['clients'])[0]]['redirect_uri'][0],
             "{{PROXY_SIGN_RESPONSE}}" => $config['proxyConfig']['signProxyResponse'],
             "{{PROXY_ENCRYPT_RESPONSE}}" => $config['proxyConfig']['encryptProxyResponse']
         );
@@ -1359,15 +1377,18 @@ class Setup {
         $configProxyClientValue = $config['proxyConfig']['clients'][$configProxyClientID];
         $proxy_config['clients'][$configProxyClientID] = $configProxyClientValue;
 
-        if(!array_key_exists('signProxyResponse', $proxy_config) || $proxy_config['signProxyResponse']==null) {
+        if(!array_key_exists('signProxyResponse', $proxy_config)) {
             $proxy_config['signProxyResponse'] = $config['proxyConfig']['signProxyResponse'];
         }
 
-        if(!array_key_exists('encryptProxyResponse', $proxy_config) || $proxy_config['encryptProxyResponse']==null) {
+        if(!array_key_exists('encryptProxyResponse', $proxy_config)) {
             $proxy_config['encryptProxyResponse'] = $config['proxyConfig']['encryptProxyResponse'];
         }
 
-        $proxy_config['tokenExpTime'] = 1200; //20 minutes as default
+        if(!array_key_exists('tokenExpTime', $proxy_config) || $proxy_config['tokenExpTime']==null) {
+            $proxy_config['tokenExpTime'] = 1200; //20 minutes as default
+        }
+        
         file_put_contents("spid-php-proxy.json", json_encode($proxy_config));
 
     }

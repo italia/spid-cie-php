@@ -37,7 +37,11 @@
         "web-token/jwt-key-mgmt": "2.2.11",
         "web-token/jwt-signature": "2.2.11",
         "web-token/jwt-encryption": "2.2.11",
-        "web-token/jwt-signature-algorithm-rsa": "2.2.11"
+        "web-token/jwt-signature-algorithm-rsa": "2.2.11",
+        "web-token/jwt-signature-algorithm-hmac": "2.2.11",
+        "web-token/jwt-encryption-algorithm-aeskw": "2.2.11",
+        "web-token/jwt-encryption-algorithm-aescbc": "2.2.11"
+
     },
     "scripts": {
         "post-update-cmd": [
