@@ -190,96 +190,8 @@
             ";            
         }
 
-        public function insertSPIDButton($size) {        
-            $button_li = "
-                <li class=\"spid-idp-button-link\" data-idp=\"arubaid\">
-                    <a href=\"?idp=ArubaPEC S.p.A.\"><span class=\"spid-sr-only\">Aruba ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.png'; this.onerror=null;\" alt=\"Aruba ID\" /></a>
-                </li>
-                <li class=\"spid-idp-button-link\" data-idp=\"infocertid\">
-                    <a href=\"?idp=InfoCert S.p.A.\"><span class=\"spid-sr-only\">Infocert ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-infocertid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-infocertid.png'; this.onerror=null;\" alt=\"Infocert ID\" /></a>
-                </li>
-                <li class=\"spid-idp-button-link\" data-idp=\"intesaid\">
-                    <a href=\"?idp=IN.TE.S.A. S.p.A.\"><span class=\"spid-sr-only\">Intesa ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-intesaid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-intesaid.png'; this.onerror=null;\" alt=\"Intesa ID\" /></a>
-                </li>
-                <li class=\"spid-idp-button-link\" data-idp=\"lepidaid\">
-                    <a href=\"?idp=Lepida S.p.A.\"><span class=\"spid-sr-only\">Lepida ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-lepidaid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-lepidaid.png'; this.onerror=null;\" alt=\"Lepida ID\" /></a>
-                </li>
-                <li class=\"spid-idp-button-link\" data-idp=\"namirialid\">
-                    <a href=\"?idp=Namirial\"><span class=\"spid-sr-only\">Namirial ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-namirialid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-namirialid.png'; this.onerror=null;\" alt=\"Namirial ID\" /></a>
-                </li>
-                <li class=\"spid-idp-button-link\" data-idp=\"posteid\">
-                    <a href=\"?idp=Poste Italiane SpA\"><span class=\"spid-sr-only\">Poste ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-posteid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-posteid.png'; this.onerror=null;\" alt=\"Poste ID\" /></a>
-                </li>
-                <li class=\"spid-idp-button-link\" data-idp=\"sielteid\">
-                    <a href=\"?idp=Sielte S.p.A.\"><span class=\"spid-sr-only\">Sielte ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-sielteid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-sielteid.png'; this.onerror=null;\" alt=\"Sielte ID\" /></a>
-                </li>
-                <li class=\"spid-idp-button-link\" data-idp=\"spiditalia\">
-                    <a href=\"?idp=Register.it S.p.A.\"><span class=\"spid-sr-only\">SPIDItalia Register.it</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-spiditalia.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-spiditalia.png'; this.onerror=null;\" alt=\"SpidItalia\" /></a>
-                </li>
-                <li class=\"spid-idp-button-link\" data-idp=\"timid\">
-                    <a href=\"?idp=TI Trust Technologies srl\"><span class=\"spid-sr-only\">Tim ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-timid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-timid.png'; this.onerror=null;\" alt=\"Tim ID\" /></a>
-                </li>
-                <li class=\"spid-idp-support-link\">
-                    <a href=\"https://www.spid.gov.it\">Maggiori informazioni</a>
-                </li>
-                <li class=\"spid-idp-support-link\">
-                    <a href=\"https://www.spid.gov.it/richiedi-spid\">Non hai SPID?</a>
-                </li>
-                <li class=\"spid-idp-support-link\">
-                    <a href=\"https://www.spid.gov.it/serve-aiuto\">Serve aiuto?</a>
-                </li>
-            ";
-
-
-            $button_test = "";
-            if(array_key_exists('TEST', $this->idps)) {
-                $button_test = "
-                    <li class=\"spid-idp-button-link\" data-idp=\"testid\">
-                        <a href=\"?idp=TEST\">IDP TEST</a>
-                    </li>
-                ";
-            }
-            $button_local = "";
-            if(array_key_exists('LOCAL', $this->idps)) {
-                $button_local = "
-                    <li class=\"spid-idp-button-link\" data-idp=\"localid\">
-                        <a href=\"?idp=LOCAL\">IDP LOCAL</a>
-                    </li>
-                ";
-            }
-
-            if(array_key_exists('VALIDATOR', $this->idps)) {
-                $button_li .= "
-                    <li class=\"spid-idp-support-link\">
-                        <a href=\"?idp=VALIDATOR\">SPID Validator</a>
-                    </li>
-                ";
-            }
-
-            if(array_key_exists('DEMO', $this->idps)) {
-                $button_li .= "
-                    <li class=\"spid-idp-support-link\">
-                        <a href=\"?idp=DEMO\">SPID Demo</a>
-                    </li>
-                ";
-            }
-
-            if(array_key_exists('DEMOVALIDATOR', $this->idps)) {
-                $button_li .= "
-                    <li class=\"spid-idp-support-link\">
-                        <a href=\"?idp=DEMOVALIDATOR\">SPID Demo (Validator mode)</a>
-                    </li>
-                ";
-            }
-
-            if(array_key_exists('TEST', $this->idps)) {
-                $button_li .= "
-                    <li class=\"spid-idp-support-link\">
-                        <a href=\"?idp=TEST\">SPID Test</a>
-                    </li>
-                ";
-            }
-
+        public function insertSPIDButton($size) {
+            $button_li = $this->addSPIDButtonListItems();
 
             switch($size) {
                 case "S":
@@ -364,6 +276,91 @@
                     </button>
                 </div>
             ";       
+        }
+
+        public function addSPIDButtonListItems(): string
+        {
+            $button_li = "
+                <li class=\"spid-idp-button-link\" data-idp=\"arubaid\">
+                    <a href=\"?idp=ArubaPEC S.p.A.\"><span class=\"spid-sr-only\">Aruba ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.png'; this.onerror=null;\" alt=\"Aruba ID\" /></a>
+                </li>
+                <li class=\"spid-idp-button-link\" data-idp=\"infocertid\">
+                    <a href=\"?idp=InfoCert S.p.A.\"><span class=\"spid-sr-only\">Infocert ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-infocertid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-infocertid.png'; this.onerror=null;\" alt=\"Infocert ID\" /></a>
+                </li>
+                <li class=\"spid-idp-button-link\" data-idp=\"intesaid\">
+                    <a href=\"?idp=IN.TE.S.A. S.p.A.\"><span class=\"spid-sr-only\">Intesa ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-intesaid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-intesaid.png'; this.onerror=null;\" alt=\"Intesa ID\" /></a>
+                </li>
+                <li class=\"spid-idp-button-link\" data-idp=\"lepidaid\">
+                    <a href=\"?idp=Lepida S.p.A.\"><span class=\"spid-sr-only\">Lepida ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-lepidaid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-lepidaid.png'; this.onerror=null;\" alt=\"Lepida ID\" /></a>
+                </li>
+                <li class=\"spid-idp-button-link\" data-idp=\"namirialid\">
+                    <a href=\"?idp=Namirial\"><span class=\"spid-sr-only\">Namirial ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-namirialid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-namirialid.png'; this.onerror=null;\" alt=\"Namirial ID\" /></a>
+                </li>
+                <li class=\"spid-idp-button-link\" data-idp=\"posteid\">
+                    <a href=\"?idp=Poste Italiane SpA\"><span class=\"spid-sr-only\">Poste ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-posteid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-posteid.png'; this.onerror=null;\" alt=\"Poste ID\" /></a>
+                </li>
+                <li class=\"spid-idp-button-link\" data-idp=\"sielteid\">
+                    <a href=\"?idp=Sielte S.p.A.\"><span class=\"spid-sr-only\">Sielte ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-sielteid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-sielteid.png'; this.onerror=null;\" alt=\"Sielte ID\" /></a>
+                </li>
+                <li class=\"spid-idp-button-link\" data-idp=\"spiditalia\">
+                    <a href=\"?idp=Register.it S.p.A.\"><span class=\"spid-sr-only\">SPIDItalia Register.it</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-spiditalia.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-spiditalia.png'; this.onerror=null;\" alt=\"SpidItalia\" /></a>
+                </li>
+                <li class=\"spid-idp-button-link\" data-idp=\"timid\">
+                    <a href=\"?idp=TI Trust Technologies srl\"><span class=\"spid-sr-only\">Tim ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-timid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-timid.png'; this.onerror=null;\" alt=\"Tim ID\" /></a>
+                </li>
+                <li class=\"spid-idp-support-link\">
+                    <a href=\"https://www.spid.gov.it\">Maggiori informazioni</a>
+                </li>
+                <li class=\"spid-idp-support-link\">
+                    <a href=\"https://www.spid.gov.it/richiedi-spid\">Non hai SPID?</a>
+                </li>
+                <li class=\"spid-idp-support-link\">
+                    <a href=\"https://www.spid.gov.it/serve-aiuto\">Serve aiuto?</a>
+                </li>
+            ";
+
+
+            $button_local = "";
+            if (array_key_exists('LOCAL', $this->idps)) {
+                $button_local = "
+                    <li class=\"spid-idp-button-link\" data-idp=\"localid\">
+                        <a href=\"?idp=LOCAL\">IDP LOCAL</a>
+                    </li>
+                ";
+            }
+
+            if (array_key_exists('VALIDATOR', $this->idps)) {
+                $button_li .= "
+                    <li class=\"spid-idp-support-link\">
+                        <a href=\"?idp=VALIDATOR\">SPID Validator</a>
+                    </li>
+                ";
+            }
+
+            if (array_key_exists('DEMO', $this->idps)) {
+                $button_li .= "
+                    <li class=\"spid-idp-support-link\">
+                        <a href=\"?idp=DEMO\">SPID Demo</a>
+                    </li>
+                ";
+            }
+
+            if (array_key_exists('DEMOVALIDATOR', $this->idps)) {
+                $button_li .= "
+                    <li class=\"spid-idp-support-link\">
+                        <a href=\"?idp=DEMOVALIDATOR\">SPID Demo (Validator mode)</a>
+                    </li>
+                ";
+            }
+
+            if (array_key_exists('TEST', $this->idps)) {
+                $button_li .= "
+                    <li class=\"spid-idp-support-link\">
+                        <a href=\"?idp=TEST\">SPID Test</a>
+                    </li>
+                ";
+            }
+            return $button_li;
         }
     }
 

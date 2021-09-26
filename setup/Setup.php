@@ -492,16 +492,6 @@ class Setup {
             }
         }
 
-        /* DEPRECATED
-        if (!isset($config['addTestIDP'])) {
-            echo "Add configuration for Public Test IDP idp.spid.gov.it ? (" .
-            $colors->getColoredString("Y", "green") . "): ";
-            $config['addTestIDP'] = readline();
-            $config['addTestIDP'] = ($config['addTestIDP'] != null &&
-                    strtoupper($config['addTestIDP']) == "N") ? false : true;
-        }
-        */
-
         if (!isset($config['addDemoIDP'])) {
             echo "Add configuration for Public Demo IDP demo.spid.gov.it ? (" .
             $colors->getColoredString("Y", "green") . "): ";
@@ -541,21 +531,60 @@ class Setup {
         }
 
         if (!isset($config['addProxyExample'])) {
-            echo "Add proxy example php files proxy-spid.php, proxy-sample.php to www ? (" .
+            echo "Add proxy example php files proxy-spid.php, proxy-sample.php, proxy-login-spid.php to www ? (" .
             $colors->getColoredString("N", "green") . "): ";
             $config['addProxyExample'] = readline();
-            $config['addProxyExample'] = ($config['addProxyExample'] != null &&
-                    strtoupper($config['addProxyExample']) == "Y") ? true : false;
+            $config['addProxyExample'] = $config['addProxyExample'] != null &&
+                    strtoupper($config['addProxyExample']) == "Y";
 
             if($config['addProxyExample']) {
-                echo "Insert URL to register as redirect_uri: ";
+                echo "Insert URL to register as redirect_uri (/proxy-sample.php): ";
                 $proxyRedirectURI = readline();
+                $proxyRedirectURI = ($proxyRedirectURI == null || $proxyRedirectURI == '')? 
+                    '/proxy-sample.php' : $proxyRedirectURI;
+
+                echo "Sign proxy response ? (" .
+                    $colors->getColoredString("Y", "green") . "): ";
+                $signProxyResponse = readline();
+                $signProxyResponse = ($signProxyResponse != null &&
+                    strtoupper($signProxyResponse) == "N") ? false : true;
+
+                echo "Encrypt proxy response ? (" .
+                    $colors->getColoredString("N", "green") . "): ";
+                $encryptProxyResponse = readline();
+                $encryptProxyResponse = ($encryptProxyResponse != null &&
+                    strtoupper($encryptProxyResponse) == "Y") ? true : false;
+
                 $proxyClientID = uniqid();
                 echo "your client_id: " . $colors->getColoredString($proxyClientID, "red");
                 echo "\n" . $colors->getColoredString("remember to configure client_id, redirect_uri and idp on button link", "green");
-                echo "\ngrab your client_id then press a key to continue";
+
+                $proxyClientSecret = '';
+                if($encryptProxyResponse) {
+                    $proxyClientSecret = uniqid();
+                    echo "\nyour client_secret: " . $colors->getColoredString($proxyClientSecret, "red");
+                    echo "\n" . $colors->getColoredString("use client_secret to decrypt JWE inside JWS response from proxy", "green");
+
+                    echo "\ngrab your client_id and client_secret, then press a key to continue";
+
+                } else {
+
+                    echo "\ngrab your client_id, then press a key to continue";
+                }
+
                 readline();
-                $config['proxyConfig'] = [ $proxyClientID => [$proxyRedirectURI] ];
+                $config['proxyConfig'] = array(
+                    'clients'=> array(
+                        $proxyClientID => array(
+                            "name"=> "Default client",
+                            "client_id"=> $proxyClientID,
+                            "client_secret"=> $proxyClientSecret,
+                            "redirect_uri"=> [$proxyRedirectURI]
+                        )
+                    ),
+                    'signProxyResponse'=> $signProxyResponse,
+                    'encryptProxyResponse'=> $encryptProxyResponse
+                );
             }
         }
 
@@ -640,8 +669,6 @@ class Setup {
         echo $colors->getColoredString("\nOrganization Display Name: " . $config['spOrganizationDisplayName'], "yellow");
         echo $colors->getColoredString("\nOrganization URL: " . $config['spOrganizationURL'], "yellow");
         echo $colors->getColoredString("\nAttribute Consuming Service Index: " . $config['acsIndex'], "yellow");
-        //echo $colors->getColoredString("\nAdd configuration for Test IDP idp.spid.gov.it: ", "yellow");
-        //echo $colors->getColoredString(($config['addTestIDP']) ? "Y" : "N", "yellow");
         echo $colors->getColoredString("\nAdd configuration for SPID Demo (demo.spid.gov.it): ", "yellow");
         echo $colors->getColoredString(($config['addDemoIDP']) ? "Y" : "N", "yellow");
         echo $colors->getColoredString("\nAdd configuration for SPID Demo Validator (demo.spid.gov.it/validator): ", "yellow");
@@ -654,6 +681,12 @@ class Setup {
         echo $colors->getColoredString(($config['addExamples']) ? "Y" : "N", "yellow");
         echo $colors->getColoredString("\nAdd proxy example php files: ", "yellow");
         echo $colors->getColoredString(($config['addProxyExample']) ? "Y" : "N", "yellow");
+        if($config['addProxyExample']) {
+            echo $colors->getColoredString("\nSign proxy response: ", "yellow");
+            echo $colors->getColoredString(($config['proxyConfig']['signProxyResponse']) ? "Y" : "N", "yellow");
+            echo $colors->getColoredString("\nEncrypt proxy response: ", "yellow");
+            echo $colors->getColoredString(($config['proxyConfig']['encryptProxyResponse']) ? "Y" : "N", "yellow");
+        }
         //echo $colors->getColoredString("\nUse SPID smart button: ", "yellow");
         //echo $colors->getColoredString(($config['useSmartButton'])? "Y":"N", "yellow");
         echo $colors->getColoredString("\nSimpleSAMLphp Password: " . $config['adminPassword'], "yellow");
@@ -775,6 +808,10 @@ class Setup {
 
         //echo $colors->getColoredString("\n\nReady to setup. Press a key to continue or CTRL-C to exit\n", "white");
         //readline();
+
+        if($config['addProxyExample']) {
+            self::saveProxyConfigurations($config);
+        }
 
         file_put_contents("spid-php-setup.json", json_encode($config));
 
@@ -925,15 +962,10 @@ class Setup {
 
         // write proxy example files
         if ($config['addProxyExample']) {
-            echo $colors->getColoredString("\nWrite proxy example files to www (proxy-spid.php, proxy-sample.php)... ", "white");
+            echo $colors->getColoredString("\nWrite proxy example files to www (proxy-spid.php, proxy-sample.php, proxy-login-spid.php)... ", "white");
 
             // configuration for proxy
-            $vars = array(
-                "{{SDKHOME}}" => $config['installDir'],
-                "{{PROXY_CLIENT_CONFIG}}" => var_export($config['proxyConfig'], true),
-                "{{PROXY_CLIENT_ID}}" => array_keys($config['proxyConfig'])[0],
-                "{{PROXY_REDIRECT_URI}}" => $config['proxyConfig'][array_keys($config['proxyConfig'])[0]][0]
-            );
+            $vars = self::proxyVariables($config);
 
             $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-spid.tpl', true);
             $customized = str_replace(array_keys($vars), $vars, $template);
@@ -942,6 +974,10 @@ class Setup {
             $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-sample.tpl', true);
             $customized = str_replace(array_keys($vars), $vars, $template);
             file_put_contents($config['wwwDir'] . "/proxy-sample.php", $customized);
+
+            $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-login-spid.tpl', true);
+            $customized = str_replace(array_keys($vars), $vars, $template);
+            file_put_contents($config['wwwDir'] . "/proxy-login-spid.php", $customized);
 
             echo $colors->getColoredString("OK", "green");
         }
@@ -981,6 +1017,7 @@ class Setup {
         if ($config['addProxyExample']) {
             $filesystem->chmod($config['wwwDir'] . "/proxy-spid.php", 0644);
             $filesystem->chmod($config['wwwDir'] . "/proxy-sample.php", 0644);
+            $filesystem->chmod($config['wwwDir'] . "/proxy-login-spid.php", 0644);
         }
         echo $colors->getColoredString("OK", "green");
 
@@ -1013,19 +1050,6 @@ class Setup {
         // setup IDP configurations
         $IDPMetadata = "";
         $IDPEntities = "";
-
-        /* DEPRECATED
-        // add configuration for public test IDP
-        if ($config['addTestIDP']) {
-            echo $colors->getColoredString("\nWrite metadata for public test IDP... ", "white");
-            $vars = array("{{ENTITYID}}" => "'" . $config['entityID'] . "'");
-            $template_idp_test = file_get_contents($_installDir . '/setup/metadata/saml20-idp-remote-test.ptpl', true);
-            $template_idp_test = str_replace(array_keys($vars), $vars, $template_idp_test);
-            $IDPMetadata .= "\n\n" . $template_idp_test;
-            $IDPEntities .= "\n\t\t\t\$this->idps['TEST'] = 'https://idptest.spid.gov.it';";
-            echo $colors->getColoredString("OK", "green");
-        }
-        */
 
         // add configuration for public demo IDP
         if ($config['addDemoIDP']) {
@@ -1218,6 +1242,14 @@ class Setup {
         $template = file_get_contents($config['installDir'] . '/setup/sdk/spid-php.tpl', true);
         $customized = str_replace(array_keys($vars), $vars, $template);
         file_put_contents($config['installDir'] . "/spid-php.php", $customized);
+
+        if ($config['addProxyExample']) {
+            $vars = array_merge($vars, self::proxyVariables($config));
+            $template_proxy = file_get_contents($config['installDir'] . '/setup/sdk/proxy-spid-php.tpl', true);
+            $customized_proxy = str_replace(array_keys($vars), $vars, $template_proxy);
+            file_put_contents($config['installDir'] . "/proxy-spid-php.php", $customized_proxy);
+        }
+
         echo $colors->getColoredString("OK", "green");
         echo "\n\n";
     }
@@ -1309,12 +1341,56 @@ class Setup {
                 $installDir . "/spid-php.php]... ", "white");
         $filesystem->remove($installDir . "/spid-php.php");
         echo $colors->getColoredString("OK", "green");
+        echo $colors->getColoredString("\nRemove sdk proxy file [" .
+        $installDir . "/proxy-spid-php.php]... ", "white");
+        $filesystem->remove($installDir . "/proxy-spid-php.php");
+        echo $colors->getColoredString("OK", "green");
         echo $colors->getColoredString("\nRemove composer lock file... ", "white");
         $filesystem->remove($installDir . "/composer.lock");
         echo $colors->getColoredString("OK", "green");
         echo $colors->getColoredString("\nExample files NOT removed... ", "white");
 
         echo $colors->getColoredString("\n\nSPID PHP SDK successfully removed\n\n", "green");
+    }
+
+    /**
+     * @param $config
+     * @return array
+     */
+    private static function proxyVariables($config): array {
+        return array(
+            "{{SDKHOME}}" => $config['installDir'],
+            "{{PROXY_CLIENT_CONFIG}}" => var_export($config['proxyConfig'], true),
+            "{{PROXY_CLIENT_ID}}" => array_keys($config['proxyConfig']['clients'])[0],
+            "{{PROXY_REDIRECT_URI}}" => $config['proxyConfig']['clients'][array_keys($config['proxyConfig']['clients'])[0]]['redirect_uri'][0],
+            "{{PROXY_SIGN_RESPONSE}}" => $config['proxyConfig']['signProxyResponse'],
+            "{{PROXY_ENCRYPT_RESPONSE}}" => $config['proxyConfig']['encryptProxyResponse']
+        );
+    }
+
+    private static function saveProxyConfigurations($config) {
+        $proxy_config = file_exists("spid-php-proxy.json") ?
+            json_decode(file_get_contents("spid-php-proxy.json"), true) : array();
+        $proxy_config['spDomain'] = $config['spDomain'];
+
+        $configProxyClientID = array_keys($config['proxyConfig']['clients'])[0];
+        $configProxyClientValue = $config['proxyConfig']['clients'][$configProxyClientID];
+        $proxy_config['clients'][$configProxyClientID] = $configProxyClientValue;
+
+        if(!array_key_exists('signProxyResponse', $proxy_config)) {
+            $proxy_config['signProxyResponse'] = $config['proxyConfig']['signProxyResponse'];
+        }
+
+        if(!array_key_exists('encryptProxyResponse', $proxy_config)) {
+            $proxy_config['encryptProxyResponse'] = $config['proxyConfig']['encryptProxyResponse'];
+        }
+
+        if(!array_key_exists('tokenExpTime', $proxy_config) || $proxy_config['tokenExpTime']==null) {
+            $proxy_config['tokenExpTime'] = 1200; //20 minutes as default
+        }
+        
+        file_put_contents("spid-php-proxy.json", json_encode($proxy_config));
+
     }
 
 }

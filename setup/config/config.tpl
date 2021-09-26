@@ -348,7 +348,9 @@ $config = array(
      * through https. If the user can access the service through
      * both http and https, this must be set to FALSE.
      */
-    'session.cookie.secure' => false,
+    'session.cookie.secure' => true,
+
+    'session.cookie.samesite' => 'None',
 
     /*
      * When set to FALSE fallback to transient session on session initialization

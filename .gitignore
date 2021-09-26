@@ -7,3 +7,5 @@ spid-php-setup*.json
 spid-php-openssl.cnf
 .idea
 log-backup
+proxy-spid-php.php
+spid-php-proxy.json

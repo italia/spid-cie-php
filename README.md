@@ -28,6 +28,7 @@ Durante il processo di setup lo script richiede l'inserimento delle seguenti inf
 * se inserire nella configurazione i dati dell'IDP per la validazione di AgID (https://validator.spid.gov.it)
 * se copiare nella root del webserver i file di esempio per l'integrazione del bottone
 * se copiare nella root del webserver i file di esempio per l'utilizzo come proxy
+* le informazioni necessarie per configurare un client di esempio per il proxy
 * i dati per la generazione del certificato X.509 per il service provider
 
 e si occupa di eseguire i seguenti passi:
@@ -42,7 +43,7 @@ Al termine del processo di setup si potrà scaricare il [metadata](#Metadata) op
 
 Se si è scelto di copiare i file di esempio, sarà possibile verificare subito l'integrazione accedendo da web a /login-spid.php.
 
-Se si è scelto di copiare i file di esempio come proxy, sarà possibile verificare il funzionamento come proxy accedendo da web a /proxy-spid.php
+Se si è scelto di copiare i file di esempio come proxy, sarà possibile verificare il funzionamento come proxy accedendo da web a /proxy-sample.php oppure /proxy-login-spid.php
 
 ## Requisiti
 * Web server
@@ -57,13 +58,13 @@ Se si è scelto di copiare i file di esempio come proxy, sarà possibile verific
 ```
 # composer install
 ```
-Al termine dell'installazione tutte le configurazioni sono salvate nei file *spid-php-setup.json* e *spid-php-openssl.cnf*. In caso di reinstallazione, le informazioni di configurazione saranno recuperate automaticamente da tali file, senza la necessità di doverle reinserire nuovamente.  
+Al termine dell'installazione tutte le configurazioni sono salvate nei file *spid-php-setup.json*, *spid-php-openssl.cnf* e *spid-php-proxy.json*. In caso di reinstallazione, le informazioni di configurazione saranno recuperate automaticamente da tali file, senza la necessità di doverle reinserire nuovamente.  
 
 ## Disinstallazione
 ```
 # composer uninstall
 ```
-La disinstallazione non cancella gli eventuali file *spid-php-setup.json* e *spid-php-openssl.cnf* locali che contengono le configurazioni inserite durante il processo in installazione.
+La disinstallazione non cancella gli eventuali file *spid-php-setup.json*, *spid-php-openssl.cnf* e *spid-php-proxy.json* locali che contengono le configurazioni inserite durante il processo in installazione.
 
 ## Aggiornamento Metadata IdP
 ```
@@ -75,7 +76,7 @@ La disinstallazione non cancella gli eventuali file *spid-php-setup.json* e *spi
 # composer uninstall
 # composer install
 ```
-Se nella directory locale sono presenti i file *spid-php-setup.json* e *spid-php-openssl.cnf* l'aggiornamento non richiederà nuovamente le informazioni di configurazione. Per modificare le informazioni di configurazione precedentemente inserite, occorrerà eseguire la disinstallazione, cancellare o modificare manualmente il file *spid-php-setup.json*, quindi procedere alla nuova installazione. Per rigenerare i certificati occorrerà eseguire la disinstallazione, rinominare o cancellare la directory /cert o i certificati *spid-sp.crt* e *spid-sp.pem* in essa presenti, quindi procedere ad una nuova installazione.
+Se nella directory locale sono presenti i file *spid-php-setup.json* e *spid-php-openssl.cnf*, l'aggiornamento non richiederà nuovamente le informazioni di configurazione. Per modificare le informazioni di configurazione precedentemente inserite, occorrerà eseguire la disinstallazione, cancellare o modificare manualmente il file *spid-php-setup.json*, quindi procedere alla nuova installazione. Per rigenerare i certificati occorrerà eseguire la disinstallazione, rinominare o cancellare la directory /cert o i certificati *spid-sp.crt* e *spid-sp.pem* in essa presenti, quindi procedere ad una nuova installazione.
 
 ## Configurazione nginx
 Per utilizzare SimpleSAMLphp su webserver nginx occorre configurare nginx come nell'esempio seguente.
@@ -119,7 +120,7 @@ Dopo aver completato la procedura di installazione il metadata del service provi
 
 dove *myservice* è il nome del servizio come specificato durante l'installazione.
 
-## API
+## API SDK
 ### Costruttore
 ```
 new SPID_PHP()
@@ -182,6 +183,8 @@ invia una richiesta di login livello $level verso l'idp $idp. Dopo l'autenticazi
 
 $idp può assumere uno dei seguenti valori:
 * VALIDATOR
+* DEMO
+* DEMOVALIDATOR
 * ArubaPEC S.p.A.
 * InfoCert S.p.A.
 * IN.TE.S.A. S.p.A.
@@ -247,88 +250,92 @@ if(!$spidsdk->isAuthenticated()) {
 
 ```
 
-## Esempio di utilizzo come proxy
+## Utilizzo come Proxy
+Durante l'installazione è possibile scegliere se installare i file di esempio per l'utilizzo di spid-php come proxy. 
+
+In tal caso viene richiesto:
+- URL di redirect alla quale inviare i dati dell'utente al termine dell'autenticazione
+- se firmare la response
+- se cifrare la response
+
+Se si seleziona Y alla domanda se firmare la response, i dati dell'utente saranno inviati alla URL di redirect in POST contenuti in un token in formato JWS firmato con la chiave privata del certificato del Service Provider generato durante l'installazione e salvato in */cert*.
+
+Se non si seleziona Y alla domanda se firmare la response, i dati dell'utente saranno inviati, invece, alla URL di redirect in POST come variabili in chiaro.
+
+Se oltre alla firma, si seleziona Y anche alla domanda se cifrare la response, questa sarà inviata alla URL di redirect in POST come token in formato JWS il cui payload contiene nell'attributo *data* un token JWE cifrato con un *client_secret* contenente i dati dell'utente.
+
+*client_id* e *client_secret* sono generati automaticamente per il client durante il setup, mostrati a video e salvati nel file *spid-php-proxy.json*.
+
+
+Per inserire ulteriori client con le relative configurazioni di *client_id*, *client_secret* e *redirect_uri*, è possibile editare il file *spid-php-proxy*.json 
+
+## API Proxy
+### login
 ```
-require_once("<path to spid-php>/spid-php.php");
+GET /proxy-spid.php?action=login&client_id=<client_id>&redirect_uri=<redirect_uri>&idp=<idp>&state=<state>
+```
+Invia la AuthnRequest ad uno specifico IdP e ritorna la Response decodificata o come JWS o JWS(JWE) in POST alla redirect_uri del client.
 
-$spidsdk = new SPID_PHP();
+Parametri:
 
-$client = [
-    <allowed client_id> = [ <allowed redirect_uri> ]
-];
+ - <client_id> è l'identificativo corrispondente al client
+ - <redirect_uri> è la URL del client alla quale ritornare la risposta. Deve corrispondere ad una delle URL registrate per il client
+ - <idp> è il valore che identifica l'IdP con il quale eseguire l'autenticazione (vedi API SDK login)
+ - <state> è il valore del RelayState
 
-$action         = $_GET['action'];
-$client_id      = $_GET['client_id'];
-$redirect_uri   = $_GET['redirect_uri'];
-$state          = $_GET['state'];
-$idp            = $_GET['idp'];
+### logout
+```
+GET /proxy-spid.php?action=logout&client_id=<client_id>
+```
+Esegue la disconnessione dall'IdP.
+  
+Parametri:
+  
+ - <client_id> è l'identificativo corrispondente al client. Dopo aver eseguito la disconnessione presso l'IdP, il flusso viene rediretto al primo redirect_uri registrato per il client
 
+### verify
+```
+GET /proxy-spid.php?action=verify&token=<token>&decrypt=<decrypt>&secret=<secret>
+```
+Verifica e decifra il token JWT ricevuto con la response.
+  
+Parametri:
+  
+ - <token> è il token JWT ricevuto con la response, nel caso in cui si sia scelto di firmare la response
+ - <decrypt> può assumere valore Y o N. Permette di decifrare la response nel caso in cui si sia scelto di cifrare la response
+ - <secret> è il client_secret consegnato al client con cui è possibile decifrare la response
+  
+Nel caso in cui non è possibile verificare la firma oppure non è possibile decifrare la response (perchè il secret non è corretto oppure perchè il token è malformato) viene restituito status code 422.
+  
+Si consiglia di utilizzare l'endpoint verify esclusivamente per la verifica della firma dei messaggi. Per decifrare i dati dell'utente, invece, si consiglia di implementare la decodifica sul client.
 
-switch($action) {
-
-    case "login":
-
-        if(!$spidsdk->isIdPAvailable($idp)) {
-            // idp not found
-            http_response_code(404);
-            die(); 
+## Esempio di utilizzo del proxy
+```
+<a href="/proxy-login-spid.php">Go to Login Page or...</a><br/>
+<a href="/proxy-spid.php?client_id=<client_id>&action=login&redirect_uri=/proxy-sample.php&idp=DEMOVALIDATOR&state=state">Login with a single IdP (example for DEMO Validator)</a>
+<p>
+    <?php
+        foreach($_POST as $attribute=>$value) {
+            echo "<p>" . $attribute . ": <b>" . $value . "</b></p>";
         }
-
-        if(in_array($client_id, array_keys($client))) {
-            if(in_array($redirect_uri, $client[$client_id])) {
-
-                if($spidsdk->isAuthenticated() 
-                && isset($_GET['idp']) 
-                && $spidsdk->isIdP($_GET['idp'])) {
-
-                    echo "<form name='spidauth' action='".$redirect_uri."' method='POST'>"; 
-
-                    foreach($spidsdk->getAttributes() as $attribute=>$value) {
-                        echo "<input type='hidden' name='".$attribute."' value='".$value[0]."' />";
-                    }
-                    echo "<input type='hidden' name='state' value='".$state."' />";
-                    echo "</form>";
-                    echo "<script type='text/javascript'>";
-                    echo "  document.spidauth.submit();";
-                    echo "</script>";
-
-                } else {
-                    $spidsdk->login($idp, 1);
-                }
-
-            } else {
-                // redirect_uri not found in configuration
-                http_response_code(404); 
-                die();
-            }
-
-        } else {
-            // client not found in configuration
-            http_response_code(404);
-            die();
-        }
-
-    break;
-
-    case "logout":
-
-        if($spidsdk->isAuthenticated()) {
-            $spidsdk->logout();
-            die();
-        } else {
-            header("location: " . $client[$client_id][0]);
-            die();
-        }
-
-    break;
-}
-
-// action not valid
-http_response_code(404);
-die(); 
-
+    ?>
+</p>
+<a href="/proxy-spid.php?client_id=61504487f292e&action=logout">Esci</a>
 
 ```
+  
+## Author
+Michele D'Amico (damikael)
+ 
+## Credits
+Linfa Service
+  
+ManyDesigns
+  
+## Contributors
+<a href = "https://github.com/italia/spid-php/contributors">
+  <img src = "https://contrib.rocks/image?repo=italia/spid-php"/>
+</a>
 
 ## Compliance
 
