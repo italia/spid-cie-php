@@ -111,7 +111,7 @@
                 $spidsdk->logout();
                 die();
             } else {
-                header("location: " . $clients[$client_id][0]);
+                header("location: " . $clients[$client_id]['redirect_uri'][0]);
                 die();
             }
 
