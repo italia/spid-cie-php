@@ -200,6 +200,12 @@ $level può assumere uno dei seguenti valori
 * 2
 * 3
 
+### getResponseID
+```
+string getResponseID()
+```
+restituisce l'attributo ID della SAML Response ricevuta dall'IdP
+
 ### getAttributes
 ```
 array getAttributes()

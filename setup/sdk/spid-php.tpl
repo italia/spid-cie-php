@@ -17,6 +17,14 @@
             return $this->spid_auth->getAuthData('saml:sp:IdP');
         }
 
+        public function getAuthDataArray() {
+            return $this->spid_auth->getAuthDataArray();
+        }
+
+        public function getResponseID() {
+            return $this->spid_auth->getAuthDataArray()['saml:sp:prevAuth']['id'];
+        }
+
         public function isIdPAvailable($idp) {
             return ($this->idps[$idp]!=null);
         }

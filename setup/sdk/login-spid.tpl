@@ -10,6 +10,7 @@
         && $spidsdk->isIdP($_GET['idp'])) {
 
             echo "<p>IdP: <b>" . $spidsdk->getIdP() . "</b></p>";
+            echo "<p>Response ID: " . $spidsdk->getResponseID() . "</p>";
             
             foreach($spidsdk->getAttributes() as $attribute=>$value) {
                 echo "<p>" . $attribute . ": <b>" . $value[0] . "</b></p>";
