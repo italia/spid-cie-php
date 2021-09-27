@@ -284,10 +284,10 @@ Invia la AuthnRequest ad uno specifico IdP e ritorna la Response decodificata o 
 
 Parametri:
 
- - <client_id> è l'identificativo corrispondente al client
- - <redirect_uri> è la URL del client alla quale ritornare la risposta. Deve corrispondere ad una delle URL registrate per il client
- - <idp> è il valore che identifica l'IdP con il quale eseguire l'autenticazione (vedi API SDK login)
- - <state> è il valore del RelayState
+ - *client_id* è l'identificativo corrispondente al client
+ - *redirect_uri* è la URL del client alla quale ritornare la risposta. Deve corrispondere ad una delle URL registrate per il client
+ - *idp* è il valore che identifica l'IdP con il quale eseguire l'autenticazione (vedi API SDK login)
+ - *state* è il valore del RelayState
 
 ### logout
 ```
@@ -297,7 +297,7 @@ Esegue la disconnessione dall'IdP.
   
 Parametri:
   
- - <client_id> è l'identificativo corrispondente al client. Dopo aver eseguito la disconnessione presso l'IdP, il flusso viene rediretto al primo redirect_uri registrato per il client
+ - *client_id* è l'identificativo corrispondente al client. Dopo aver eseguito la disconnessione presso l'IdP, il flusso viene rediretto al primo redirect_uri registrato per il client
 
 ### verify
 ```
@@ -307,9 +307,9 @@ Verifica e decifra il token JWT ricevuto con la response.
   
 Parametri:
   
- - <token> è il token JWT ricevuto con la response, nel caso in cui si sia scelto di firmare la response
- - <decrypt> può assumere valore Y o N. Permette di decifrare la response nel caso in cui si sia scelto di cifrare la response
- - <secret> è il client_secret consegnato al client con cui è possibile decifrare la response
+ - *token* è il token JWT ricevuto con la response, nel caso in cui si sia scelto di firmare la response
+ - *decrypt* può assumere valore Y o N. Permette di decifrare la response nel caso in cui si sia scelto di cifrare la response
+ - *secret* è il client_secret consegnato al client con cui è possibile decifrare la response
   
 Nel caso in cui non è possibile verificare la firma oppure non è possibile decifrare la response (perchè il secret non è corretto oppure perchè il token è malformato) viene restituito status code 422.
   
