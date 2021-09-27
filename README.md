@@ -331,12 +331,11 @@ Si consiglia di utilizzare l'endpoint verify esclusivamente per la verifica dell
 ```
   
 ## Author
-Michele D'Amico (damikael)
+[Michele D'Amico (damikael)](https://it.linkedin.com/in/damikael)
  
 ## Credits
-Linfa Service
-  
-ManyDesigns
+ - [Linfa Service](https://www.linfaservice.it)
+ - [ManyDesigns](http://www.manydesigns.com/)
   
 ## Contributors
 <a href = "https://github.com/italia/spid-php/contributors">
