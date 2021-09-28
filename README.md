@@ -334,8 +334,8 @@ Si consiglia di utilizzare l'endpoint verify esclusivamente per la verifica dell
 [Michele D'Amico (damikael)](https://it.linkedin.com/in/damikael)
  
 ## Credits
- - [Linfa Service](https://www.linfaservice.it)
- - [ManyDesigns](https://www.manydesigns.com)
+<a href="https://www.linfaservice.it" target="_blank"><img  style="border:1px solid #ccc; padding: 5px; height: 50px; margin-right: 20px;" src="https://www.linfaservice.it/common/linfaservice.png" alt="Linfa Service"></a>
+<a href="https://www.manydesigns.com" target="_blank"><img  style="border:1px solid #ccc; padding: 5px; height: 50px; margin-right: 20px;" src="https://www.manydesigns.com/img/logoMD.png" alt="ManyDesigns"></a>
   
 ## Contributors
 <a href = "https://github.com/italia/spid-php/contributors">
