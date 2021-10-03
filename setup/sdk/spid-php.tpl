@@ -17,6 +17,13 @@
             return $this->spid_auth->getAuthData('saml:sp:IdP');
         }
 
+        public function getIdPKey() {
+            $idp = $this->getIdP();
+            foreach($this->idps as $k=>$v) {
+                if($v==$idp) return $k;
+            }
+        }
+
         public function getAuthDataArray() {
             return $this->spid_auth->getAuthDataArray();
         }
