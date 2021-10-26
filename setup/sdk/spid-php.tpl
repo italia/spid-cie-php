@@ -334,10 +334,8 @@
                 </li>
             ";
 
-
-            $button_local = "";
             if (array_key_exists('LOCAL', $this->idps)) {
-                $button_local = "
+                $button_li .= "
                     <li class=\"spid-idp-button-link\" data-idp=\"localid\">
                         <a href=\"?idp=LOCAL\">IDP LOCAL</a>
                     </li>
