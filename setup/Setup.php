@@ -6,6 +6,15 @@ use Composer\Script\Event;
 use SPID_PHP\Colors;
 use Symfony\Component\Filesystem\Filesystem;
 
+// readline replacement
+if (!function_exists('readline')) {
+  function readline() {
+    $fp = fopen("php://stdin", "r");
+    $line = rtrim(fgets($fp, 1024));
+    return $line;
+  }
+}
+
 class Setup {
 
     public static function setup(Event $event) {

@@ -107,7 +107,10 @@ $config = array(
      *
      * See this page for a list of valid timezones: http://php.net/manual/en/timezones.php
      */
-    'timezone' => 'Europe/Rome',
+     /* SPID - as expected by SPID agreement datetime MUST be logged in UTC format. 
+      * so timezone MUST be set to null
+      */
+    'timezone' => null,
 
     /*
      * Logging.
