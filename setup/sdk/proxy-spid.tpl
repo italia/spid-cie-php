@@ -109,11 +109,21 @@
         break;
 
         case "logout":
+            $return = $redirect_uri? $redirect_uri : $clients[$client_id]['redirect_uri'][0];
+
             if($spidsdk->isAuthenticated()) {
+                /* 
+                 * Uncomment to exec local logout instead of IdP logout
+                 */
+                /*
+                $sspSession = \SimpleSAML\Session::getSessionFromRequest();
+                $sspSession->doLogout('service');
+                header("location: " . $return);
+                */
                 $spidsdk->logout();
                 die();
             } else {
-                header("location: " . $clients[$client_id]['redirect_uri'][0]);
+                header("location: " . $return);
                 die();
             }
 
