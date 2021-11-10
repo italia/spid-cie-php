@@ -75,6 +75,8 @@ class Setup {
         $config = file_exists("spid-php-setup.json") ?
                 json_decode(file_get_contents("spid-php-setup.json"), true) : array();
 
+        $config['production'] = false;
+
         if (!isset($config['acsCustomLocation'])) {
             $config['acsCustomLocation'] = $_acsCustomLocation;
         }
@@ -669,6 +671,7 @@ class Setup {
 
         echo $colors->getColoredString("\nCurrent directory: " . $config['installDir'], "yellow");
         echo $colors->getColoredString("\nWeb root directory: " . $config['wwwDir'], "yellow");
+        echo $colors->getColoredString("\nProduction: " . $config['production'], "yellow");
         echo $colors->getColoredString("\nService Name: " . $config['serviceName'], "yellow");
         echo $colors->getColoredString("\nEntity ID: " . $config['entityID'], "yellow");
         echo $colors->getColoredString("\nService Provider Domain: " . $config['spDomain'], "yellow");
@@ -1380,8 +1383,9 @@ class Setup {
     private static function saveProxyConfigurations($config) {
         $proxy_config = file_exists("spid-php-proxy.json") ?
             json_decode(file_get_contents("spid-php-proxy.json"), true) : array();
-        $proxy_config['spDomain'] = $config['spDomain'];
 
+        $proxy_config['production'] = $config['production'];
+        $proxy_config['spDomain'] = $config['spDomain'];
         $configProxyClientID = array_keys($config['proxyConfig']['clients'])[0];
         $configProxyClientValue = $config['proxyConfig']['clients'][$configProxyClientID];
         $proxy_config['clients'][$configProxyClientID] = $configProxyClientValue;

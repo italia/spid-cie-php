@@ -1,7 +1,10 @@
 <?php 
 
     require_once("{{SDKHOME}}/spid-php.php");
-    $spidsdk = new SPID_PHP();
+
+    $production = false;
+
+    $spidsdk = new SPID_PHP($production);
 
     //$spidsdk->setPurpose("P");
 

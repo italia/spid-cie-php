@@ -27,8 +27,9 @@
     const DEBUG = false;
 
     $proxy_config = file_exists(PROXY_CONFIG_FILE)? json_decode(file_get_contents(PROXY_CONFIG_FILE), true) : array();
+    $production = $proxy_config['production'];
 
-    $spidsdk        = new SPID_PHP();
+    $spidsdk        = new SPID_PHP($production);
     $clients        = $proxy_config['clients'];
     $action         = $_GET['action'];
     $client_id      = $_GET['client_id'];
@@ -82,6 +83,7 @@
                                 echo "<input type='hidden' name='".$attribute."' value='".$value."' />";
                             }
                         }
+
                         echo "<input type='hidden' name='state' value='".$state."' />";
                         echo "</form>";
                         echo "<script type='text/javascript'>";
