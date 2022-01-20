@@ -8,8 +8,8 @@
         private $idps = array();
         private $purpose = null;
 
-        function __construct($production=false) {
-            $this->spid_auth = new SimpleSAML_Auth_Simple('service');
+        function __construct($production=false, $servicename='service') {
+            $this->spid_auth = new SimpleSAML\Auth\Simple($servicename);
             $this->production = $production;
 
             {{IDPS}}
@@ -103,7 +103,7 @@
             if($saml_logout) {
                 $this->spid_auth->logout($returnTo);
             } else {
-                $session = SimpleSAML_Session::getSessionFromRequest();
+               $session = SimpleSAML\Session::getSessionFromRequest();
                 if ($session->isValid('service')) {
                     $session->doLogout('service');
                 }
