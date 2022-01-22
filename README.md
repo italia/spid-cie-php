@@ -139,13 +139,13 @@ restituisce true se l'utente è autenticato, false altrimenti
 ```
 bool isIdPAvailable($idp)
 ```
-restituisce true se il valore di $idp è tra quelli previsti (vedi login) 
+restituisce true se il valore di **$idp** è tra quelli previsti (vedi login) 
 
 ### isIdP
 ```
 bool isIdP($idp)
 ```
-restituisce true se l'utente è autenticato con l'idp $idp (vedi login)
+restituisce true se l'utente è autenticato con l'idp **$idp** (vedi login)
 
 ### requireAuth
 ```
@@ -170,23 +170,25 @@ inserisce i riferimenti al codice javascript necessario al funzionamento del bot
 void insertSPIDButton($size, [$method='GET'])
 ```
 stampa il codice per l'inserimento dello smart button. 
-$size specifica la dimensione del pulsante (S|M|L|XL)
-$method specifica se la versione del bottone (GET|POST)
+
+**$size** specifica la dimensione del pulsante (S|M|L|XL)
+
+**$method** specifica la versione del bottone (GET|POST)
 
 ### setPurpose
 ```
 void setPurpose($purpose)
 ```
 imposta l'estensione "Purpose" nell'AuthenticationRequest per inviare una richiesta di autenticazione per identità digitale ad uso professionale ([Avviso SPID n.18 v.2](https://www.agid.gov.it/sites/default/files/repository_files/spid-avviso-n18_v.2-_autenticazione_persona_giuridica_o_uso_professionale_per_la_persona_giuridica.pdf)).
-$purpose specifica il valore dell'estensione Purpose (P|LP|PG|PF|PX)
+**$purpose** specifica il valore dell'estensione Purpose (P|LP|PG|PF|PX)
 
 ### login
 ```
 void login($idp, $level, [$returnTo], [$attributeConsumingServiceIndex], [$post])
 ```
-invia una richiesta di login livello $level verso l'idp $idp. Dopo l'autenticazione, l'utente è reindirizzato alla url eventualmente specificata in $returnTo. Se il parametro $returnTo non è specificato, l'utente è reindirizzato alla pagina di provenienza.
+invia una richiesta di login livello $level verso l'idp **$idp**. Dopo l'autenticazione, l'utente è reindirizzato alla url eventualmente specificata in **$returnTo**. Se il parametro **$returnTo** non è specificato, l'utente è reindirizzato alla pagina di provenienza.
 
-$idp può assumere uno dei seguenti valori:
+**$idp** può assumere uno dei seguenti valori:
 * VALIDATOR
 * DEMO
 * DEMOVALIDATOR
@@ -200,12 +202,16 @@ $idp può assumere uno dei seguenti valori:
 * Register.it S.p.A.
 * TI Trust Technologies srl
 
-$level può assumere uno dei seguenti valori
+**$level** può assumere uno dei seguenti valori
 * 1
 * 2
 * 3
 
-$post può assumere valore false o true. Se true specifica che la AuthnRequest deve essere inviata in Binding HTTP-Post invece che HTTP-Request (default) 
+**$post** può assumere valore 
+* false
+* true. 
+
+Se **$post** è true specifica che la AuthnRequest deve essere inviata in Binding HTTP-Post invece che HTTP-Request (default) 
 
 ### getResponseID
 ```
@@ -229,13 +235,13 @@ restituisce il valore per lo specifico attributo
 ```
 void logout([$returnTo])
 ```
-esegue la disconnessione. Dopo la disconnessione, l'utente è reindirizzato alla url specificata in $returnTo oppure alla pagina di provenienza se $returnTo non è specificato.
+esegue la disconnessione. Dopo la disconnessione, l'utente è reindirizzato alla url specificata in **$returnTo** oppure alla pagina di provenienza se **$returnTo** non è specificato.
 
 ### getLogoutURL
 ```
 string getLogoutURL([$returnTo])
 ```
-restituisce la url per eseguire la disconnessione. Dopo la disconnessione, l'utente è reindirizzato alla url specificata in $returnTo oppure alla pagina di provenienza se $returnTo non è specificato.
+restituisce la url per eseguire la disconnessione. Dopo la disconnessione, l'utente è reindirizzato alla url specificata in **$returnTo** oppure alla pagina di provenienza se **$returnTo** non è specificato.
 
 
 ## Esempio di integrazione
