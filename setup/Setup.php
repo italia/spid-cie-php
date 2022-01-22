@@ -1205,19 +1205,17 @@ class Setup {
              */
 
 
-            $icon = "spid-idp-dummy.svg";
-            /*
-              switch($IDPentityID) {
-              case "https://loginspid.aruba.it": $icon = "spid-idp-aruba.svg"; break;
-              case "https://identity.infocert.it": $icon = "spid-idp-infocertid.svg"; break;
-              case "https://spid.intesa.it": $icon = "spid-idp-intesaid.svg"; break;
-              case "https://idp.namirialtsp.com/idp": $icon = "spid-idp-namirialid.svg"; break;
-              case "https://posteid.poste.it": $icon = "spid-idp-posteid.svg"; break;
-              case "https://identity.sieltecloud.it": $icon = "spid-idp-sielteid.svg"; break;
-              case "https://spid.register.it": $icon = "spid-idp-spiditalia.svg"; break;
-              case "https://login.id.tim.it/affwebservices/public/saml2sso": $icon = "spid-idp-timid.svg"; break;
-              }
-             */
+            $icon = "assets/icons/spid-idp-dummy.png";
+            switch($IDPentityID) {
+                case "https://loginspid.aruba.it": $icon = "spid-sp-access-button/img/spid-idp-arubaid.svg"; break;
+                case "https://identity.infocert.it": $icon = "spid-sp-access-button/img/spid-idp-infocertid.svg"; break;
+                case "https://spid.intesa.it": $icon = "spid-sp-access-button/img/spid-idp-intesaid.svg"; break;
+                case "https://idp.namirialtsp.com/idp": $icon = "spid-sp-access-button/img/spid-idp-namirialid.svg"; break;
+                case "https://posteid.poste.it": $icon = "spid-sp-access-button/img/spid-idp-posteid.svg"; break;
+                case "https://identity.sieltecloud.it": $icon = "spid-sp-access-button/img/spid-idp-sielteid.svg"; break;
+                case "https://spid.register.it": $icon = "spid-sp-access-button/img/spid-idp-spiditalia.svg"; break;
+                case "https://login.id.tim.it/affwebservices/public/saml2sso": $icon = "spid-sp-access-button/img/spid-idp-timid.svg"; break;
+            }
 
             $vars = array(
                 "{{ENTITYID}}" => $IDPentityID,
