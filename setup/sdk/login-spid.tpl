@@ -9,8 +9,8 @@
     //$spidsdk->setPurpose("P");
 
     if($spidsdk->isAuthenticated() 
-        && isset($_GET['idp']) 
-        && $spidsdk->isIdP($_GET['idp'])) {
+        && isset($_REQUEST['idp']) 
+        && $spidsdk->isIdP($_REQUEST['idp'])) {
 
             echo "<p>IdP: <b>" . $spidsdk->getIdP() . "</b></p>";
             echo "<p>Response ID: " . $spidsdk->getResponseID() . "</p>";
@@ -23,15 +23,18 @@
 
     } else {
 
-        if(!isset($_GET['idp'])) {    
+        if(!isset($_REQUEST['idp'])) {  
             $spidsdk->insertSPIDButtonCSS();
+			echo "<br><br>POST<br><form name=\"spid_idp_access\" action=\"#\" method=\"post\">";
+            $spidsdk->insertSPIDButton("L","post");  
+			echo "</form><br><br>GET<br>";
             $spidsdk->insertSPIDButton("L");  
             $spidsdk->insertSPIDButtonJS(); 
         } else {
-            $spidsdk->login($_GET['idp'], 2);  
+            $spidsdk->login($_REQUEST['idp'], 2);  
 
             // set AttributeConsumingServiceIndex 2
-            //$spidsdk->login($_GET['idp'], 2, "", 2);
+            //$spidsdk->login($_REQUEST['idp'], 2, "", 2);
         }
     }
 ?>
