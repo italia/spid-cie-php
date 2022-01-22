@@ -7,10 +7,10 @@
 ![SP SPID in produzione con spid-php](https://img.shields.io/badge/SP%20SPID%20in%20produzione%20con%20spid--php-41+-green)
 
 # spid-php
-Software Development Kit for easy SPID access integration with SimpleSAMLphp.
-
+Software Development Kit for easy SPID access integration with SimpleSAMLphp.\
 spid-php has been developed and is maintained by Michele D'Amico (@damikael). **It's highly recommended to use the latest release**.
 
+<img src="spid-php-tutorial.gif" />
 
 spid-php è uno script composer (https://getcomposer.org/) che semplifica e automatizza il processo di installazione e configurazione di SimpleSAMLphp (https://simplesamlphp.org/) per l'integrazione dell'autenticazione SPID all'interno di applicazioni PHP tramite lo SPID SP Access Button (https://github.com/italia/spid-sp-access-button). spid-php permette di realizzare un Service Provider (pubblico o privato) per SPID in pochi secondi, ma **non è orientato alla realizzazione di Aggregatori e/o Gestori**.  
 
