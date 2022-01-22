@@ -8,8 +8,10 @@
         private $idps = array();
         private $purpose = null;
 
-        function __construct() {
+        function __construct($production=false) {
             $this->spid_auth = new SimpleSAML_Auth_Simple('service');
+            $this->production = $production;
+
             {{IDPS}}
         }
 
@@ -33,7 +35,19 @@
         }
 
         public function isIdPAvailable($idp) {
-            return ($this->idps[$idp]!=null);
+            $available = false;
+            if($this->production && (
+                $idp == 'DEMO'
+                || $idp == 'DEMOVALIDATOR'
+                || $idp == 'VALIDATOR'
+                || $idp == 'LOCAL'
+            )) {
+                $available = false;
+            } else {
+                $available = ($this->idps[$idp]!=null);
+            }
+            
+            return $available;
         }
 
         public function isIdP($idp) {
@@ -293,8 +307,7 @@
             ";       
         }
 
-        public function addSPIDButtonListItems(): string
-        {
+        public function addSPIDButtonListItems(): string {
             $button_li = "
                 <li class=\"spid-idp-button-link\" data-idp=\"arubaid\">
                     <a href=\"?idp=ArubaPEC S.p.A.\"><span class=\"spid-sr-only\">Aruba ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.png'; this.onerror=null;\" alt=\"Aruba ID\" /></a>
@@ -334,47 +347,49 @@
                 </li>
             ";
 
+            if(!$this->production) {
 
-            $button_local = "";
-            if (array_key_exists('LOCAL', $this->idps)) {
-                $button_local = "
-                    <li class=\"spid-idp-button-link\" data-idp=\"localid\">
-                        <a href=\"?idp=LOCAL\">IDP LOCAL</a>
-                    </li>
-                ";
+                if (array_key_exists('LOCAL', $this->idps)) {
+                    $button_li .= "
+                        <li class=\"spid-idp-button-link\" data-idp=\"localid\">
+                            <a href=\"?idp=LOCAL\">IDP LOCAL</a>
+                        </li>
+                    ";
+                }
+
+                if (array_key_exists('VALIDATOR', $this->idps)) {
+                    $button_li .= "
+                        <li class=\"spid-idp-support-link\">
+                            <a href=\"?idp=VALIDATOR\">SPID Validator</a>
+                        </li>
+                    ";
+                }
+
+                if (array_key_exists('DEMO', $this->idps)) {
+                    $button_li .= "
+                        <li class=\"spid-idp-support-link\">
+                            <a href=\"?idp=DEMO\">SPID Demo</a>
+                        </li>
+                    ";
+                }
+
+                if (array_key_exists('DEMOVALIDATOR', $this->idps)) {
+                    $button_li .= "
+                        <li class=\"spid-idp-support-link\">
+                            <a href=\"?idp=DEMOVALIDATOR\">SPID Demo (Validator mode)</a>
+                        </li>
+                    ";
+                }
+
+                if (array_key_exists('TEST', $this->idps)) {
+                    $button_li .= "
+                        <li class=\"spid-idp-support-link\">
+                            <a href=\"?idp=TEST\">SPID Test</a>
+                        </li>
+                    ";
+                }
             }
 
-            if (array_key_exists('VALIDATOR', $this->idps)) {
-                $button_li .= "
-                    <li class=\"spid-idp-support-link\">
-                        <a href=\"?idp=VALIDATOR\">SPID Validator</a>
-                    </li>
-                ";
-            }
-
-            if (array_key_exists('DEMO', $this->idps)) {
-                $button_li .= "
-                    <li class=\"spid-idp-support-link\">
-                        <a href=\"?idp=DEMO\">SPID Demo</a>
-                    </li>
-                ";
-            }
-
-            if (array_key_exists('DEMOVALIDATOR', $this->idps)) {
-                $button_li .= "
-                    <li class=\"spid-idp-support-link\">
-                        <a href=\"?idp=DEMOVALIDATOR\">SPID Demo (Validator mode)</a>
-                    </li>
-                ";
-            }
-
-            if (array_key_exists('TEST', $this->idps)) {
-                $button_li .= "
-                    <li class=\"spid-idp-support-link\">
-                        <a href=\"?idp=TEST\">SPID Test</a>
-                    </li>
-                ";
-            }
             return $button_li;
         }
     }
