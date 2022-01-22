@@ -682,6 +682,14 @@ class SP extends \SimpleSAML\Auth\Source
                     Constants::BINDING_HOK_SSO
                 ]
             );
+        } else if($state['saml:SingleSignOnServiceProtocolBinding']) {
+            /* SPID-PHP CUSTOM - BINDING CHOICE */
+            $dst = $idpMetadata->getEndpointPrioritizedByBinding(
+                'SingleSignOnService',
+                [
+                    $state['saml:SingleSignOnServiceProtocolBinding']
+                ]
+            );
         } else {
             /** @var array $dst */
             $dst = $idpMetadata->getEndpointPrioritizedByBinding(
