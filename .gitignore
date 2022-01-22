@@ -9,7 +9,7 @@ spid-php-openssl.cnf
 log-backup
 proxy-spid-php.php
 spid-php-proxy.json
+composer
 metadata.xml
 metadata-signed.xml
-composer
 *wip
