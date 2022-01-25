@@ -1,6 +1,12 @@
 {
     "config": {
-        "version": "3.9.0"
+        "version": "3.9.0",
+	    "platform": {
+		    "php": "7.4.1"
+	    },
+        "allow-plugins": {
+            "simplesamlphp/composer-module-installer": true
+        }
     },
     "repositories": {
         "spid-sp-access-button": {
