@@ -342,7 +342,17 @@ Si consiglia di utilizzare l'endpoint verify esclusivamente per la verifica dell
 <a href="/proxy-spid.php?client_id=61504487f292e&action=logout">Esci</a>
 
 ```
-  
+## Gestione degli errori SPID
+
+Durante il processo di autenticazione SPID posso verificarsi degli errori che 
+vengono generati dagli IDP, determinati dall'interazione dell'utente con la form di login oppure da formati delle richieste che non rispettano le regole tecniche di SPID.
+
+La tabella con i messaggi di errore è disponible [qui](https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/messaggi-errore.html)
+
+Lo script ```/error.php``` viene richiamato alla ricezione di un messaggio 
+di Response che contiene i dettagli dell'errore.
+
+
 ## Author
 [Michele D'Amico (damikael)](https://it.linkedin.com/in/damikael)
  
