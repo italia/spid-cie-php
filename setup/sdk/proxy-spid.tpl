@@ -89,9 +89,11 @@
                         echo "<script type='text/javascript'>";
                         echo "  document.spidauth.submit();";
                         echo "</script>";
+                        die();
                 
                     } else {
                         $spidsdk->login($idp, 1);
+                        die();
                     }
 
                 } else {
