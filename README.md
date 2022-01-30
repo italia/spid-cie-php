@@ -4,15 +4,17 @@
 [![Join the #spid-php channel](https://img.shields.io/badge/Slack%20channel-%23spid--php-blue.svg?logo=slack)](https://developersitalia.slack.com/messages/CB6DCK274)
 [![Get invited](https://slack.developers.italia.it/badge.svg)](https://slack.developers.italia.it/)
 [![SPID on forum.italia.it](https://img.shields.io/badge/Forum-SPID-blue.svg)](https://forum.italia.it/c/spid)
-![SP SPID in produzione con spid-php](https://img.shields.io/badge/SP%20SPID%20in%20produzione%20con%20spid--php-23+-green)
+![SP SPID in produzione con spid-php](https://img.shields.io/badge/SP%20SPID%20in%20produzione%20con%20spid--php-41+-green)
 
 # spid-php
-Software Development Kit for easy SPID access integration with SimpleSAMLphp.
-
+Software Development Kit for easy SPID access integration with SimpleSAMLphp.\
 spid-php has been developed and is maintained by Michele D'Amico (@damikael). **It's highly recommended to use the latest release**.
 
+<img src="doc/spid-php-tutorial.gif" alt="spid-php video tutorial" />
 
-spid-php è uno script composer (https://getcomposer.org/) che semplifica e automatizza il processo di installazione e configurazione di SimpleSAMLphp (https://simplesamlphp.org/) per l'integrazione dell'autenticazione SPID all'interno di applicazioni PHP tramite lo SPID SP Access Button (https://github.com/italia/spid-sp-access-button). spid-php permette di realizzare un Service Provider per SPID in pochi secondi. **Si raccomanda di mantenere sempre aggiornata la propria installazione all'ultima versione**.
+spid-php è uno script composer (https://getcomposer.org/) che semplifica e automatizza il processo di installazione e configurazione di SimpleSAMLphp (https://simplesamlphp.org/) per l'integrazione dell'autenticazione SPID all'interno di applicazioni PHP tramite lo SPID SP Access Button (https://github.com/italia/spid-sp-access-button). spid-php permette di realizzare un Service Provider (pubblico o privato) per SPID in pochi secondi, ma **non è orientato alla realizzazione di Aggregatori e/o Gestori**.  
+
+**Si raccomanda di mantenere sempre aggiornata la propria installazione all'ultima versione**.
 
 Durante il processo di setup lo script richiede l'inserimento delle seguenti informazioni:
 * directory di installazione (directory corrente)
@@ -137,13 +139,13 @@ restituisce true se l'utente è autenticato, false altrimenti
 ```
 bool isIdPAvailable($idp)
 ```
-restituisce true se il valore di $idp è tra quelli previsti (vedi login) 
+restituisce true se il valore di **$idp** è tra quelli previsti (vedi login) 
 
 ### isIdP
 ```
 bool isIdP($idp)
 ```
-restituisce true se l'utente è autenticato con l'idp $idp (vedi login)
+restituisce true se l'utente è autenticato con l'idp **$idp** (vedi login)
 
 ### requireAuth
 ```
@@ -165,24 +167,28 @@ inserisce i riferimenti al codice javascript necessario al funzionamento del bot
 
 ### insertSPIDButton
 ```
-void insertSPIDButton(string $size)
+void insertSPIDButton($size, [$method='GET'])
 ```
-stampa il codice per l'inserimento dello smart button. $size specifica la dimensione del pulsante (S|M|L|XL)
+stampa il codice per l'inserimento dello smart button. 
+
+**$size** specifica la dimensione del pulsante (S|M|L|XL)
+
+**$method** specifica la versione del bottone (GET|POST)
 
 ### setPurpose
 ```
-void setPurpose(string $purpose)
+void setPurpose($purpose)
 ```
 imposta l'estensione "Purpose" nell'AuthenticationRequest per inviare una richiesta di autenticazione per identità digitale ad uso professionale ([Avviso SPID n.18 v.2](https://www.agid.gov.it/sites/default/files/repository_files/spid-avviso-n18_v.2-_autenticazione_persona_giuridica_o_uso_professionale_per_la_persona_giuridica.pdf)).
-$purpose specifica il valore dell'estensione Purpose (P|LP|PG|PF|PX)
+**$purpose** specifica il valore dell'estensione Purpose (P|LP|PG|PF|PX)
 
 ### login
 ```
-void login($idp, $level, [$returnTo], [$attributeConsumingServiceIndex])
+void login($idp, $level, [$returnTo], [$attributeConsumingServiceIndex], [$post])
 ```
-invia una richiesta di login livello $level verso l'idp $idp. Dopo l'autenticazione, l'utente è reindirizzato alla url eventualmente specificata in $returnTo. Se il parametro $returnTo non è specificato, l'utente è reindirizzato alla pagina di provenienza.
+invia una richiesta di login livello $level verso l'idp **$idp**. Dopo l'autenticazione, l'utente è reindirizzato alla url eventualmente specificata in **$returnTo**. Se il parametro **$returnTo** non è specificato, l'utente è reindirizzato alla pagina di provenienza.
 
-$idp può assumere uno dei seguenti valori:
+**$idp** può assumere uno dei seguenti valori:
 * VALIDATOR
 * DEMO
 * DEMOVALIDATOR
@@ -196,10 +202,16 @@ $idp può assumere uno dei seguenti valori:
 * Register.it S.p.A.
 * TI Trust Technologies srl
 
-$level può assumere uno dei seguenti valori
+**$level** può assumere uno dei seguenti valori
 * 1
 * 2
 * 3
+
+**$post** può assumere valore 
+* false
+* true. 
+
+Se **$post** è true specifica che la AuthnRequest deve essere inviata in Binding HTTP-Post invece che HTTP-Request (default) 
 
 ### getResponseID
 ```
@@ -223,13 +235,13 @@ restituisce il valore per lo specifico attributo
 ```
 void logout([$returnTo])
 ```
-esegue la disconnessione. Dopo la disconnessione, l'utente è reindirizzato alla url specificata in $returnTo oppure alla pagina di provenienza se $returnTo non è specificato.
+esegue la disconnessione. Dopo la disconnessione, l'utente è reindirizzato alla url specificata in **$returnTo** oppure alla pagina di provenienza se **$returnTo** non è specificato.
 
 ### getLogoutURL
 ```
 string getLogoutURL([$returnTo])
 ```
-restituisce la url per eseguire la disconnessione. Dopo la disconnessione, l'utente è reindirizzato alla url specificata in $returnTo oppure alla pagina di provenienza se $returnTo non è specificato.
+restituisce la url per eseguire la disconnessione. Dopo la disconnessione, l'utente è reindirizzato alla url specificata in **$returnTo** oppure alla pagina di provenienza se **$returnTo** non è specificato.
 
 
 ## Esempio di integrazione
@@ -330,7 +342,17 @@ Si consiglia di utilizzare l'endpoint verify esclusivamente per la verifica dell
 <a href="/proxy-spid.php?client_id=61504487f292e&action=logout">Esci</a>
 
 ```
-  
+## Gestione degli errori SPID
+
+Durante il processo di autenticazione SPID posso verificarsi degli errori che 
+vengono generati dagli IDP, determinati dall'interazione dell'utente con la form di login oppure da formati delle richieste che non rispettano le regole tecniche di SPID.
+
+La tabella con i messaggi di errore è disponible [qui](https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/messaggi-errore.html)
+
+Lo script ```/error.php``` viene richiamato alla ricezione di un messaggio 
+di Response che contiene i dettagli dell'errore.
+
+
 ## Author
 [Michele D'Amico (damikael)](https://it.linkedin.com/in/damikael)
  

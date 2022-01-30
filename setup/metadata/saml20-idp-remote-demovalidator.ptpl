@@ -44,14 +44,11 @@ $metadata['https://demo.spid.gov.it/validator'] = array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
       'Location' => 'https://demo.spid.gov.it/validator/samlsso',
     ),
-    
-    /*
-    0 =>
+    1 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
       'Location' => 'https://demo.spid.gov.it/validator/samlsso',
-    ),
-    */
+    )
   ),
   'SingleLogoutService' =>
   array (

@@ -1,6 +1,12 @@
 {
     "config": {
-        "version": "3.8.3"
+        "version": "3.9.0",
+	    "platform": {
+		    "php": "7.4.1"
+	    },
+        "allow-plugins": {
+            "simplesamlphp/composer-module-installer": true
+        }
     },
     "repositories": {
         "spid-sp-access-button": {
@@ -41,7 +47,6 @@
         "web-token/jwt-signature-algorithm-hmac": "2.2.11",
         "web-token/jwt-encryption-algorithm-aeskw": "2.2.11",
         "web-token/jwt-encryption-algorithm-aescbc": "2.2.11"
-
     },
     "scripts": {
         "post-update-cmd": [
