@@ -990,11 +990,12 @@ class Setup {
             $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-login-spid.tpl', true);
             $customized = str_replace(array_keys($vars), $vars, $template);
             file_put_contents($config['wwwDir'] . "/proxy-login-spid.php", $customized);
-            
-            // add error.tpl
-            $template = file_get_contents($config['installDir'] . '/setup/sdk/error.tpl', true);
-            $customized = str_replace(array_keys($vars), $vars, $template);
-            file_put_contents($config['wwwDir'] . "/error.php", $customized);
+            if (!file_exists($config['wwwDir'] . "/error.php")) {
+                // add error.tpl only if not exists
+		$template = file_get_contents($config['installDir'] . '/setup/sdk/error.tpl', true);
+		$customized = str_replace(array_keys($vars), $vars, $template);
+		file_put_contents($config['wwwDir'] . "/error.php", $customized);
+            }
 
             echo $colors->getColoredString("OK", "green");
         }
