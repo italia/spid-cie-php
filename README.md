@@ -85,6 +85,20 @@ Se nella directory locale sono presenti i file *spid-php-setup.json* e *spid-php
 Per utilizzare SimpleSAMLphp su webserver nginx occorre configurare nginx come nell'esempio seguente.
 In *myservice* inserire il nome del servizio come specificato durante l'installazione.
 
+### Prerequisiti per certificati self-signed
+Per fare valido l'uso del `snippets/snakeoil.conf` file su Nginx, è necessario generare il certificato "sel-signed" `/etc/ssl/certs/ssl-cert-snakeoil.pem`  attraverso la installazione del package `ssl-cert` su distribuizioni Debian based (come Ubuntu), con il comando:
+
+```bash
+sudo apt-get install ssl-cert
+```
+
+O, in alternativa, generare il certificato manualmente tramite OpenSSL, con il comando:
+
+```bash
+sudo make-ssl-cert generate-default-snakeoil --force-overwrite
+```
+
+### Configurazione
 ```
 server {  
   listen 443 ssl http2;  
