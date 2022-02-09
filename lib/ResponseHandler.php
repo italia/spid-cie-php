@@ -21,8 +21,8 @@ use Jose\Component\Encryption\JWEDecrypter;
 
 abstract class ResponseHandler {
 
-    const TOKEN_PRIVATE_KEY = "/home/spidauth/spid-php/cert/spid-sp.pem";
-    const TOKEN_PUBLIC_CERT = "/home/spidauth/spid-php/cert/spid-sp.crt";
+    const TOKEN_PRIVATE_KEY = "../cert/spid-sp.pem";
+    const TOKEN_PUBLIC_CERT = "../cert/spid-sp.crt";
     const DEFAULT_SECRET = "";
     const DEFAULT_TOKEN_EXPIRATION_TIME = 1200;
 
