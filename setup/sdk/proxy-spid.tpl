@@ -1,5 +1,11 @@
 <?php
     require_once("{{SDKHOME}}/proxy-spid-php.php");
+    require_once("{{SDKHOME}}/lib/ResponseHandler.php");
+    require_once("{{SDKHOME}}/lib/ResponseHandlerPlain.php");
+    require_once("{{SDKHOME}}/lib/ResponseHandlerSign.php");
+    require_once("{{SDKHOME}}/lib/ResponseHandlerSignEncrypt.php");
+    require_once("{{SDKHOME}}/lib/ResponseHandlerEncryptSign.php");
+
     use Jose\Component\Core\AlgorithmManager;
     use Jose\Component\Core\JWK;
     use Jose\Component\KeyManagement\JWKFactory;
@@ -55,40 +61,34 @@
                     && isset($_GET['idp']) 
                     && $spidsdk->isIdP($_GET['idp'])) {
 
-                        echo "<form name='spidauth' action='".$redirect_uri."' method='POST'>";
-
                         // dearray values
                         $data = array();
                         foreach($spidsdk->getAttributes() as $attribute=>$value) {
                             $data[$attribute] = $value[0];
                         }
 
-                        if($proxy_config['signProxyResponse']) {
+                        $client_config = $proxy_config['clients'][$client_id];
+                        $handlerClass = 'ResponseHandler'.$client_config['handler'];
 
-                            $exp_time = $proxy_config['tokenExpTime'] ?: DEFAULT_TOKEN_EXPIRATION_TIME;
-                            $iss = $proxy_config['spDomain'];
-                            $aud = $redirect_uri;
-                            $jwk_pem = TOKEN_PRIVATE_KEY;
-
-                            if($proxy_config['encryptProxyResponse']) {
-                                $secret = $proxy_config['clients'][$client_id]['client_secret'];
-                                $data = makeJWE($data, $exp_time, $iss, $aud, $secret);
-                            }
-
-                            $signedDataToken = makeJWS($data, $exp_time, $iss, $aud, $jwk_pem);
-                            echo "<input type='hidden' name='data' value='".$signedDataToken."' />";
-
-                        } else {
-                            foreach($data as $attribute=>$value) {
-                                echo "<input type='hidden' name='".$attribute."' value='".$value."' />";
+                        if(!in_array($handlerClass, [
+                            'ResponseHandlerPlain', 
+                            'ResponseHandlerSign',
+                            'ResponseHandlerSignEncrypt',
+                            'ResponseHandlerEncryptSign'
+                        ])) {
+                            if($proxy_config['signProxyResponse']) {
+                                if($proxy_config['encryptProxyResponse']) {
+                                    $handlerClass = 'ResponseHandlerEncryptSign';
+                                } else {
+                                    $handlerClass = 'ResponseHandlerSign';
+                                }
+                            } else {
+                                $handlerClass = 'ResponseHandlerPlain';
                             }
                         }
 
-                        echo "<input type='hidden' name='state' value='".$state."' />";
-                        echo "</form>";
-                        echo "<script type='text/javascript'>";
-                        echo "  document.spidauth.submit();";
-                        echo "</script>";
+                        $handler = new $handlerClass($proxy_config['spDomain'], $client_config);
+                        $handler->sendResponse($redirect_uri, $data, $state);
                         die();
                 
                     } else {
@@ -185,81 +185,6 @@
     if(DEBUG) echo "action not valid"; 
     die(); 
 
-
-    
-    function makeJWE($payload, $exp_time, $iss, $aud, $secret): string {
-        
-        $iat        = new DateTimeImmutable();
-        $exp_time   = $exp_time?: DEFAULT_TOKEN_EXPIRATION_TIME;
-        $exp        = $iat->modify("+".$exp_time." seconds")->getTimestamp();
-
-        $data = [
-            'iss'  => $iss,                                     // Issuer - spDomain
-            'aud'  => $aud,                                     // Audience - Redirect_uri
-            'iat'  => $iat->getTimestamp(),                     // Issued at: time when the token was generated
-            'nbf'  => $iat->getTimestamp(),                     // Not before
-            'exp'  => $exp,                                     // Expire
-            'data' => $payload,                                 // Authentication Data
-        ];
-
-        $keyEncryptionAlgorithmManager = new AlgorithmManager([ new A256KW() ]); 
-        $contentEncryptionAlgorithmManager = new AlgorithmManager([ new A256CBCHS512() ]);
-        $compressionMethodManager = new CompressionMethodManager([ new Deflate() ]);
-
-        $jweBuilder = new JWEBuilder(
-            $keyEncryptionAlgorithmManager,
-            $contentEncryptionAlgorithmManager,
-            $compressionMethodManager
-        );
-
-        $jwk = JWKFactory::createFromSecret($secret?:DEFAULT_SECRET);
-
-        $jwe = $jweBuilder
-            ->create()
-            ->withPayload(json_encode($data))
-            ->withSharedProtectedHeader([
-                'alg' => 'A256KW',
-                'enc' => 'A256CBC-HS512',
-                'zip' => 'DEF'
-            ])
-            ->addRecipient($jwk) 
-            ->build();
-
-        $serializer = new JWESerializer();
-        $token = $serializer->serialize($jwe, 0); 
-
-        return $token;
-    }
-
-    function makeJWS($payload, $exp_time, $iss, $aud, $jwk_pem): string {
-        
-        $iat        = new DateTimeImmutable();
-        $exp_time   = $exp_time?: DEFAULT_TOKEN_EXPIRATION_TIME;
-        $exp        = $iat->modify("+".$exp_time." seconds")->getTimestamp();
-
-        $data = [
-            'iss'  => $iss,                                     // Issuer - spDomain
-            'aud'  => $aud,                                     // Audience - Redirect_uri
-            'iat'  => $iat->getTimestamp(),                     // Issued at: time when the token was generated
-            'nbf'  => $iat->getTimestamp(),                     // Not before
-            'exp'  => $exp,                                     // Expire
-            'data' => $payload,                                 // Authentication Data
-        ];
-
-        $algorithmManager = new AlgorithmManager([new RS256()]);
-        $jwk = JWKFactory::createFromKeyFile($jwk_pem);
-        $jwsBuilder = new JWSBuilder($algorithmManager);
-        $jws = $jwsBuilder
-            ->create() 
-            ->withPayload(json_encode($data)) 
-            ->addSignature($jwk, ['alg' => 'RS256']) 
-            ->build(); 
-        
-        $serializer = new JWSSerializer(); 
-        $token = $serializer->serialize($jws, 0); 
-    
-        return $token;
-    }
 
 ?>
 
