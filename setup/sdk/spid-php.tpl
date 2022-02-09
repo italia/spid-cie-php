@@ -223,7 +223,7 @@
 
         public function insertSPIDButton($size, $method='GET') {
 			$size = strtoupper($size);
-			$method = strtoupper($method);
+			$method = strtolower($method);
 
             $button_li = $this->addSPIDButtonListItems($method);
 
@@ -293,7 +293,7 @@
                 break;
             }
 
-            if($method=="POST") {
+            if($method=="post") {
                 $button = "<form name=\"spid_idp_access\" action=\"#\" method=\"post\">" . $button . "</form>";
             }
 
@@ -317,9 +317,9 @@
         }
 
         public function addSPIDButtonListItems($method='GET'): string {
-			$method = strtoupper($method);
+			$method = strtolower($method);
 
-			if($method=='POST') {
+			if($method=='post') {
 
 				$button_li = "
 					<li class=\"spid-idp-button-link\" data-idp=\"arubaid\">

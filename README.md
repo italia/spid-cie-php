@@ -1,6 +1,6 @@
 <img src="https://github.com/italia/spid-graphics/blob/master/spid-logos/spid-logo-b-lb.png" alt="SPID" data-canonical-src="https://github.com/italia/spid-graphics/blob/master/spid-logos/spid-logo-b-lb.png" width="50%" />
 
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.2.5-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.4.1-8892BF.svg)](https://php.net/)
 [![Join the #spid-php channel](https://img.shields.io/badge/Slack%20channel-%23spid--php-blue.svg?logo=slack)](https://developersitalia.slack.com/messages/CB6DCK274)
 [![Get invited](https://slack.developers.italia.it/badge.svg)](https://slack.developers.italia.it/)
 [![SPID on forum.italia.it](https://img.shields.io/badge/Forum-SPID-blue.svg)](https://forum.italia.it/c/spid)
@@ -50,9 +50,10 @@ Se si è scelto di copiare i file di esempio come proxy, sarà possibile verific
 
 ## Requisiti
 * Web server
-* php >= 7.2.5 < 8.0
+* php >= 7.4.1 < 8.0
 * php-xml
 * php-mbstring
+* php-gmp
 * Composer (https://getcomposer.org)
 * OpenSSL >= 1.1.1
 * OpenSSL aes-256-cbc Cipher Algorithm
