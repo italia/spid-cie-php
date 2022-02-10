@@ -24,10 +24,11 @@
     use Jose\Component\Encryption\Serializer\CompactSerializer as JWESerializer;
     use Jose\Component\Encryption\JWEDecrypter;
 
-
     const PROXY_CONFIG_FILE = "{{SDKHOME}}/spid-php-proxy.json";
     const TOKEN_PRIVATE_KEY = "{{SDKHOME}}/cert/spid-sp.pem";
     const TOKEN_PUBLIC_CERT = "{{SDKHOME}}/cert/spid-sp.crt";
+    const DEFAULT_SPID_LEVEL = 2;
+    const DEFAULT_ATCS_INDEX = 0;
     const DEFAULT_SECRET = "";
     const DEFAULT_TOKEN_EXPIRATION_TIME = 1200;
     const DEBUG = false;
@@ -92,7 +93,9 @@
                         die();
                 
                     } else {
-                        $spidsdk->login($idp, 1);
+                        $spid_level = $clients[$client_id]['level'] || DEFAULT_SPID_LEVEL;
+                        $atcs_index = $clients[$client_id]['atcs_index'] || DEFAULT_ATCS_INDEX;
+                        $spidsdk->login($idp, $spid_level, "", $atcs_index);
                         die();
                     }
 
