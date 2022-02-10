@@ -93,8 +93,11 @@
                         die();
                 
                     } else {
-                        $spid_level = $clients[$client_id]['level'] || DEFAULT_SPID_LEVEL;
-                        $atcs_index = $clients[$client_id]['atcs_index'] || DEFAULT_ATCS_INDEX;
+                        $spid_level = $clients[$client_id]['level'];
+                        $atcs_index = $clients[$client_id]['atcs_index'];
+                        if($spid_level==null || !in_array($spid_level, [1,2,3])) $spid_level = DEFAULT_SPID_LEVEL;
+                        if($atcs_index==null || !is_numeric($atcs_index)) $atcs_index = DEFAULT_ATCS_INDEX;
+
                         $spidsdk->login($idp, $spid_level, "", $atcs_index);
                         die();
                     }
