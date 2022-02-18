@@ -32,6 +32,7 @@
         }
     },
     "require": {
+        "lib-openssl": "^1.1.1",
         "simplesamlphp/simplesamlphp": "1.19.0",
         "italia/spid-smart-button": "*",
         "italia/spid-sp-access-button": "*",
