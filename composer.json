@@ -1,9 +1,6 @@
 {
     "config": {
-        "version": "3.10.0",
-	    "platform": {
-		    "php": "7.4.1"
-	    }
+        "version": "3.10.2"
     },
     "repositories": {
         "spid-sp-access-button": {
@@ -32,6 +29,10 @@
         }
     },
     "require": {
+        "php": "^7.4.1",
+        "ext-xml": "*",
+        "ext-mbstring": "*",
+        "ext-gmp": "*",
         "lib-openssl": "^1.1.1",
         "simplesamlphp/simplesamlphp": "1.19.0",
         "italia/spid-smart-button": "*",
