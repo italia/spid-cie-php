@@ -1411,4 +1411,32 @@ class Setup {
 
     }
 
+
+// It checks if OpenSSL is present and if its version is higher than the minimum version required.
+// If so it returns true, false otherwise. 
+function openssl_version_check($minimum_version = "1.1.1") {
+    $result = false;
+
+    if (defined('OPENSSL_VERSION_TEXT')) {
+
+        $openssl_version = OPENSSL_VERSION_TEXT;
+
+        // For PHP < 8.0
+        if (!function_exists('str_starts_with')) {
+            function str_starts_with($str, $start) {
+                return (@substr_compare($str, $start, 0, strlen($start)) == 0);
+            }
+        }
+
+        if (str_starts_with($openssl_version, "OpenSSL")) {
+            $openssl_version = str_replace("OpenSSL ", "", $openssl_version);
+            $openssl_version = substr($openssl_version, 0, strpos($openssl_version, ' '));
+            $openssl_version = preg_replace('/[a-z]/i', '', $openssl_version);
+            $result = version_compare($openssl_version, $minimum_version, ">=");
+        }
+    }
+    return $result;
+}
+
+
 }
