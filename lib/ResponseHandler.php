@@ -32,6 +32,14 @@ abstract class ResponseHandler {
         $this->config = $config;
     }
 
+    function set($key, $value) {
+        $this->$key = $value;
+    }
+
+    function get($key) {
+        return $this->$key;
+    }
+
     abstract public function sendResponse($redirect_uri, $data, $state);
 
     protected function makeJWE($payload, $exp_time, $iss, $aud, $secret): string {

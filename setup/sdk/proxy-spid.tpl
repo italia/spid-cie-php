@@ -89,6 +89,9 @@
                         }
 
                         $handler = new $handlerClass($proxy_config['spDomain'], $client_config);
+                        $handler->set('providerId', $spidsdk->getIdP());
+                        $handler->set('providerName', $spidsdk->getIdPKey());
+                        $handler->set('responseId', $spidsdk->getResponseID());
                         $handler->sendResponse($redirect_uri, $data, $state);
                         die();
                 

@@ -14,6 +14,9 @@ class ResponseHandlerSign extends ResponseHandler {
         echo "<input type='hidden' name='data' value='".$signedDataToken."' />";
 
         echo "<input type='hidden' name='state' value='".$state."' />";
+        echo "<input type='hidden' name='providerId' value='".$this->providerId."' />";
+        echo "<input type='hidden' name='providerName' value='".$this->providerName."' />";
+        echo "<input type='hidden' name='responseId' value='".$this->responseId."' />";
         echo "</form>";
         echo "<script type='text/javascript'>";
         echo "  document.spidauth.submit();";
