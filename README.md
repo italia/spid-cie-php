@@ -59,6 +59,8 @@ Se si è scelto di copiare i file di esempio come proxy, sarà possibile verific
 * OpenSSL aes-256-cbc Cipher Algorithm
 
 ## Installazione
+Clonare, oppure salvare i file di spid-php, in una __directory non esposta sul web__ (__NON salvare i file del progetto nella root o in una sottodirectory del server web come www o public_html__). Quindi lanciare il comando di installazione dalla directory principale di spid-php.
+
 ```
 # composer install
 ```
