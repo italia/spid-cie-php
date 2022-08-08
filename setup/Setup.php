@@ -37,6 +37,7 @@ class Setup {
         $_installDir = getcwd();
         $_acsCustomLocation = "";
         $_sloCustomLocation = "";
+        $_storeType = "";
 
         $_serviceName = "myservice";
         $_spName = "Service Provider Name";
@@ -109,6 +110,19 @@ class Setup {
             if ($config['serviceName'] == null || $config['serviceName'] == "") {
                 $config['serviceName'] = $_serviceName;
             }
+        }
+
+        if (!isset($config['storeType'])) {
+            $scelta = "";
+            while ($scelta != "phpsession" && $scelta != "sql") { 
+                echo "Please insert the store type (" .
+                $colors->getColoredString("phpsession", "green") . "|sql): ";
+                $scelta = strtolower(readline());
+                if ($scelta == null || $scelta == "") { 
+                    $scelta = "phpsession";
+                }
+            }
+            $config['storeType'] = $scelta;
         }
 
         if (!isset($config['entityID'])) {
@@ -844,7 +858,11 @@ class Setup {
             "{{TECHCONTACT_EMAIL}}" => "'" . $config['technicalContactEmail'] . "'",
             "{{ACSCUSTOMLOCATION}}" => "'" . $config['acsCustomLocation'] . "'",
             "{{SLOCUSTOMLOCATION}}" => "'" . $config['sloCustomLocation'] . "'",
-            "{{SP_DOMAIN}}" => "'." . $config['spDomain'] . "'"
+            "{{SP_DOMAIN}}" => "'." . $config['spDomain'] . "'",
+            "{{STORETYPE}}" => "'" . $config['storeType'] . "'",
+            "{{STORESQLDNS}}" => "'sqlite:" . ($config['storeType'] == 'sql' ? $config['installDir'] : "/path/to") . "/sqlitedatabase.sq3'",
+            "{{STORESQLUSERNAME}}" => ($config['storeType'] == 'sql' ? "'root'": "null"),
+            "{{STORESQLPASSWORD}}" => ($config['storeType'] == 'sql' ? "'" . bin2hex(random_bytes(8)) . "'": "null")
         );
         $template = file_get_contents($config['installDir'] . '/setup/config/config.tpl', true);
         $customized = str_replace(array_keys($vars), $vars, $template);
