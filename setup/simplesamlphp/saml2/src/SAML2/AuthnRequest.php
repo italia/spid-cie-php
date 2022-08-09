@@ -825,9 +825,16 @@ class AuthnRequest extends Request
             if (array_key_exists('SPNameQualifier', $this->nameIdPolicy)) {
                 $nameIdPolicy->setAttribute('SPNameQualifier', $this->nameIdPolicy['SPNameQualifier']);
             }
+            /* Avviso SPID n.5
+             * https://www.agid.gov.it/sites/default/files/repository_files/documentazione/spid-avviso-n5-regole-tecniche-errata-corrige.pdf
+             *
+             * https://demo.spid.gov.it/validator#/request-check-strict
+             * 35	The AllowCreate attribute MUST not be present
+             *
             if (array_key_exists('AllowCreate', $this->nameIdPolicy)) {
                 $nameIdPolicy->setAttribute('AllowCreate', ($this->nameIdPolicy['AllowCreate']) ? 'true' : 'false');
             }
+             */
             $root->appendChild($nameIdPolicy);
         }
 
