@@ -47,6 +47,7 @@ class Setup {
         $_entityID = "https://localhost";
         $_spDomain = "localhost";
         $_acsIndex = 0;
+        $_spidLevel = 1;
         $_adminPassword = "admin";
         $_secretsalt = bin2hex(random_bytes(16)); 
         $_technicalContactName = "";
@@ -109,6 +110,19 @@ class Setup {
             if ($config['serviceName'] == null || $config['serviceName'] == "") {
                 $config['serviceName'] = $_serviceName;
             }
+        }
+
+        if (!isset($config['spidLevel'])) {
+            $scelta = ""
+            while ($scelta != "1" && $scelta != "2" && $scelta != "3") { 
+                echo "Please insert the SPID Level (" .
+                $colors->getColoredString("1", "green") . ", 2, 3): ";
+                $scelta = strtoupper(readline());
+                if ($scelta == null || $scelta == "") { 
+                    $scelta = "1";
+                }
+            }
+            $config['spidLevel'] = $scelta;
         }
 
         if (!isset($config['entityID'])) {
@@ -867,6 +881,7 @@ class Setup {
             "{{ORGANIZATIONCODE}}" => "'" . $config['spOrganizationCode'] . "'",
             "{{ORGANIZATIONEMAILADDRESS}}" => "'" . $config['spOrganizationEmailAddress'] . "'",
             "{{ORGANIZATIONTELEPHONENUMBER}}" => "'" . $config['spOrganizationTelephoneNumber'] . "'",
+            "{{SPIDLEVEL}}" => "'https://www.spid.gov.it/SpidL" . $config['spidLevel'] . "'"
         );
 
         if(!$config['spIsPublicAdministration']) {

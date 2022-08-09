@@ -32,9 +32,7 @@ $config = array(
         /* Impostare il livello di spid che si vuole (1,2,3)  per il servizio */
         'AuthnContextClassRef' =>
         array(
-            'https://www.spid.gov.it/SpidL1',
-            'https://www.spid.gov.it/SpidL2',
-            'https://www.spid.gov.it/SpidL3'
+            {{SPIDLEVEL}}
         ),
 
         'AuthnContextComparison' => 'exact',
