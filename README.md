@@ -4,7 +4,7 @@
 [![Join the #spid-php channel](https://img.shields.io/badge/Slack%20channel-%23spid--php-blue.svg?logo=slack)](https://developersitalia.slack.com/messages/CB6DCK274)
 [![Get invited](https://slack.developers.italia.it/badge.svg)](https://slack.developers.italia.it/)
 [![SPID on forum.italia.it](https://img.shields.io/badge/Forum-SPID-blue.svg)](https://forum.italia.it/c/spid)
-![SP SPID in produzione con spid-php](https://img.shields.io/badge/SP%20SPID%20in%20produzione%20con%20spid--php-41+-green)
+![SP SPID in produzione con spid-php](https://img.shields.io/badge/SP%20SPID%20in%20produzione%20con%20spid--php-70+-green)
 
 # spid-php
 Software Development Kit for easy SPID access integration with SimpleSAMLphp.\
@@ -59,6 +59,8 @@ Se si è scelto di copiare i file di esempio come proxy, sarà possibile verific
 * OpenSSL aes-256-cbc Cipher Algorithm
 
 ## Installazione
+Clonare, oppure salvare i file di spid-php, in una __directory non esposta sul web__ (__NON salvare i file del progetto nella root o in una sottodirectory del server web come www o public_html__). Quindi lanciare il comando di installazione dalla directory principale di spid-php.
+
 ```
 # composer install
 ```
