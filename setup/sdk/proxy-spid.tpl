@@ -36,7 +36,6 @@
     $proxy_config = file_exists(PROXY_CONFIG_FILE)? json_decode(file_get_contents(PROXY_CONFIG_FILE), true) : array();
     $production = $proxy_config['production'];
 
-    $spidsdk        = new SPID_PHP($production);
     $clients        = $proxy_config['clients'];
     $action         = $_GET['action'];
     $client_id      = $_GET['client_id'];
@@ -44,10 +43,15 @@
     $state          = $_GET['state'];
     $idp            = $_GET['idp'];
 
-
     switch($action) {
 
         case "login":
+
+            $service = "service";
+            if($idp=="CIE TEST") $service = "cie";
+        
+            $spidsdk = new SPID_PHP($production, $service);
+
 
             if(!$spidsdk->isIdPAvailable($idp)) {
                 http_response_code(404);
@@ -92,6 +96,7 @@
                         $handler->set('providerId', $spidsdk->getIdP());
                         $handler->set('providerName', $spidsdk->getIdPKey());
                         $handler->set('responseId', $spidsdk->getResponseID());
+
                         $handler->sendResponse($redirect_uri, $data, $state);
                         die();
                 
@@ -122,6 +127,13 @@
         case "logout":
             $return = $redirect_uri? $redirect_uri : $clients[$client_id]['redirect_uri'][0];
 
+            $service = "service";
+            $spidsdk = new SPID_PHP($production, $service);
+            if(!$spidsdk->isAuthenticated()) {
+                $service = "cie";
+                $spidsdk = new SPID_PHP($production, $service);
+            };
+            
             if($spidsdk->isAuthenticated()) {
                 /* 
                  * Uncomment to exec local logout instead of IdP logout
