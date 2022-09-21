@@ -48,7 +48,7 @@
         case "login":
 
             $service = "service";
-            if($idp=="CIE TEST") $service = "cie";
+            if($idp=="CIE" || $idp=="CIE TEST") $service = "cie";
         
             $spidsdk = new SPID_PHP($production, $service);
 
