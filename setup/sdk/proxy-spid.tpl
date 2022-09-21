@@ -43,7 +43,7 @@
     $state          = $_GET['state'];
     $idp            = $_GET['idp'];
 
-    switch($action) { 
+    switch($action) {
 
         case "login":
 
@@ -96,7 +96,7 @@
                         $handler->set('providerId', $spidsdk->getIdP());
                         $handler->set('providerName', $spidsdk->getIdPKey());
                         $handler->set('responseId', $spidsdk->getResponseID());
-
+                        
                         $handler->sendResponse($redirect_uri, $data, $state);
                         die();
                 
@@ -133,7 +133,7 @@
                 $service = "cie";
                 $spidsdk = new SPID_PHP($production, $service);
             };
-            
+
             if($spidsdk->isAuthenticated()) {
                 /* 
                  * Uncomment to exec local logout instead of IdP logout
