@@ -24,6 +24,10 @@
             return ($idp==$this->idps['CIE TEST'] || $idp==$this->idps['CIE']);
         }
 
+        public function isCIEKey($key) {
+            return ($key=="CIE TEST" || $key=="CIE");
+        }
+
         public function getIdPKey() {
             $idp = $this->getIdP();
             foreach($this->idps as $k=>$v) {
@@ -78,12 +82,17 @@
         }
     
         public function login($idp, $l, $returnTo="", $attributeIndex=null, $post=false) {
-            // override for CIE
-            $comparison = $this->isCIE()? \SAML2\Constants::COMPARISON_EXACT : \SAML2\Constants::COMPARISON_MINIMUM;
-            $l = $this->isCIE()? "3" : $l;
-            $post = $this->isCIE()? true : $post;
-            
+            // default for SPID
             $l = ($l=="2" || $l=="3")? $l : "1";
+            $post = $post;
+            $comparison = \SAML2\Constants::COMPARISON_MINIMUM;
+
+            // override for CIE
+            $isCIEIdP = $this->isCIEKey($idp);
+            $l = $isCIEIdP? "3" : $l;
+            $post = $isCIEIdP? true : $post;
+            $comparison = $isCIEIdP? \SAML2\Constants::COMPARISON_EXACT : \SAML2\Constants::COMPARISON_MINIMUM;
+            
             $spidlevel = "https://www.spid.gov.it/SpidL" . $l;
             $binding = $post? \SAML2\Constants::BINDING_HTTP_POST : \SAML2\Constants::BINDING_HTTP_REDIRECT;
 
