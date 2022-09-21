@@ -43,7 +43,7 @@
     $state          = $_GET['state'];
     $idp            = $_GET['idp'];
 
-    switch($action) {
+    switch($action) { 
 
         case "login":
 

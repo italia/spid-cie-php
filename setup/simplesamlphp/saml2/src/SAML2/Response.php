@@ -63,8 +63,11 @@ class Response extends StatusResponse
             $this->assertionIssuer = new XML\saml\Issuer($assertionIssuer[0]);
             
             // CIE bypass
-            if($this->assertionIssuer->getValue()!='https://preproduzione.idserver.servizicie.interno.gov.it/idp/profile/SAML2/POST/SSO') {
-
+            if(
+                $this->assertionIssuer->getValue()!='https://preproduzione.idserver.servizicie.interno.gov.it/idp/profile/SAML2/POST/SSO'
+                && $this->assertionIssuer->getValue()!='https://idserver.servizicie.interno.gov.it/idp/profile/SAML2/POST/SSO'
+            ) {
+                
                 /* SPID CUSTOM : Assertion Issuer cannot be blank */
                 if($assertionIssuer[0]!=null) {
                     $this->assertionIssuer->setFormat($assertionIssuer[0]->getAttribute('Format'));
