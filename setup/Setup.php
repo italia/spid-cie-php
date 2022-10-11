@@ -103,12 +103,21 @@ class Setup {
         }
 
         if (!isset($config['serviceName'])) {
-            echo "Please insert name for service endpoint (" .
-            $colors->getColoredString($_serviceName, "green") . "): ";
-            $config['serviceName'] = str_replace("'", "\'", readline());
-            if ($config['serviceName'] == null || $config['serviceName'] == "") {
-                $config['serviceName'] = $_serviceName;
-            }
+            do {                    
+                echo "Please insert name for service endpoint (" .
+                $colors->getColoredString($_serviceName, "green") . "): ";
+                $serviceName = readline();
+                if ($serviceName == null || $serviceName == "") {
+                    $serviceName = $_serviceName;
+                    break;
+                }
+                $is_valid = preg_match("/^\w{1}[-\w]*$/i", $serviceName);
+                if (!$is_valid)                                
+                    echo "Value '{$serviceName}' not allowed\n";
+
+            } while(!$is_valid);
+            $config['serviceName'] = $serviceName;
+            
         }
 
         if (!isset($config['entityID'])) {
@@ -1310,12 +1319,20 @@ class Setup {
         if (!empty($config['serviceName'])) {
             $serviceName = $config['serviceName'];
         } else {
-            echo "Please insert name for service endpoint (" .
-            $colors->getColoredString($_serviceName, "green") . "): ";
-            $serviceName = readline();
-            if ($serviceName == null || $serviceName == "") {
-                $serviceName = $_serviceName;
-            }
+            do {                    
+                echo "Please insert name for service endpoint (" .
+                $colors->getColoredString($_serviceName, "green") . "): ";
+                $serviceName = readline();
+                if ($serviceName == null || $serviceName == "") {
+                    $serviceName = $_serviceName;
+                    break;
+                }
+                $is_valid = preg_match("/^\w{1}[-\w]*$/i", $serviceName);
+                if (!$is_valid)                                
+                    echo "Value '{$serviceName}' not allowed\n";
+
+            } while(!$is_valid);
+
         }
 		
 		if (file_exists("{$installDir}/vendor/simplesamlphp/simplesamlphp/log/simplesamlphp.log")) {
