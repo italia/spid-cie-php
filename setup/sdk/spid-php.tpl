@@ -19,6 +19,15 @@
             return $this->spid_auth->getAuthData('saml:sp:IdP');
         }
 
+        public function isCIE() {
+            $idp = $this->getIdP();
+            return ($idp==$this->idps['CIE TEST'] || $idp==$this->idps['CIE']);
+        }
+
+        public function isCIEKey($key) {
+            return ($key=="CIE TEST" || $key=="CIE");
+        }
+
         public function getIdPKey() {
             $idp = $this->getIdP();
             foreach($this->idps as $k=>$v) {
@@ -73,13 +82,23 @@
         }
     
         public function login($idp, $l, $returnTo="", $attributeIndex=null, $post=false) {
+            // default for SPID
             $l = ($l=="2" || $l=="3")? $l : "1";
+            $post = $post;
+            $comparison = \SAML2\Constants::COMPARISON_MINIMUM;
+
+            // override for CIE
+            $isCIEIdP = $this->isCIEKey($idp);
+            $l = $isCIEIdP? "3" : $l;
+            $post = $isCIEIdP? true : $post;
+            $comparison = $isCIEIdP? \SAML2\Constants::COMPARISON_EXACT : \SAML2\Constants::COMPARISON_MINIMUM;
+            
             $spidlevel = "https://www.spid.gov.it/SpidL" . $l;
             $binding = $post? \SAML2\Constants::BINDING_HTTP_POST : \SAML2\Constants::BINDING_HTTP_REDIRECT;
 
             $config = array(
                 'saml:AuthnContextClassRef' => $spidlevel,
-                'saml:AuthnContextComparison' => \SAML2\Constants::COMPARISON_MINIMUM,
+                'saml:AuthnContextComparison' => $comparison,
                 'saml:idp' => $this->idps[$idp],
                 'saml:NameIDPolicy' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
                 'saml:AttributeConsumingServiceIndex' => $attributeIndex,
