@@ -22,7 +22,7 @@ jobs:
       run: docker build . --file setup/Dockerfile --tag spid-php:latest
 
     - name: Docker Tag
-      run: docker tag spid-php:latest ghcr.io/damikael/spid-php:latest
+      run: docker tag spid-php:latest ghcr.io/italia/spid-php:latest
 
     - name: Docker Push
-      run: docker push ghcr.io/damikael/spid-php:latest
+      run: docker push ghcr.io/italia/spid-php:latest
