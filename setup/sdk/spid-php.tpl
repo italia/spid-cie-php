@@ -365,6 +365,9 @@
 					<li class=\"spid-idp-button-link\" data-idp=\"spiditalia\">
 						<button class=\"idp-button-idp-logo\" name=\"idp\" value=\"Register.it S.p.A.\" type=\"submit\"><span class=\"spid-sr-only\">SPIDItalia Register.it</span><img class=\"spid-idp-button-logo\" src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-spiditalia.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-spiditalia.png'; this.onerror=null;\" alt=\"SpidItalia\" /></button>
 					</li>
+                    <li class=\"spid-idp-button-link\" data-idp=\"teamsystemid\">
+						<button class=\"idp-button-idp-logo\" name=\"idp\" value=\"TeamSystem s.p.a.\" type=\"submit\"><span class=\"spid-sr-only\">TeamSystem ID</span><img class=\"spid-idp-button-logo\" src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-teamsystemid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-teamsystemid.png'; this.onerror=null;\" alt=\"TeamSystem ID\" /></button>
+					</li>
 					<li class=\"spid-idp-button-link\" data-idp=\"timid\">
 						<button class=\"idp-button-idp-logo\" name=\"idp\" value=\"TI Trust Technologies srl\" type=\"submit\"><span class=\"spid-sr-only\">Tim ID</span><img class=\"spid-idp-button-logo\" src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-timid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-timid.png'; this.onerror=null;\" alt=\"Tim ID\" /></button>
 					</li>
