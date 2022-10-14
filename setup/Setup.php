@@ -52,9 +52,9 @@ class Setup {
         $_technicalContactName = "";
         $_technicalContactEmail = "";
         $_spCountryName = "IT";
-        $_spLocalityName = "";
+        $_spLocalityName = "Locality";
         $_spOrganizationCodeType = "VATNumber";
-        $_spOrganizationCode = "";
+        $_spOrganizationCode = "code";
         $_spOrganizationEmailAddress = "info@organization.org"; // must be not null otherwise metadata will not generated 
         $_spOrganizationTelephoneNumber = "12345678"; // must be not null otherwise metadata will not generated 
 
