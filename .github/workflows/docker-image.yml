@@ -15,10 +15,14 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
+    - name: Docker login
+      run: docker login ghcr.io -u damikael -p ${{secrets.DOCKER_CI_TOKEN}}
+      
     - name: Build the Docker image
-      run: docker build . --file setup/Dockerfile --tag spid-php:$(date +%s)
+      run: docker build . --file setup/Dockerfile --tag spid-php:latest
 
-    - name: Publish to GitHub Registry
-      run: echo $DOCKER_CI_TOKEN | docker login ghcr.io -u damikael --password-stdin
-      env:
-        DOCKER_CI_TOKEN: ${{ secrets.DOCKER_CI_TOKEN }}
+    - name: Docker Tag
+      run: docker tag spid-php:latest linfaservice/spid-php:latest
+
+    - name: Docker Push
+      run: docker push linfaservice/spid-php:latest
