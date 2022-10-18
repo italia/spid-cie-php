@@ -827,11 +827,18 @@ class Message
         }
         $attributesMatch = (count(array_intersect($req_attributes, $res_attributes)) == count($req_attributes));
 
-        if(!$attributesMatch) {
-            throw new SSP_Error\Exception(
-                'Received attributes does not match requested. Expected: '.implode(",", $req_attributes).'. Received: '.implode(",", $res_attributes)
-            );
-        }
+        // eIDAS Exception: for eIDAS received attributes may change
+        if($assertionIssuer!='https://sp-proxy.pre.eid.gov.it/spproxy/idpit'
+            && $assertionIssuer!='https://sp-proxy.eid.gov.it/spproxy/idpit') {
+
+            if(!$attributesMatch) {
+                throw new SSP_Error\Exception(
+                    'Received attributes does not match requested. Expected: '.implode(",", $req_attributes)
+                    .'. Received: '.implode(",", $res_attributes)
+                    .'. Issuer: '.$assertionIssuer
+                );
+            }
+            }
 
         /* END SPID CUSTOM */
 
