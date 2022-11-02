@@ -840,8 +840,37 @@ class Setup {
         echo $colors->getColoredString("\nCreate symlink for simplesamlphp service... ", "white");
         $cmd_target = $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www";
         $cmd_link = $config['wwwDir'] . "/" . $config['serviceName'];
-        symlink($cmd_target, $cmd_link);
-        echo $colors->getColoredString("OK", "green");
+        
+        $symlink_manual_creation_command = false;
+        if (PHP_OS_FAMILY === "Windows") {
+            // windows
+            // symlink function doesn't work correctly on windows.
+            // Using mklink /D needs an administrator user
+            // Using mklink /J works with non-admin users, but cannot create external filesystems links
+            // Here we try to make a symbolic link (/D), if it's not possibile we'll warn the user to 
+            // execute the command using an administrator user.
+            $cmd_target_safe_mklink = str_replace("/", "\\", $cmd_target);
+            $cmd_link_safe_mklink = str_replace("/", "\\", $cmd_link);
+            $mklink_cmd = "mklink /D \"$cmd_link_safe_mklink\"  \"$cmd_target_safe_mklink\"";
+            try {
+                $result = exec($mklink_cmd);
+                if (!$result) {
+                    $symlink_manual_creation_command= "WARNING! At the end of the installation execute as administrator this command:\n$mklink_cmd";
+                }
+            } catch(Exception $e) {
+                $symlink_manual_creation_command= "WARNING! At the end of the installation execute as administrator this command:\n$mklink_cmd";
+            }
+            
+        } else {
+            // linux
+            symlink($cmd_target, $cmd_link);
+        }
+        
+        if ($symlink_manual_creation_command === false) {
+            echo $colors->getColoredString("OK", "green");
+        } else {
+            echo $colors->getColoredString("TO CREATE MANUALLY", "yellow");
+        }
 
         // customize and copy config file
         echo $colors->getColoredString("\nWrite config file... ", "white");
@@ -1052,6 +1081,10 @@ class Setup {
 
 
         echo $colors->getColoredString("\n\nSPID PHP SDK successfully installed! Enjoy the identities\n\n", "green");
+        
+        if ($symlink_manual_creation_command !== false) {
+            echo $colors->getColoredString("\n$symlink_manual_creation_command\n", "yellow");
+        }
     }
 
     public static function updateMetadata() {
