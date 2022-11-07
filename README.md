@@ -77,6 +77,12 @@ La disinstallazione non cancella gli eventuali file *spid-php-setup.json*, *spid
 # composer update-metadata
 ```
 
+## Aggiornamento Certificati
+```
+# composer make-certificate <days>
+```
+Il parametro days indica il numero di giorni di validità del certificato, se omesso il valore predefinito è 730 giorni.
+
 ## Reinstallazione / Aggiornamento
 ```
 # composer uninstall
