@@ -1,6 +1,6 @@
 {
     "config": {
-        "version": "3.10.3",
+        "version": "3.12.0",
         "allow-plugins": {
             "simplesamlphp/composer-module-installer": true
         }
@@ -56,6 +56,9 @@
         ],
         "update-metadata": [
             "SPID_PHP\\Setup::updateMetadata"
+        ],
+        "make-certificate": [
+            "SPID_PHP\\Setup::makeCertificate"
         ],
         "uninstall": [
             "SPID_PHP\\Setup::remove"

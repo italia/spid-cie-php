@@ -1314,6 +1314,42 @@ class Setup {
         echo "\n\n";
     }
 
+    public static function makeCertificate($event) {
+        $colors = new Colors();
+
+        $days = 730;
+
+        $params = $event->getArguments();
+
+        echo var_export($params, true);
+
+        if(count($params)>0 && is_numeric($params[0])) {
+            $days = $params[0];
+        }
+
+        if(!file_exists("spid-php-openssl.cnf")) {
+            echo "\nspid-php-openssl.cnf not found\n\n";
+            exit(1);
+        }
+
+        $cmd = "openssl req -new -x509 -config spid-php-openssl.cnf -days " . $days .
+                " -keyout ./spid-sp.pem" .
+                " -out ./spid-sp.crt" . 
+                " -extensions req_ext ";
+
+        echo $colors->getColoredString("\nMaking new certificates... \n\n", "white");
+        echo $colors->getColoredString($cmd, "white");
+
+        shell_exec($cmd);
+        
+        echo $colors->getColoredString("\n\nprivate key and certificate generated:\n", "white");
+        echo $colors->getColoredString("\nspid-sp.pem", "green");
+        echo $colors->getColoredString("\nspid-sp.crt", "green");
+
+        echo $colors->getColoredString("\n\nPlease copy spid-sp.pem and spid-sp.crt into the following paths:\n spid-php/cert\n spid-php/vendor/simplesamlphp/simplesamlphp/cert\n\n", "yellow");
+    }
+
+
     public static function remove() {
         $filesystem = new Filesystem();
         $colors = new Colors();
