@@ -81,7 +81,14 @@ La disinstallazione non cancella gli eventuali file *spid-php-setup.json*, *spid
 ```
 # composer make-certificate <days>
 ```
-Il parametro days indica il numero di giorni di validità del certificato, se omesso il valore predefinito è 730 giorni.
+Il parametro *&lt;days&gt;* indica il numero di giorni di validità del certificato; se omesso, il valore predefinito è 730 giorni.
+
+## Firma metadata
+```
+# composer sign-metadata <metadata.xml> <metadata-signed.xml>
+```
+Il parametro *&lt;metadata.xml&gt;* indica il nome del file xml del metadata da firmare; se omesso, il valore predefinito è metadata.xml.<br/>
+Il parametro *&lt;metadata-signed.xml&gt;* indica il nome del file xml del metadata firmato; se omesso, il valore predefinito è metadata-signed.xml.
 
 ## Reinstallazione / Aggiornamento
 ```
