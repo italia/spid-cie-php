@@ -60,6 +60,9 @@
         "make-certificate": [
             "SPID_PHP\\Setup::makeCertificate"
         ],
+        "sign-metadata": [
+            "SPID_PHP\\Setup::signMetadata"
+        ],
         "uninstall": [
             "SPID_PHP\\Setup::remove"
         ]

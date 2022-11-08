@@ -1316,12 +1316,8 @@ class Setup {
 
     public static function makeCertificate($event) {
         $colors = new Colors();
-
         $days = 730;
-
         $params = $event->getArguments();
-
-        echo var_export($params, true);
 
         if(count($params)>0 && is_numeric($params[0])) {
             $days = $params[0];
@@ -1349,6 +1345,39 @@ class Setup {
         echo $colors->getColoredString("\n\nPlease copy spid-sp.pem and spid-sp.crt into the following paths:\n spid-php/cert\n spid-php/vendor/simplesamlphp/simplesamlphp/cert\n\n", "yellow");
     }
 
+    public static function signMetadata($event) {
+        require_once('vendor/simplesamlphp/simplesamlphp/config/authsources.php');
+        require_once('vendor/simplesamlphp/simplesamlphp/lib/SimpleSAML/Metadata/Signer.php');
+
+        $colors = new Colors();
+        $params = $event->getArguments();
+
+        echo $colors->getColoredString("\nSigning metadata... \n", "white");
+
+        $metadata_in        = (count($params) > 0 && $params[0])? $params[0] : 'metadata.xml';
+        $metadata_out       = (count($params) > 1 && $params[1])? $params[1] : 'metadata-signed.xml';
+        $metadata_service   = (count($params) > 2 && $params[2])? $params[2] : 'service';
+        
+        echo $colors->getColoredString("\nMetadata to sign: " . $metadata_in, "white");
+        echo $colors->getColoredString("\nMetadata signed: " . $metadata_out, "white");
+        echo $colors->getColoredString("\nService: " . $metadata_service, "white");
+        echo "\n\n";
+
+        $config[$metadata_service]['privatekey'] = 'spid-sp.pem';
+        $config[$metadata_service]['certificate'] = 'spid-sp.crt';
+        
+        try {
+            $signer = new \SimpleSAML\Metadata\Signer();
+            $xml = file_get_contents($metadata_in);
+            $xml = $signer::sign($xml, $config[$metadata_service], 'SAML 2 SP');
+            file_put_contents($metadata_out, $xml);
+    
+            echo $colors->getColoredString("Metadata signed\n\n", "green");
+
+        } catch(Exception $e) {
+            echo $colors->getColoredString("Error: " . $e->getMessage(), "red");
+        }
+    }
 
     public static function remove() {
         $filesystem = new Filesystem();
