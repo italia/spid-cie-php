@@ -29,6 +29,7 @@
     const TOKEN_PUBLIC_CERT = "{{SDKHOME}}/cert/spid-sp.crt";
     const DEFAULT_SPID_LEVEL = 2;
     const DEFAULT_ATCS_INDEX = 0;
+    const DEFAULT_EIDAS_ATCS_INDEX = 100;
     const DEFAULT_SECRET = "";
     const DEFAULT_TOKEN_EXPIRATION_TIME = 1200;
     const DEBUG = false;
@@ -106,7 +107,11 @@
                         if($spid_level==null || !in_array($spid_level, [1,2,3])) $spid_level = DEFAULT_SPID_LEVEL;
                         if($atcs_index==null || !is_numeric($atcs_index)) $atcs_index = DEFAULT_ATCS_INDEX;
 
-                        $spidsdk->login($idp, $spid_level, "", $atcs_index);
+                        if($idp=="EIDAS" || $idp=="EIDAS QA") $atcs_index = DEFAULT_EIDAS_ATCS_INDEX;
+
+                        $returnTo = $_SERVER['SCRIPT_URI'].'?action=login&idp='.$idp.'&client_id='.$client_id.'&redirect_uri='.$redirect_uri.'&state='.$state;
+                        setcookie('SPIDPHP_PROXYRETURNTO', $returnTo, time()+60*5, '/');
+                        $spidsdk->login($idp, $spid_level, $_SERVER['SCRIPT_URI'], $atcs_index);
                         die();
                     }
 
@@ -143,7 +148,20 @@
                 $sspSession->doLogout('service');
                 header("location: " . $return);
                 */
-                $spidsdk->logout();
+
+                $idp = $spidsdk->getIdPKey();
+
+                if($idp=='EIDAS' || $idp=='EIDAS QA') {
+
+                    $sspSession = \SimpleSAML\Session::getSessionFromRequest();
+                    $sspSession->doLogout('service');
+                    header("location: " . $return);
+
+                } else {
+
+                    $spidsdk->logout();
+                }
+                
                 die();
             } else {
                 header("location: " . $return);
@@ -200,6 +218,16 @@
 
             die();
         break;
+    }
+
+
+    $returnTo = $_COOKIE['SPIDPHP_PROXYRETURNTO'];
+    if($returnTo!=null && $returnTo!='') {
+        unset($_COOKIE['SPIDPHP_PROXYRETURNTO']); 
+        setcookie('SPIDPHP_PROXYRETURNTO', null, -1, '/'); 
+        header('Location: '.$returnTo);
+        echo "Redirect to <a href='".$returnTo."'>".$returnTo."</a>";
+        die();
     }
 
     http_response_code(404);
