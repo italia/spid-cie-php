@@ -53,7 +53,7 @@
             )) {
                 $available = false;
             } else {
-                $available = ($this->idps[$idp]!=null);
+                $available = (isset($this->idps[$idp]) && $this->idps[$idp]!=null);
             }
             
             return $available;
@@ -63,7 +63,7 @@
             return (
                 $idp!=null
                 && $this->getIdp()!=null
-                && $this->idps[$idp]!=null
+                && isset($this->idps[$idp])
                 && ($this->idps[$idp]==$this->getIdp())
             );
         }
