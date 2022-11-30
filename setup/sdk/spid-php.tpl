@@ -63,6 +63,7 @@
             return (
                 $idp!=null
                 && $this->getIdp()!=null
+                && $this->idps[$idp]!=null
                 && ($this->idps[$idp]==$this->getIdp())
             );
         }

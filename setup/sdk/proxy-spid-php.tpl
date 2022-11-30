@@ -18,7 +18,7 @@ class PROXY_SPID_PHP extends SPID_PHP {
         $this->state = $state;
     }
 
-    public function addSPIDButtonListItems(): string{
+    public function addSPIDButtonListItems($method='GET'): string{
         $button_li = "
                 <li class=\"spid-idp-button-link\" data-idp=\"arubaid\">
                     <a href=\"/proxy-spid.php?client_id=".$this->client_id."&action=login&redirect_uri=".$this->redirect_uri."&idp=ArubaPEC S.p.A.&state=".$this->state."\"><span class=\"spid-sr-only\">Aruba ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-arubaid.png'; this.onerror=null;\" alt=\"Aruba ID\" /></a>
