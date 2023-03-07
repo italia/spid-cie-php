@@ -200,8 +200,9 @@ class Error extends Exception
             $referer = 'unknown';
         }
 
-        $statusCode = (method_exists($this->getCause(), "getStatus"))? $this->getCause()->getStatus() : "";
-        $statusMessage = (method_exists($this->getCause(), "getMessage"))? $this->getCause()->getMessage() : "";
+        $cause = $this->getCause();
+        $statusCode = ($cause!=null && method_exists($cause, "getStatus"))? $cause->getStatus() : "";
+        $statusMessage = ($cause!=null && method_exists($cause, "getMessage"))? $cause->getMessage() : "";
 
         $errorData = [
             'statusCode'     => $statusCode,

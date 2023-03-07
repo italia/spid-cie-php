@@ -32,12 +32,12 @@
         }
     },
     "require": {
-        "php": "^7.4.1",
+        "php": "^8.0.0",
         "ext-xml": "*",
         "ext-mbstring": "*",
         "ext-gmp": "*",
         "lib-openssl": "^1.1.1",
-        "simplesamlphp/simplesamlphp": "1.19.0",
+        "simplesamlphp/simplesamlphp": "1.19.8",
         "italia/spid-smart-button": "*",
         "italia/spid-sp-access-button": "*",
         "symfony/filesystem": "5.2.6",
