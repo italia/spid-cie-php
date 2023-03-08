@@ -750,14 +750,16 @@ class Setup {
         echo $colors->getColoredString("\nAttribute Consuming Service Index: " . $config['acsIndex'], "yellow");
         echo $colors->getColoredString(($config['addSPID']) ? "Y" : "N", "yellow");
         echo $colors->getColoredString(($config['addCIE']) ? "Y" : "N", "yellow");
-        echo $colors->getColoredString("\nAdd configuration for SPID Demo (demo.spid.gov.it): ", "yellow");
-        echo $colors->getColoredString(($config['addDemoIDP']) ? "Y" : "N", "yellow");
-        echo $colors->getColoredString("\nAdd configuration for SPID Demo Validator (demo.spid.gov.it/validator): ", "yellow");
-        echo $colors->getColoredString(($config['addDemoValidatorIDP']) ? "Y" : "N", "yellow");
-        echo $colors->getColoredString("\nAdd configuration for local test IDP: ", "yellow");
-        echo $colors->getColoredString(($config['addLocalTestIDP'] != "") ? $config['addLocalTestIDP'] : "N", "yellow");
-        echo $colors->getColoredString("\nAdd configuration for AgID Validator validator.spid.gov.it: ", "yellow");
-        echo $colors->getColoredString(($config['addValidatorIDP']) ? "Y" : "N", "yellow");
+        if($config['addSPID']) {
+            echo $colors->getColoredString("\nAdd configuration for SPID Demo (demo.spid.gov.it): ", "yellow");
+            echo $colors->getColoredString(($config['addDemoIDP']) ? "Y" : "N", "yellow");
+            echo $colors->getColoredString("\nAdd configuration for SPID Demo Validator (demo.spid.gov.it/validator): ", "yellow");
+            echo $colors->getColoredString(($config['addDemoValidatorIDP']) ? "Y" : "N", "yellow");
+            echo $colors->getColoredString("\nAdd configuration for local test IDP: ", "yellow");
+            echo $colors->getColoredString(($config['addLocalTestIDP'] != "") ? $config['addLocalTestIDP'] : "N", "yellow");
+            echo $colors->getColoredString("\nAdd configuration for AgID Validator validator.spid.gov.it: ", "yellow");
+            echo $colors->getColoredString(($config['addValidatorIDP']) ? "Y" : "N", "yellow");
+        }
         echo $colors->getColoredString("\nAdd example php files: ", "yellow");
         echo $colors->getColoredString(($config['addExamples']) ? "Y" : "N", "yellow");
         echo $colors->getColoredString("\nAdd proxy example php files: ", "yellow");
