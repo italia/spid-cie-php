@@ -24,15 +24,25 @@
     } else {
 
         if(!isset($_REQUEST['idp'])) {  
-            $spidsdk->insertSPIDButtonCSS();
+        
+            if($spidsdk->isSPIDEnabled()) {
+            
+                $spidsdk->insertSPIDButtonCSS();
 			
-            echo "<p>POST Version</p>";
-            $spidsdk->insertSPIDButton("L","POST");
+                echo "<p>SPID BUTTON (POST Version)</p>";
+                $spidsdk->insertSPIDButton("L","POST");
 
-			echo "<p>GET Version</p>";
-            $spidsdk->insertSPIDButton("L");
+                echo "<p>SPID BUTTON (GET Version)</p>";
+                $spidsdk->insertSPIDButton("L");
 
-            $spidsdk->insertSPIDButtonJS(); 
+                $spidsdk->insertSPIDButtonJS(); 
+            }
+            
+            if($spidsdk->isCIEEnabled()) {
+                echo "<p>CIE BUTTON</p>";
+                $spidsdk->insertCIEButton();
+            }
+            
         } else {
             $spidsdk->login($_REQUEST['idp'], 2);  
 

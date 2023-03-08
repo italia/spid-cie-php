@@ -7,14 +7,27 @@
         private $spid_auth;
         private $idps = array();
         private $purpose = null;
+        private $service = 'spid';
+        
+        public const SPID_ENABLED = {{SPID_ENABLED}};
+        public const CIE_ENABLED = {{CIE_ENABLED}};
 
-        function __construct($production=false, $servicename='service') {
-            $this->spid_auth = new SimpleSAML\Auth\Simple($servicename);
+        function __construct($production=false, $service='spid') {
+            $this->spid_auth = new SimpleSAML\Auth\Simple($service);
             $this->production = $production;
+            $this->service = $service;
 
             {{IDPS}}
         }
 
+	public function isSPIDEnabled() {
+	    return self::SPID_ENABLED;
+	}
+
+	public function isCIEEnabled() {
+	    return self::CIE_ENABLED;
+	}
+	
         public function getIdP() {
             return $this->spid_auth->getAuthData('saml:sp:IdP');
         }
@@ -126,8 +139,8 @@
                 $this->spid_auth->logout($returnTo);
             } else {
                $session = SimpleSAML\Session::getSessionFromRequest();
-                if ($session->isValid('service')) {
-                    $session->doLogout('service');
+                if ($session->isValid($this->service)) {
+                    $session->doLogout($this->service);
                 }
             }
         }
@@ -372,6 +385,9 @@
 					<li class=\"spid-idp-button-link\" data-idp=\"timid\">
 						<button class=\"idp-button-idp-logo\" name=\"idp\" value=\"TI Trust Technologies srl\" type=\"submit\"><span class=\"spid-sr-only\">Tim ID</span><img class=\"spid-idp-button-logo\" src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-timid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-timid.png'; this.onerror=null;\" alt=\"Tim ID\" /></button>
 					</li>
+					<li class=\"spid-idp-button-link\" data-idp=\"etnaid\">
+						<button class=\"idp-button-idp-logo\" name=\"idp\" value=\"EtnaHitech S.C.p.A.\" type=\"submit\"><span class=\"spid-sr-only\">Etna ID</span><img class=\"spid-idp-button-logo\" src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-etnaid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-etnaid.png'; this.onerror=null;\" alt=\"Etna ID\" /></button>
+					</li>
 					<li class=\"spid-idp-support-link\" data-spidlink=\"info\">
 						<a href=\"https://www.spid.gov.it\">Maggiori informazioni</a>
 					</li>
@@ -454,6 +470,9 @@
 					<li class=\"spid-idp-button-link\" data-idp=\"timid\">
 						<a href=\"?idp=TI Trust Technologies srl\"><span class=\"spid-sr-only\">Tim ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-timid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-timid.png'; this.onerror=null;\" alt=\"Tim ID\" /></a>
 					</li>
+					<li class=\"spid-idp-button-link\" data-idp=\"teamsystemid\">
+						<a href=\"?idp=TeamSystem s.p.a.\"><span class=\"spid-sr-only\">TeamSystem ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-teamsystemid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-teamsystemid.png'; this.onerror=null;\" alt=\"TeamSystem ID\" /></a>
+					</li>
 					<li class=\"spid-idp-button-link\" data-idp=\"etnaid\">
 						<a href=\"?idp=EtnaHitech S.C.p.A.\"><span class=\"spid-sr-only\">Etna ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-etnaid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-etnaid.png'; this.onerror=null;\" alt=\"Etna ID\" /></a>
 					</li>
@@ -513,6 +532,21 @@
 			}
 
             return $button_li;
+        }
+        
+        
+        public function insertCIEButton($size='default') {
+            echo "
+                <div class=\"cie-button\" style=\"width: 280px;\">
+                    <a class=\"cie-button\" role=\"button\"
+                        href=\"?idp=CIE TEST\" >
+                        <span class=\"cie-button-icon\">
+                            <img aria-hidden=\"true\" src=\"/{{SERVICENAME}}/cie-graphics/SVG/entra_con_cie.svg\" alt=\"Entra con CIE\" />
+                        </span>
+                        <span class=\"sr-only\" style=\"display:none\">Entra con CIE</span>
+                    </a>
+                </div>
+            ";    
         }
     }
 

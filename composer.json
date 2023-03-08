@@ -29,17 +29,30 @@
                     "reference": "master"
                 }
             }
+        },
+        "cie-graphics": {
+            "type": "package",
+            "package": {
+                "name": "italia/cie-graphics",
+                "version": "1.0",
+                "source": {
+                    "url": "https://github.com/italia/cie-graphics",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
         }
     },
     "require": {
-        "php": "^7.4.1",
+        "php": "^8.0.28",
         "ext-xml": "*",
         "ext-mbstring": "*",
         "ext-gmp": "*",
         "lib-openssl": "^1.1.1",
-        "simplesamlphp/simplesamlphp": "1.19.0",
+        "simplesamlphp/simplesamlphp": "1.19.8",
         "italia/spid-smart-button": "*",
         "italia/spid-sp-access-button": "*",
+        "italia/cie-graphics": "*",
         "symfony/filesystem": "5.2.6",
         "web-token/jwt-core": "2.2.11",
         "web-token/jwt-key-mgmt": "2.2.11",

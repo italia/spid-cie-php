@@ -1,12 +1,4 @@
-<?php
-
-$config = array(
-    'admin' => array(
-        'core:AdminPassword',
-    ),
-
-    // An authentication source 
-    'service' => array(
+    'spid' => array(
         'saml:SP',
         'privatekey' => 'spid-sp.pem',
         'certificate' => 'spid-sp.crt',
@@ -75,5 +67,4 @@ $config = array(
                 'telephoneNumber'   => {{ORGANIZATIONTELEPHONENUMBER}}
             )
         )
-    )
-);
+    ),

@@ -48,7 +48,7 @@
 
         case "login":
 
-            $service = "service";
+            $service = "spid";
             if($idp=="CIE" || $idp=="CIE TEST") $service = "cie";
         
             $spidsdk = new SPID_PHP($production, $service);
@@ -132,7 +132,7 @@
         case "logout":
             $return = $redirect_uri? $redirect_uri : $clients[$client_id]['redirect_uri'][0];
 
-            $service = "service";
+            $service = "spid";
             $spidsdk = new SPID_PHP($production, $service);
             if(!$spidsdk->isAuthenticated()) {
                 $service = "cie";
@@ -145,7 +145,7 @@
                  */
                 /*
                 $sspSession = \SimpleSAML\Session::getSessionFromRequest();
-                $sspSession->doLogout('service');
+                $sspSession->doLogout($service);
                 header("location: " . $return);
                 */
 
@@ -154,7 +154,7 @@
                 if($idp=='EIDAS' || $idp=='EIDAS QA') {
 
                     $sspSession = \SimpleSAML\Session::getSessionFromRequest();
-                    $sspSession->doLogout('service');
+                    $sspSession->doLogout('spid');
                     header("location: " . $return);
 
                 } else {
