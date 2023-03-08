@@ -7,7 +7,7 @@
 ![SP SPID in produzione con spid-php](https://img.shields.io/badge/SP%20SPID%20in%20produzione%20con%20spid--php-70+-green)
 
 # spid-php
-Software Development Kit for easy SPID access integration with SimpleSAMLphp.\
+Software Development Kit for easy SPID & CIE access integration with SimpleSAMLphp.\
 spid-php has been developed and is maintained by Michele D'Amico (@damikael). **It's highly recommended to use the latest release**.
 
 <img src="doc/spid-php-tutorial.gif" alt="spid-php video tutorial" />
@@ -254,14 +254,18 @@ invia una richiesta di login livello $level verso l'idp **$idp**. Dopo l'autenti
 * DEMO
 * DEMOVALIDATOR
 * ArubaPEC S.p.A.
+* EtnaHitech S.C.p.A.
 * InfoCert S.p.A.
 * IN.TE.S.A. S.p.A.
 * Lepida S.p.A.
 * Namirial
 * Poste Italiane SpA
-* Sielte S.p.A.
 * Register.it S.p.A.
+* Sielte S.p.A.
+* TeamSystem s.p.a.
 * TI Trust Technologies srl
+* CIE TEST
+* CIE
 
 **$level** può assumere uno dei seguenti valori
 * 1
