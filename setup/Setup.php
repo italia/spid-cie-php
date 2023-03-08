@@ -1304,7 +1304,7 @@ class Setup {
         }
         
         // add configuration for public demo IDP
-        if ($config['addDemoIDP']) {
+        if ($config['addSPID'] && $config['addDemoIDP']) {
             echo $colors->getColoredString("\nWrite metadata for public Demo IDP... ", "white");
             $vars = array("{{ENTITYID}}" => "'" . $config['entityID'] . "'");
             $template_idp_demo = file_get_contents($_installDir . '/setup/metadata/saml20-idp-remote-demo.ptpl', true);
@@ -1315,7 +1315,7 @@ class Setup {
         }
 
         // add configuration for public demo IDP (Validator mode)
-        if ($config['addDemoValidatorIDP']) {
+        if ($config['addSPID'] && $config['addDemoValidatorIDP']) {
             echo $colors->getColoredString("\nWrite metadata for public Demo IDP (Validator mode)... ", "white");
             $vars = array("{{ENTITYID}}" => "'" . $config['entityID'] . "'");
             $template_idp_demovalidator = file_get_contents($_installDir . '/setup/metadata/saml20-idp-remote-demovalidator.ptpl', true);
@@ -1326,7 +1326,7 @@ class Setup {
         }
 
         // add configuration for AgID Validator
-        if ($config['addValidatorIDP']) {
+        if ($config['addSPID'] && $config['addValidatorIDP']) {
             echo $colors->getColoredString("\nWrite metadata for AgID Validator... ", "white");
             $vars = array("{{ENTITYID}}" => "'" . $config['entityID'] . "'");
             $template_idp_validator = file_get_contents($_installDir . '/setup/metadata/saml20-idp-remote-validator.ptpl', true);
