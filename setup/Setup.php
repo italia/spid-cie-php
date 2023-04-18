@@ -1098,7 +1098,6 @@ class Setup {
                 "verify_peer_name" => true,
         ));
 
-        $xml = file_get_contents('https://registry.spid.gov.it/metadata/idp/spid-entities-idps.xml', false, stream_context_create($arrContextOptions));
 
         if (!file_exists($config['installDir'] . "/vendor")) {
             echo "\nspid-php is not installed. Please install it first.\n\n composer install\n\n";
@@ -1112,8 +1111,19 @@ class Setup {
         $IDPMetadata = "";
         $IDPEntities = "";
 
+        // retrieve IdP metadatas XML from SPID Registry
+        echo $colors->getColoredString("\nRetrieve configurations for production IDPs from SPID Registry... ", "white");
+        $xml = file_get_contents('https://registry.spid.gov.it/entities-idp', false, stream_context_create($arrContextOptions));
+        // remove tag prefixes
+        $xml = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml);
+        $xml = simplexml_load_string($xml);
+        $xmlDom = dom_import_simplexml($xml);
+        echo $colors->getColoredString("OK", "green");
+
         // add configuration for public demo IDP
         if ($config['addDemoIDP']) {
+
+            /*  TO REMOVE
             echo $colors->getColoredString("\nWrite metadata for public Demo IDP... ", "white");
             $vars = array("{{ENTITYID}}" => "'" . $config['entityID'] . "'");
             $template_idp_demo = file_get_contents($_installDir . '/setup/metadata/saml20-idp-remote-demo.ptpl', true);
@@ -1121,10 +1131,23 @@ class Setup {
             $IDPMetadata .= "\n\n" . $template_idp_demo;
             $IDPEntities .= "\n\t\t\t\$this->idps['DEMO'] = 'https://demo.spid.gov.it';";
             echo $colors->getColoredString("OK", "green");
+            */
+
+            echo $colors->getColoredString("\nAdd metadata of public Demo IDP... ", "white");
+            $xml1 = file_get_contents('https://demo.spid.gov.it/metadata.xml', false, stream_context_create($arrContextOptions));
+            // remove tag prefixes
+            $xml1 = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml1);
+            $xml1 = simplexml_load_string($xml1);
+            $xml1->Organization->OrganizationName = "DEMO";
+            $xml1Dom = dom_import_simplexml($xml1);
+            $xmlDom->appendChild($xmlDom->ownerDocument->importNode($xml1Dom, true));
+            echo $colors->getColoredString("OK", "green");
         }
 
         // add configuration for public demo IDP (Validator mode)
         if ($config['addDemoValidatorIDP']) {
+    
+            /*  TO REMOVE
             echo $colors->getColoredString("\nWrite metadata for public Demo IDP (Validator mode)... ", "white");
             $vars = array("{{ENTITYID}}" => "'" . $config['entityID'] . "'");
             $template_idp_demovalidator = file_get_contents($_installDir . '/setup/metadata/saml20-idp-remote-demovalidator.ptpl', true);
@@ -1132,10 +1155,23 @@ class Setup {
             $IDPMetadata .= "\n\n" . $template_idp_demovalidator;
             $IDPEntities .= "\n\t\t\t\$this->idps['DEMOVALIDATOR'] = 'https://demo.spid.gov.it/validator';";
             echo $colors->getColoredString("OK", "green");
+            */
+
+            echo $colors->getColoredString("\nAdd metadata of public Demo IDP (Validator mode)... ", "white");
+            $xml1 = file_get_contents('https://demo.spid.gov.it/validator/metadata.xml', false, stream_context_create($arrContextOptions));
+            // remove tag prefixes
+            $xml1 = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml1);
+            $xml1 = simplexml_load_string($xml1);
+            $xml1->Organization->OrganizationName = "DEMOVALIDATOR";
+            $xml1Dom = dom_import_simplexml($xml1);
+            $xmlDom->appendChild($xmlDom->ownerDocument->importNode($xml1Dom, true));
+            echo $colors->getColoredString("OK", "green");
         }
 
         // add configuration for AgID Validator
         if ($config['addValidatorIDP']) {
+            
+            /*  TO REMOVE
             echo $colors->getColoredString("\nWrite metadata for AgID Validator... ", "white");
             $vars = array("{{ENTITYID}}" => "'" . $config['entityID'] . "'");
             $template_idp_validator = file_get_contents($_installDir . '/setup/metadata/saml20-idp-remote-validator.ptpl', true);
@@ -1143,53 +1179,27 @@ class Setup {
             $IDPMetadata .= "\n\n" . $template_idp_validator;
             $IDPEntities .= "\n\t\t\t\$this->idps['VALIDATOR'] = 'https://validator.spid.gov.it';";
             echo $colors->getColoredString("OK", "green");
+            */
+
+            echo $colors->getColoredString("\nAdd metadata of AgID Validator... ", "white");
+            $xml1 = file_get_contents('https://validator.spid.gov.it/metadata.xml', false, stream_context_create($arrContextOptions));
+            // remove tag prefixes
+            $xml1 = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml1);
+            $xml1 = simplexml_load_string($xml1);
+            $xml1->Organization->OrganizationName = "DEMOVALIDATOR";
+            $xml1Dom = dom_import_simplexml($xml1);
+            $xmlDom->appendChild($xmlDom->ownerDocument->importNode($xml1Dom, true));
+            echo $colors->getColoredString("OK", "green");
         }
-
-        // retrieve IDP metadata
-        echo $colors->getColoredString("\nRetrieve configurations for production IDPs... ", "white");
-
-        // remove tag prefixes
-        $xml = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml);
-        $xml = simplexml_load_string($xml);
 
         // add configuration for local test IDP
         if ($config['addLocalTestIDP'] != "") {
             echo $colors->getColoredString("\nRetrieve configuration for local test IDP... ", "white");
-            $arrContextOptions = array(
-                "ssl" => array(
-                    "verify_peer" => false,
-                    "verify_peer_name" => false,
-                ),
-            );
             $xml1 = file_get_contents($config['addLocalTestIDP'], false, stream_context_create($arrContextOptions));
             // remove tag prefixes
             $xml1 = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml1);
             $xml1 = simplexml_load_string($xml1);
-
-            /*
-              echo "$xml1\n";
-              $xml1 = simplexml_load_string($xml1);
-              echo ($xml1 !== FALSE ? 'Valid XML' : 'Parse Error'), PHP_EOL;
-              echo "xml1 = $xml1\n";
-              echo print_r($xml1) . PHP_EOL;
-              echo "xml1 as xml = " . $xml1->asXml(). "\n";
-              // http://php.net/manual/en/simplexmlelement.addchild.php
-              $myfile = fopen("before", "w") or die("Unable to open file!");
-              fwrite($myfile, print_r($xml, true));
-              fclose($myfile);
-              $to = $xml->addChild('EntityDescriptor', $xml1);
-              foreach($xml1 as $from) {
-              // https://stackoverflow.com/a/4778964
-              $toDom = dom_import_simplexml($to);
-              $fromDom = dom_import_simplexml($from);
-              $toDom->appendChild($toDom->ownerDocument->importNode($fromDom, true));
-              }
-              $myfile1 = fopen("after", "w") or die("Unable to open file!");
-              fwrite($myfile1, print_r($xml, true));
-              fclose($myfile1);
-             */
             $xml1->Organization->OrganizationName = "LOCAL";
-            $xmlDom = dom_import_simplexml($xml);
             $xmlLocalTestDom = dom_import_simplexml($xml1);
             $xmlDom->appendChild($xmlDom->ownerDocument->importNode($xmlLocalTestDom, true));
         }
@@ -1246,7 +1256,7 @@ class Setup {
                 }
             }
 
-            /*
+            /*  TO REMOVE
               foreach($entity->IDPSSODescriptor->Attribute as $attr) {
               $friendlyName = trim($attr->attributes()['FriendlyName']);
               $name = trim($attr->attributes()['Name']);
@@ -1254,7 +1264,19 @@ class Setup {
              */
 
 
+            echo $colors->getColoredString("\nRetrieve IDP logo for " . $IDPentityID . "... ", "white");
+            $registry_idp_json = file_get_contents('https://registry.spid.gov.it/entities-idp?output=json');
+            $registry_idp = json_decode($registry_idp_json, true);
+
             $icon = "assets/icons/spid-idp-dummy.png";
+
+            foreach($registry_idp as $registry_idp_entity) {
+                if($registry_idp_entity['entity_id']==$IDPentityID) {
+                    $icon = $registry_idp_entity['logo_uri'];
+                }
+            }
+
+            /*  TO REMOVE
             switch($IDPentityID) {
                 case "https://loginspid.aruba.it": $icon = "spid-sp-access-button/img/spid-idp-arubaid.svg"; break;
                 case "https://identity.infocert.it": $icon = "spid-sp-access-button/img/spid-idp-infocertid.svg"; break;
@@ -1267,6 +1289,7 @@ class Setup {
                 case "https://spid.teamsystem.com/idp": $icon = "spid-sp-access-button/img/spid-idp-timid.svg"; break;
                 case "https://id.eht.eu": $icon = "spid-sp-access-button/img/spid-idp-etnaid.svg"; break;
             }
+            */
 
             $vars = array(
                 "{{ENTITYID}}" => $IDPentityID,
