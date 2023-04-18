@@ -454,6 +454,9 @@
 					<li class=\"spid-idp-button-link\" data-idp=\"timid\">
 						<a href=\"?idp=TI Trust Technologies srl\"><span class=\"spid-sr-only\">Tim ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-timid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-timid.png'; this.onerror=null;\" alt=\"Tim ID\" /></a>
 					</li>
+					<li class=\"spid-idp-button-link\" data-idp=\"etnaid\">
+						<a href=\"?idp=EtnaHitech S.C.p.A.\"><span class=\"spid-sr-only\">Etna ID</span><img src=\"/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-etnaid.svg\" onerror=\"this.src='/{{SERVICENAME}}/spid-sp-access-button/img/spid-idp-etnaid.png'; this.onerror=null;\" alt=\"Etna ID\" /></a>
+					</li>
 					<li class=\"spid-idp-support-link\">
 						<a href=\"https://www.spid.gov.it\">Maggiori informazioni</a>
 					</li>
