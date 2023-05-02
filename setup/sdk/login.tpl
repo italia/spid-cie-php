@@ -4,13 +4,18 @@
 
     $production = false;
 
-    $spidsdk = new SPID_PHP($production);
+    $service = "spid";
+    $idp = $_REQUEST['idp'];
+    if($idp=="CIE" || $idp=="CIE TEST") $service = "cie";
+
+
+    $spidsdk = new SPID_PHP($production, $service);
 
     //$spidsdk->setPurpose("P");
 
     if($spidsdk->isAuthenticated() 
-        && isset($_REQUEST['idp']) 
-        && $spidsdk->isIdP($_REQUEST['idp'])) {
+        && isset($idp) 
+        && $spidsdk->isIdP($idp)) {
 
             echo "<p>IdP: <b>" . $spidsdk->getIdP() . "</b></p>";
             echo "<p>Response ID: " . $spidsdk->getResponseID() . "</p>";
@@ -23,7 +28,7 @@
 
     } else {
 
-        if(!isset($_REQUEST['idp'])) {  
+        if(!isset($idp)) {  
         
             if($spidsdk->isSPIDEnabled()) {
             
@@ -44,13 +49,13 @@
             }
             
         } else {
-            $spidsdk->login($_REQUEST['idp'], 2);  
+            $spidsdk->login($idp, 2);  
 
             // set AttributeConsumingServiceIndex 2
-            //$spidsdk->login($_REQUEST['idp'], 2, "", 2);
+            //$spidsdk->login($idp, 2, "", 2);
 
             // set AttributeConsumingServiceIndex 2 and use HTTP-Post Binding
-            //$spidsdk->login($_REQUEST['idp'], 2, "", 2, true);
+            //$spidsdk->login($idp, 2, "", 2, true);
         }
     }
 ?>

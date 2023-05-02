@@ -610,10 +610,10 @@ class Setup {
 
         if (!isset($config['addProxyExample'])) {
             echo "Add proxy example php files proxy.php, proxy-sample.php, proxy-login.php, error.php to www ? (" .
-            $colors->getColoredString("N", "green") . "): ";
+            $colors->getColoredString("Y", "green") . "): ";
             $config['addProxyExample'] = readline();
-            $config['addProxyExample'] = $config['addProxyExample'] != null &&
-                    strtoupper($config['addProxyExample']) == "Y";
+            $config['addProxyExample'] = ($config['addProxyExample'] != null &&
+                    strtoupper($config['addProxyExample']) == "N") ? false : true;
 
             if($config['addProxyExample']) {
                 echo "Insert URL to register as redirect_uri (/proxy-sample.php): ";
@@ -1298,13 +1298,15 @@ class Setup {
         $IDPEntities = "";
 
         // retrieve IdP metadatas XML from SPID Registry
-        echo $colors->getColoredString("\nRetrieve configurations for production IDPs from SPID Registry... ", "white");
-        $xml = file_get_contents('https://registry.spid.gov.it/entities-idp', false, stream_context_create($arrContextOptions));
-        // remove tag prefixes
-        $xml = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml);
-        $xml = simplexml_load_string($xml);
-        $xmlDom = dom_import_simplexml($xml);
-        echo $colors->getColoredString("OK", "green");
+        if ($config['addSPID']) {
+            echo $colors->getColoredString("\nRetrieve configurations for production IDPs from SPID Registry... ", "white");
+            $xml = file_get_contents('https://registry.spid.gov.it/entities-idp', false, stream_context_create($arrContextOptions));
+            // remove tag prefixes
+            $xml = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml);
+            $xml = simplexml_load_string($xml);
+            $xmlDom = dom_import_simplexml($xml);
+            echo $colors->getColoredString("OK", "green");
+        }
 
         // add configuration for CIE
         if ($config['addCIE']) {
@@ -1358,7 +1360,7 @@ class Setup {
         }
 
         // add configuration for local test IDP
-        if ($config['addLocalTestIDP'] != "") {
+        if ($config['addSPID'] && $config['addLocalTestIDP'] != "") {
             echo $colors->getColoredString("\nRetrieve configuration for local test IDP... ", "white");
             $xml1 = file_get_contents($config['addLocalTestIDP'], false, stream_context_create($arrContextOptions));
             // remove tag prefixes
@@ -1369,88 +1371,95 @@ class Setup {
             $xmlDom->appendChild($xmlDom->ownerDocument->importNode($xmlLocalTestDom, true));
         }
 
-        foreach ($xml->EntityDescriptor as $entity) {
-            $OrganizationName = trim($entity->Organization->OrganizationName);
-            $OrganizationDisplayName = trim($entity->Organization->OrganizationDisplayName);
-            $OrganizationURL = trim($entity->Organization->OrganizationURL);
-            $IDPentityID = trim($entity->attributes()['entityID']);
+        if ($config['addSPID']) {
+            foreach ($xml->EntityDescriptor as $entity) {
+                $OrganizationName = trim($entity->Organization->OrganizationName);
+                $OrganizationDisplayName = trim($entity->Organization->OrganizationDisplayName);
+                $OrganizationURL = trim($entity->Organization->OrganizationURL);
+                $IDPentityID = trim($entity->attributes()['entityID']);
 
-            $template_keys = "array(\n";
-            $nK = 0;
-            $template_key = file_get_contents($config['installDir'] . '/setup/metadata/key.ptpl', true);
-            foreach ($entity->IDPSSODescriptor->KeyDescriptor as $keyDescriptor) {
-                $X509Certificate = trim($keyDescriptor->KeyInfo->X509Data->X509Certificate);
-                $template_keys .= "\t\t" . $nK++ . " => ";
-                $vars = array("{{X509CERTIFICATE}}" => $X509Certificate);
-                $template_keys .= str_replace(array_keys($vars), $vars, $template_key);
+                $template_keys = "array(\n";
+                $nK = 0;
+                $template_key = file_get_contents($config['installDir'] . '/setup/metadata/key.ptpl', true);
+                foreach ($entity->IDPSSODescriptor->KeyDescriptor as $keyDescriptor) {
+                    $X509Certificate = trim($keyDescriptor->KeyInfo->X509Data->X509Certificate);
+                    $template_keys .= "\t\t" . $nK++ . " => ";
+                    $vars = array("{{X509CERTIFICATE}}" => $X509Certificate);
+                    $template_keys .= str_replace(array_keys($vars), $vars, $template_key);
+                }
+                $template_keys .= "\n\t)";
+
+
+                $NameIDFormat = trim($entity->IDPSSODescriptor->NameIDFormat);
+
+                $template_slo = file_get_contents($config['installDir'] . '/setup/metadata/slo.ptpl', true);
+                foreach ($entity->IDPSSODescriptor->SingleLogoutService as $slo) {
+                    $SLOBinding = trim($slo->attributes()['Binding']);
+                    $SLOLocation = trim($slo->attributes()['Location']);
+
+                    if ($SLOBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect") {
+                        $vars = array("{{SLOREDIRECTLOCATION}}" => $SLOLocation);
+                        $template_slo = str_replace(array_keys($vars), $vars, $template_slo);
+                    }
+
+                    if ($SLOBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST") {
+                        $vars = array("{{SLOPOSTLOCATION}}" => $SLOLocation);
+                        $template_slo = str_replace(array_keys($vars), $vars, $template_slo);
+                    }
+                }
+
+                $template_sso = file_get_contents($config['installDir'] . '/setup/metadata/sso.ptpl', true);
+                foreach ($entity->IDPSSODescriptor->SingleSignOnService as $sso) {
+                    $SSOBinding = trim($sso->attributes()['Binding']);
+                    $SSOLocation = trim($sso->attributes()['Location']);
+
+                    if ($SSOBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect") {
+                        $vars = array("{{SSOREDIRECTLOCATION}}" => $SSOLocation);
+                        $template_sso = str_replace(array_keys($vars), $vars, $template_sso);
+                    }
+
+                    if ($SSOBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST") {
+                        $vars = array("{{SSOPOSTLOCATION}}" => $SSOLocation);
+                        $template_sso = str_replace(array_keys($vars), $vars, $template_sso);
+                    }
+                }
+
+                if ($config['addCIE']) {
+                    $icon = "assets/icons/spid-cie-dummy.png";
+                }
+
+                if ($config['addSPID']) {
+                    $icon = "assets/icons/spid-idp-dummy.png";
+                    echo $colors->getColoredString("\nRetrieve IDP logo for " . $IDPentityID . "... ", "white");
+                    $registry_idp_json = file_get_contents('https://registry.spid.gov.it/entities-idp?output=json');
+                    $registry_idp = json_decode($registry_idp_json, true);
+        
+                    foreach($registry_idp as $registry_idp_entity) {
+                        if($registry_idp_entity['entity_id']==$IDPentityID) {
+                            $icon = $registry_idp_entity['logo_uri'];
+                        }
+                    }
+                }
+
+                $vars = array(
+                    "{{ENTITYID}}" => $IDPentityID,
+                    "{{ICON}}" => $icon,
+                    "{{SPENTITYID}}" => $config['entityID'],
+                    "{{ORGANIZATIONNAME}}" => $OrganizationName,
+                    "{{ORGANIZATIONDISPLAYNAME}}" => $OrganizationDisplayName,
+                    "{{ORGANIZATIONURL}}" => $OrganizationURL,
+                    "{{SSO}}" => $template_sso,
+                    "{{SLO}}" => $template_slo,
+                    "{{NAMEIDFORMAT}}" => $NameIDFormat,
+                    "{{KEYS}}" => $template_keys
+                );
+
+                $template_idp = file_get_contents($config['installDir'] . '/setup/metadata/saml20-idp-remote.ptpl', true);
+                $template_idp = str_replace(array_keys($vars), $vars, $template_idp);
+
+                $IDPMetadata .= "\n\n" . $template_idp;
+                $IDPEntities .= "\n\t\t\t\$this->idps['" . str_replace("'", "", $OrganizationName) . "'] = '" . $IDPentityID . "';";
             }
-            $template_keys .= "\n\t)";
-
-
-            $NameIDFormat = trim($entity->IDPSSODescriptor->NameIDFormat);
-
-            $template_slo = file_get_contents($config['installDir'] . '/setup/metadata/slo.ptpl', true);
-            foreach ($entity->IDPSSODescriptor->SingleLogoutService as $slo) {
-                $SLOBinding = trim($slo->attributes()['Binding']);
-                $SLOLocation = trim($slo->attributes()['Location']);
-
-                if ($SLOBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect") {
-                    $vars = array("{{SLOREDIRECTLOCATION}}" => $SLOLocation);
-                    $template_slo = str_replace(array_keys($vars), $vars, $template_slo);
-                }
-
-                if ($SLOBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST") {
-                    $vars = array("{{SLOPOSTLOCATION}}" => $SLOLocation);
-                    $template_slo = str_replace(array_keys($vars), $vars, $template_slo);
-                }
-            }
-
-            $template_sso = file_get_contents($config['installDir'] . '/setup/metadata/sso.ptpl', true);
-            foreach ($entity->IDPSSODescriptor->SingleSignOnService as $sso) {
-                $SSOBinding = trim($sso->attributes()['Binding']);
-                $SSOLocation = trim($sso->attributes()['Location']);
-
-                if ($SSOBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect") {
-                    $vars = array("{{SSOREDIRECTLOCATION}}" => $SSOLocation);
-                    $template_sso = str_replace(array_keys($vars), $vars, $template_sso);
-                }
-
-                if ($SSOBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST") {
-                    $vars = array("{{SSOPOSTLOCATION}}" => $SSOLocation);
-                    $template_sso = str_replace(array_keys($vars), $vars, $template_sso);
-                }
-            }
-
-            echo $colors->getColoredString("\nRetrieve IDP logo for " . $IDPentityID . "... ", "white");
-            $registry_idp_json = file_get_contents('https://registry.spid.gov.it/entities-idp?output=json');
-            $registry_idp = json_decode($registry_idp_json, true);
-
-            $icon = "assets/icons/spid-idp-dummy.png";
-
-            foreach($registry_idp as $registry_idp_entity) {
-                if($registry_idp_entity['entity_id']==$IDPentityID) {
-                    $icon = $registry_idp_entity['logo_uri'];
-                }
-            }
-
-            $vars = array(
-                "{{ENTITYID}}" => $IDPentityID,
-                "{{ICON}}" => $icon,
-                "{{SPENTITYID}}" => $config['entityID'],
-                "{{ORGANIZATIONNAME}}" => $OrganizationName,
-                "{{ORGANIZATIONDISPLAYNAME}}" => $OrganizationDisplayName,
-                "{{ORGANIZATIONURL}}" => $OrganizationURL,
-                "{{SSO}}" => $template_sso,
-                "{{SLO}}" => $template_slo,
-                "{{NAMEIDFORMAT}}" => $NameIDFormat,
-                "{{KEYS}}" => $template_keys
-            );
-
-            $template_idp = file_get_contents($config['installDir'] . '/setup/metadata/saml20-idp-remote.ptpl', true);
-            $template_idp = str_replace(array_keys($vars), $vars, $template_idp);
-
-            $IDPMetadata .= "\n\n" . $template_idp;
-            $IDPEntities .= "\n\t\t\t\$this->idps['" . str_replace("'", "", $OrganizationName) . "'] = '" . $IDPentityID . "';";
         }
 
         echo $colors->getColoredString("OK", "green");
