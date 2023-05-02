@@ -19,14 +19,22 @@
                 echo "<p>" . $attribute . ": <b>" . $value[0] . "</b></p>";
             }
     
-            echo "<hr/><p><a href='" . $spidsdk->getLogoutURL("/proxy-login-spid.php") . "'>Logout</a></p>";
+            echo "<hr/><p><a href='" . $spidsdk->getLogoutURL("/proxy-login.php") . "'>Logout</a></p>";
 
     } else {
 
         if(!isset($_GET['idp'])) {    
-            $spidsdk->insertSPIDButtonCSS();
-            $spidsdk->insertSPIDButton("L");  
-            $spidsdk->insertSPIDButtonJS(); 
+            if($spidsdk->isSPIDEnabled()) {
+                echo "<p>SPID BUTTON</p>";
+                $spidsdk->insertSPIDButtonCSS();
+                $spidsdk->insertSPIDButton("L");  
+                $spidsdk->insertSPIDButtonJS(); 
+            }
+            if($spidsdk->isCIEEnabled()) {
+                echo "<p>CIE BUTTON";
+                $spidsdk->insertCIEButton();
+            }
+            
         } else {
             $spidsdk->login($_GET['idp'], 2);  
 

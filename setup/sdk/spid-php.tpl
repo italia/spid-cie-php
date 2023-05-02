@@ -7,14 +7,27 @@
         private $spid_auth;
         private $idps = array();
         private $purpose = null;
+        private $service = 'spid';
+        
+        public const SPID_ENABLED = {{SPID_ENABLED}};
+        public const CIE_ENABLED = {{CIE_ENABLED}};
 
-        function __construct($production=false, $servicename='service') {
-            $this->spid_auth = new SimpleSAML\Auth\Simple($servicename);
+        function __construct($production=false, $service='spid') {
+            $this->spid_auth = new SimpleSAML\Auth\Simple($service);
             $this->production = $production;
+            $this->service = $service;
 
             {{IDPS}}
         }
 
+	public function isSPIDEnabled() {
+	    return self::SPID_ENABLED;
+	}
+
+	public function isCIEEnabled() {
+	    return self::CIE_ENABLED;
+	}
+	
         public function getIdP() {
             return $this->spid_auth->getAuthData('saml:sp:IdP');
         }
@@ -126,8 +139,8 @@
                 $this->spid_auth->logout($returnTo);
             } else {
                $session = SimpleSAML\Session::getSessionFromRequest();
-                if ($session->isValid('service')) {
-                    $session->doLogout('service');
+                if ($session->isValid($this->service)) {
+                    $session->doLogout($this->service);
                 }
             }
         }
@@ -487,6 +500,21 @@
 			}
 
             return $button_li;
+        }
+        
+        
+        public function insertCIEButton($size='default') {
+            echo "
+                <div class=\"cie-button\" style=\"width: 280px;\">
+                    <a class=\"cie-button\" role=\"button\"
+                        href=\"?idp=CIE TEST\" >
+                        <span class=\"cie-button-icon\">
+                            <img aria-hidden=\"true\" src=\"/{{SERVICENAME}}/cie-graphics/SVG/entra_con_cie.svg\" alt=\"Entra con CIE\" />
+                        </span>
+                        <span class=\"sr-only\" style=\"display:none\">Entra con CIE</span>
+                    </a>
+                </div>
+            ";    
         }
     }
 
