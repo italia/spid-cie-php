@@ -62,7 +62,8 @@ class Metadata
         'fpa.CAP',
         'fpa.Comune',
         'fpa.Provincia',
-        'fpa.Nazione'
+        'fpa.Nazione',
+        'extensions'
     ];
 
 
