@@ -60,7 +60,7 @@ class Setup {
         $_spOrganizationFiscalCode = "FiscalCode";
         $_spOrganizationNace2Code = "NACE2Code";
         $_spOrganizationEmailAddress = "info@organization.org"; // must be not null otherwise metadata will not generated 
-        $_spOrganizationTelephoneNumber = "12345678"; // must be not null otherwise metadata will not generated 
+        $_spOrganizationTelephoneNumber = "+3912345678"; // must be not null otherwise metadata will not generated 
 
         // ContactPerson billing
         $_fpaIdPaese = "IT";
@@ -1353,7 +1353,7 @@ class Setup {
             // remove tag prefixes
             $xml1 = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml1);
             $xml1 = simplexml_load_string($xml1);
-            $xml1->Organization->OrganizationName = "DEMOVALIDATOR";
+            $xml1->Organization->OrganizationName = "VALIDATOR";
             $xml1Dom = dom_import_simplexml($xml1);
             $xmlDom->appendChild($xmlDom->ownerDocument->importNode($xml1Dom, true));
             echo $colors->getColoredString("OK", "green");
