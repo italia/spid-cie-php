@@ -890,9 +890,12 @@ class SAMLBuilder
             $eexts[] = new \SAML2\XML\Chunk($ext_elem_CessionarioCommittente);
         }
 
+        echo var_export($this, true);
+
         if (isset($details['extensions'])) {
-            foreach($details['extensions'] as $e_key => $e_val) {
-                $ext_elem = $ext_dom->createElement($e_key, $e_val? $e_val : '');
+            $ns = $details['extensions']['ns'];
+            foreach($details['extensions']['elements'] as $e_key => $e_val) {
+                $ext_elem = $ext_dom->createElementNS($ns, $e_key, $e_val? $e_val : '');
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem);
             }
         }
