@@ -7,14 +7,27 @@
         private $spid_auth;
         private $idps = array();
         private $purpose = null;
+        private $service = 'spid';
+        
+        public const SPID_ENABLED = {{SPID_ENABLED}};
+        public const CIE_ENABLED = {{CIE_ENABLED}};
 
-        function __construct($production=false, $servicename='service') {
-            $this->spid_auth = new SimpleSAML\Auth\Simple($servicename);
+        function __construct($production=false, $service='spid') {
+            $this->spid_auth = new SimpleSAML\Auth\Simple($service);
             $this->production = $production;
+            $this->service = $service;
 
             {{IDPS}}
         }
 
+	public function isSPIDEnabled() {
+	    return self::SPID_ENABLED;
+	}
+
+	public function isCIEEnabled() {
+	    return self::CIE_ENABLED;
+	}
+	
         public function getIdP() {
             return $this->spid_auth->getAuthData('saml:sp:IdP');
         }
@@ -83,22 +96,31 @@
         }
     
         public function login($idp, $l, $returnTo="", $attributeIndex=null, $post=false) {
-            // default for SPID
-            $l = ($l=="2" || $l=="3")? $l : "1";
-            $post = $post;
+            // common for SPID & CIE
             $comparison = \SAML2\Constants::COMPARISON_MINIMUM;
 
             // override for CIE
             $isCIEIdP = $this->isCIEKey($idp);
-            $l = $isCIEIdP? "3" : $l;
-            $post = $isCIEIdP? true : $post;
-            $comparison = $isCIEIdP? \SAML2\Constants::COMPARISON_EXACT : \SAML2\Constants::COMPARISON_MINIMUM;
-            
-            $spidlevel = "https://www.spid.gov.it/SpidL" . $l;
+            if($isCIEIdP) {
+                $l = ($l=="1" || $l=="2")? $l : "3";
+                $post = true;
+
+                /*
+                * Decreto 8 settembre 2022 “Modalità di impiego della carta di identità elettronica” art. 4
+                * consente l'utilizzo di CIE a livello 1 e 2
+                * impostato di default a 3 se non specificato
+                */
+                //$comparison = $isCIEIdP? \SAML2\Constants::COMPARISON_EXACT : \SAML2\Constants::COMPARISON_MINIMUM;
+
+            } else {
+                $l = ($l=="1" || $l=="3")? $l : "2";
+            }
+
+            $spidcie_level = "https://www.spid.gov.it/SpidL" . $l;
             $binding = $post? \SAML2\Constants::BINDING_HTTP_POST : \SAML2\Constants::BINDING_HTTP_REDIRECT;
 
             $config = array(
-                'saml:AuthnContextClassRef' => $spidlevel,
+                'saml:AuthnContextClassRef' => $spidcie_level,
                 'saml:AuthnContextComparison' => $comparison,
                 'saml:idp' => $this->idps[$idp],
                 'saml:NameIDPolicy' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
@@ -126,8 +148,8 @@
                 $this->spid_auth->logout($returnTo);
             } else {
                $session = SimpleSAML\Session::getSessionFromRequest();
-                if ($session->isValid('service')) {
-                    $session->doLogout('service');
+                if ($session->isValid($this->service)) {
+                    $session->doLogout($this->service);
                 }
             }
         }
@@ -487,6 +509,21 @@
 			}
 
             return $button_li;
+        }
+        
+        
+        public function insertCIEButton($size='default') {
+            echo "
+                <div class=\"cie-button\" style=\"width: 280px;\">
+                    <a class=\"cie-button\" role=\"button\"
+                        href=\"?idp=CIE TEST\" >
+                        <span class=\"cie-button-icon\">
+                            <img aria-hidden=\"true\" src=\"/{{SERVICENAME}}/cie-graphics/SVG/entra_con_cie.svg\" alt=\"Entra con CIE\" />
+                        </span>
+                        <span class=\"sr-only\" style=\"display:none\">Entra con CIE</span>
+                    </a>
+                </div>
+            ";    
         }
     }
 

@@ -1,6 +1,6 @@
 {
     "config": {
-        "version": "3.15.0",
+        "version": "3.15.1",
         "allow-plugins": {
             "simplesamlphp/composer-module-installer": true
         }
@@ -29,6 +29,18 @@
                     "reference": "master"
                 }
             }
+        },
+        "cie-graphics": {
+            "type": "package",
+            "package": {
+                "name": "italia/cie-graphics",
+                "version": "1.0",
+                "source": {
+                    "url": "https://github.com/italia/cie-graphics",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
         }
     },
     "require": {
@@ -40,6 +52,7 @@
         "simplesamlphp/simplesamlphp": "1.19.8",
         "italia/spid-smart-button": "*",
         "italia/spid-sp-access-button": "*",
+        "italia/cie-graphics": "*",
         "symfony/filesystem": "5.2.6",
         "web-token/jwt-core": "2.2.11",
         "web-token/jwt-key-mgmt": "2.2.11",

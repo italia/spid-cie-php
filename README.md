@@ -1,18 +1,18 @@
 <img src="https://github.com/italia/spid-graphics/blob/master/spid-logos/spid-logo-b-lb.png" alt="SPID" data-canonical-src="https://github.com/italia/spid-graphics/blob/master/spid-logos/spid-logo-b-lb.png" width="50%" />
 
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.4.1-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%208.0.28-8892BF.svg)](https://php.net/)
 [![Join the #spid-php channel](https://img.shields.io/badge/Slack%20channel-%23spid--php-blue.svg?logo=slack)](https://developersitalia.slack.com/messages/CB6DCK274)
 [![Get invited](https://slack.developers.italia.it/badge.svg)](https://slack.developers.italia.it/)
 [![SPID on forum.italia.it](https://img.shields.io/badge/Forum-SPID-blue.svg)](https://forum.italia.it/c/spid)
 ![SP SPID in produzione con spid-php](https://img.shields.io/badge/SP%20SPID%20in%20produzione%20con%20spid--php-70+-green)
 
 # spid-php
-Software Development Kit for easy SPID access integration with SimpleSAMLphp.\
+Software Development Kit for easy SPID & CIE access integration with SimpleSAMLphp.\
 spid-php has been developed and is maintained by Michele D'Amico (@damikael). **It's highly recommended to use the latest release**.
 
 <img src="doc/spid-php-tutorial.gif" alt="spid-php video tutorial" />
 
-spid-php è uno script composer (https://getcomposer.org/) che semplifica e automatizza il processo di installazione e configurazione di SimpleSAMLphp (https://simplesamlphp.org/) per l'integrazione dell'autenticazione SPID all'interno di applicazioni PHP tramite lo SPID SP Access Button (https://github.com/italia/spid-sp-access-button). spid-php permette di realizzare un Service Provider (pubblico o privato) per SPID in pochi secondi, ma **non è orientato alla realizzazione di Aggregatori e/o Gestori**.  
+spid-php è uno script composer (https://getcomposer.org/) che semplifica e automatizza il processo di installazione e configurazione di SimpleSAMLphp (https://simplesamlphp.org/) per l'integrazione dell'autenticazione SPID e CIE all'interno di applicazioni PHP. spid-php permette di realizzare un Service Provider (pubblico o privato) per SPID e/o CIE in pochi secondi, ma **non è orientato alla realizzazione di Aggregatori e/o Gestori**.  
 
 **Si raccomanda di mantenere sempre aggiornata la propria installazione all'ultima versione**.
 
@@ -20,6 +20,7 @@ Durante il processo di setup lo script richiede l'inserimento delle seguenti inf
 * directory di installazione (directory corrente)
 * directory root del webserver
 * nome del link al quale collegare SimpleSAMLphp
+* se eseguire l'installazione per SPID e/o CIE
 * EntityID del service provider
 * Tipologia del service provider (pubblico o privato)
 * Informazioni del service provider da inserire nel metadata
@@ -36,21 +37,25 @@ Durante il processo di setup lo script richiede l'inserimento delle seguenti inf
 
 e si occupa di eseguire i seguenti passi:
 * scarica l'ultima versione di SimpleSAMLphp con le relative dipendenze
-* scarica l'ultima versione dello spid-sp-access-button
-* crea un certificato X.509 per il service provider
-* scarica i metadata degli IDP di produzione tramite il metadata unico di configurazione (https://registry.spid.gov.it/metadata/idp/spid-entities-idps.xml)
+* scarica l'ultima versione dello grafica per il bottone SPID (https://github.com/italia/spid-sp-access-button)
+* scarica l'ultima versione della grafica per il bottone CIE (https://github.com/italia/cie-graphics)
+* crea un certificato X.509 per il service provider SPID
+* crea un certificato X.509 per il service provider CIE
+* scarica i metadata degli IDP SPID di produzione tramite il metadata unico di configurazione (https://registry.spid.gov.it/metadata/idp/spid-entities-idps.xml)
+* configura il metadata degli IDP CIE di test e di produzione
 * effettua tutte le necessarie configurazioni su SimpleSAMLphp
 * predispone il template e le risorse grafiche dello SPID SP Access Button per essere utilizzate con SimpleSAMLphp
+* predispone il template e le risorse grafiche CIE essere utilizzate con SimpleSAMLphp
 
-Al termine del processo di setup si potrà scaricare il [metadata](#Metadata) oppure utilizzare il certificato X.509 creato nella directory /cert per registrare il service provider sull'ambiente di test/validazione.
+Al termine del processo di setup si potranno scaricare i [metadata](#Metadata) oppure utilizzare i certificato X.509 creati nella directory /cert per registrare il service provider sull'ambiente di test/validazione.
 
-Se si è scelto di copiare i file di esempio, sarà possibile verificare subito l'integrazione accedendo da web a /login-spid.php.
+Se si è scelto di copiare i file di esempio, sarà possibile verificare subito l'integrazione accedendo da web a /login.php.
 
-Se si è scelto di copiare i file di esempio come proxy, sarà possibile verificare il funzionamento come proxy accedendo da web a /proxy-sample.php oppure /proxy-login-spid.php
+Se si è scelto di copiare i file di esempio come proxy, sarà possibile verificare il funzionamento come proxy accedendo da web a /proxy-sample.php oppure /proxy-login.php
 
 ## Requisiti
 * Web server
-* php >= 7.4.1 < 8.0
+* php >= 8.0.28
 * php-xml
 * php-mbstring
 * php-gmp
@@ -102,7 +107,7 @@ Per utilizzare SimpleSAMLphp su webserver nginx occorre configurare nginx come n
 In *myservice* inserire il nome del servizio come specificato durante l'installazione.
 
 ### Prerequisiti per certificati self-signed
-Per fare valido l'uso del `snippets/snakeoil.conf` file su Nginx, è necessario generare il certificato "sel-signed" `/etc/ssl/certs/ssl-cert-snakeoil.pem`  attraverso la installazione del package `ssl-cert` su distribuizioni Debian based (come Ubuntu), con il comando:
+Per fare valido l'uso del `snippets/snakeoil.conf` file su Nginx, è necessario generare il certificato "self-signed" `/etc/ssl/certs/ssl-cert-snakeoil.pem`  attraverso la installazione del package `ssl-cert` su distribuizioni Debian based (come Ubuntu), con il comando:
 
 ```bash
 sudo apt-get install ssl-cert
@@ -147,9 +152,15 @@ server {
 ```
 
 ## Metadata
-Dopo aver completato la procedura di installazione il metadata del service provider è scaricabile alla seguente url:
+Dopo aver completato la procedura di installazione è possibile scaricare i metadati alle seguenti url:
 
-**/*myservice*/module.php/saml/sp/metadata.php/service**
+### Metadata SPID
+**/*myservice*/module.php/saml/sp/metadata.php/spid**
+
+dove *myservice* è il nome del servizio come specificato durante l'installazione.
+
+### Metadata CIE
+**/*myservice*/module.php/saml/sp/metadata.php/cie**
 
 dove *myservice* è il nome del servizio come specificato durante l'installazione.
 
@@ -158,6 +169,18 @@ dove *myservice* è il nome del servizio come specificato durante l'installazion
 ```
 new SPID_PHP()
 ```
+
+### isSPIDEnabled
+```
+bool isSPIDEnabled()
+```
+restituisce true se è stata eseguita le configurazione per SPID, false altrimenti
+
+### isAuthenticated
+```
+bool isCIEEnabled()
+```
+restituisce true se è stata eseguita le configurazione per CIE, false altrimenti
 
 ### isAuthenticated
 ```
@@ -199,13 +222,21 @@ inserisce i riferimenti al codice javascript necessario al funzionamento del bot
 ```
 void insertSPIDButton($size, [$method='GET'])
 ```
-stampa il codice per l'inserimento dello smart button. 
+stampa il codice per l'inserimento del pulsante 'Entra con SPID'. 
 
 **$size** specifica la dimensione del pulsante (S|M|L|XL)
 
-**$method** specifica la versione del bottone (GET|POST)
+**$method** specifica la versione del pulsante (GET|POST)
 
-### setPurpose
+### insertCIEButton
+```
+void insertCIEButton([$size='default'])
+```
+stampa il codice per l'inserimento del pulsante 'Entra con CIE'. 
+
+**$size** specifica la dimensione del pulsante (default)
+
+### setPurpose (solo per SPID)
 ```
 void setPurpose($purpose)
 ```
@@ -223,14 +254,18 @@ invia una richiesta di login livello $level verso l'idp **$idp**. Dopo l'autenti
 * DEMO
 * DEMOVALIDATOR
 * ArubaPEC S.p.A.
+* EtnaHitech S.C.p.A.
 * InfoCert S.p.A.
 * IN.TE.S.A. S.p.A.
 * Lepida S.p.A.
 * Namirial
 * Poste Italiane SpA
-* Sielte S.p.A.
 * Register.it S.p.A.
+* Sielte S.p.A.
+* TeamSystem s.p.a.
 * TI Trust Technologies srl
+* CIE TEST
+* CIE
 
 **$level** può assumere uno dei seguenti valori
 * 1
@@ -321,7 +356,7 @@ Per inserire ulteriori client con le relative configurazioni di *client_id*, *cl
 ## API Proxy
 ### login
 ```
-GET /proxy-spid.php?action=login&client_id=<client_id>&redirect_uri=<redirect_uri>&idp=<idp>&state=<state>
+GET /proxy.php?action=login&client_id=<client_id>&redirect_uri=<redirect_uri>&idp=<idp>&state=<state>
 ```
 Invia la AuthnRequest ad uno specifico IdP e ritorna la Response decodificata o come JWS o JWS(JWE) in POST alla redirect_uri del client.
 
@@ -334,7 +369,7 @@ Parametri:
 
 ### logout
 ```
-GET /proxy-spid.php?action=logout&client_id=<client_id>
+GET /proxy.php?action=logout&client_id=<client_id>
 ```
 Esegue la disconnessione dall'IdP.
   
@@ -344,7 +379,7 @@ Parametri:
 
 ### verify
 ```
-GET /proxy-spid.php?action=verify&token=<token>&decrypt=<decrypt>&secret=<secret>
+GET /proxy.php?action=verify&token=<token>&decrypt=<decrypt>&secret=<secret>
 ```
 Verifica e decifra il token JWT ricevuto con la response.
   
@@ -360,8 +395,8 @@ Si consiglia di utilizzare l'endpoint verify esclusivamente per la verifica dell
 
 ## Esempio di utilizzo del proxy
 ```
-<a href="/proxy-login-spid.php">Go to Login Page or...</a><br/>
-<a href="/proxy-spid.php?client_id=<client_id>&action=login&redirect_uri=/proxy-sample.php&idp=DEMOVALIDATOR&state=state">Login with a single IdP (example for DEMO Validator)</a>
+<a href="/proxy-login.php">Go to Login Page or...</a><br/>
+<a href="/proxy.php?client_id=<client_id>&action=login&redirect_uri=/proxy-sample.php&idp=DEMOVALIDATOR&state=state">Login with a single IdP (example for DEMO Validator)</a>
 <p>
     <?php
         foreach($_POST as $attribute=>$value) {
@@ -395,7 +430,7 @@ di Response che contiene i dettagli dell'errore.
   <img src = "https://contrib.rocks/image?repo=italia/spid-php"/>
 </a>
 
-## Compliance
+## SPID Compliance
 
 |<img src="https://github.com/italia/spid-graphics/blob/master/spid-logos/spid-logo-c-lb.png?raw=true" width="100" /><br />_Compliance with [SPID regulations](http://www.agid.gov.it/sites/default/files/circolari/spid-regole_tecniche_v1.pdf) (for Service Providers)_|status|notes|
 |:---|:---|:---|

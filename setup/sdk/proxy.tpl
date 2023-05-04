@@ -28,6 +28,7 @@
     const TOKEN_PRIVATE_KEY = "{{SDKHOME}}/cert/spid-sp.pem";
     const TOKEN_PUBLIC_CERT = "{{SDKHOME}}/cert/spid-sp.crt";
     const DEFAULT_SPID_LEVEL = 2;
+    const DEFAULT_CIE_LEVEL = 3;
     const DEFAULT_ATCS_INDEX = 0;
     const DEFAULT_EIDAS_ATCS_INDEX = 100;
     const DEFAULT_SECRET = "";
@@ -48,8 +49,8 @@
 
         case "login":
 
-            $service = "service";
-            if($idp=="CIE" || $idp=="CIE TEST") $service = "cie";
+            $isCIE = ($idp=="CIE" || $idp=="CIE TEST");
+            $service = $isCIE? "cie" : "spid";
         
             $spidsdk = new SPID_PHP($production, $service);
 
@@ -102,16 +103,16 @@
                         die();
                 
                     } else {
-                        $spid_level = $clients[$client_id]['level'];
+                        $spidcie_level = $clients[$client_id]['level'];
                         $atcs_index = $clients[$client_id]['atcs_index'];
-                        if($spid_level==null || !in_array($spid_level, [1,2,3])) $spid_level = DEFAULT_SPID_LEVEL;
+                        if($spidcie_level==null || !in_array($spidcie_level, [1,2,3])) $spidcie_level = $isCIE? DEFAULT_CIE_LEVEL : DEFAULT_SPID_LEVEL;
                         if($atcs_index==null || !is_numeric($atcs_index)) $atcs_index = DEFAULT_ATCS_INDEX;
 
                         if($idp=="EIDAS" || $idp=="EIDAS QA") $atcs_index = DEFAULT_EIDAS_ATCS_INDEX;
 
                         $returnTo = $_SERVER['SCRIPT_URI'].'?action=login&idp='.$idp.'&client_id='.$client_id.'&redirect_uri='.$redirect_uri.'&state='.$state;
                         setcookie('SPIDPHP_PROXYRETURNTO', $returnTo, time()+60*5, '/');
-                        $spidsdk->login($idp, $spid_level, $_SERVER['SCRIPT_URI'], $atcs_index);
+                        $spidsdk->login($idp, $spidcie_level, $_SERVER['SCRIPT_URI'], $atcs_index);
                         die();
                     }
 
@@ -132,7 +133,7 @@
         case "logout":
             $return = $redirect_uri? $redirect_uri : $clients[$client_id]['redirect_uri'][0];
 
-            $service = "service";
+            $service = "spid";
             $spidsdk = new SPID_PHP($production, $service);
             if(!$spidsdk->isAuthenticated()) {
                 $service = "cie";
@@ -145,7 +146,7 @@
                  */
                 /*
                 $sspSession = \SimpleSAML\Session::getSessionFromRequest();
-                $sspSession->doLogout('service');
+                $sspSession->doLogout($service);
                 header("location: " . $return);
                 */
 
@@ -154,7 +155,7 @@
                 if($idp=='EIDAS' || $idp=='EIDAS QA') {
 
                     $sspSession = \SimpleSAML\Session::getSessionFromRequest();
-                    $sspSession->doLogout('service');
+                    $sspSession->doLogout('spid');
                     header("location: " . $return);
 
                 } else {

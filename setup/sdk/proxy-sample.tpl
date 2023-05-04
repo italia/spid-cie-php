@@ -16,8 +16,8 @@
 
 <html>
     <body>
-        <a href="/proxy-login-spid.php">Go to Login Page or...</a><br/>
-        <a href="/proxy-spid.php?client_id={{PROXY_CLIENT_ID}}&action=login&redirect_uri={{PROXY_REDIRECT_URI}}&idp=DEMOVALIDATOR&state=state">Login with a single IdP (example for DEMO Validator)</a>
+        <a href="/proxy-login.php">Go to Login Page or...</a><br/>
+        <a href="/proxy.php?client_id={{PROXY_CLIENT_ID}}&action=login&redirect_uri={{PROXY_REDIRECT_URI}}&idp=DEMOVALIDATOR&state=state">Login with a single IdP (example for DEMO Validator)</a>
         <p>
             <?php
                 foreach($_POST as $attribute=>$value) {
@@ -25,6 +25,6 @@
                 }
             ?>
         </p>
-        <a href="/proxy-spid.php?client_id={{PROXY_CLIENT_ID}}&action=logout">Esci</a>
+        <a href="/proxy.php?client_id={{PROXY_CLIENT_ID}}&action=logout">Esci</a>
     </body>
 </html>
