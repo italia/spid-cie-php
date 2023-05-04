@@ -12,7 +12,7 @@ class ResponseHandlerSignEncrypt extends ResponseHandler {
 
         $data = $this->makeJWS($data, $exp_time, $iss, $aud, $jwk_pem);
 
-        $secret = $this->config['clients'][$client_id]['client_secret'];
+        $secret = $this->config['client_secret'];
         $encryptedDataToken = $this->makeJWE($data, $exp_time, $iss, $aud, $secret);
 
         echo "<input type=\"hidden\" name=\"data\" value=\"".$encryptedDataToken."\" />";

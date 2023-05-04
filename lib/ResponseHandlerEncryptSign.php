@@ -10,7 +10,7 @@ class ResponseHandlerEncryptSign extends ResponseHandler {
         $aud = $redirect_uri;
         $jwk_pem = TOKEN_PRIVATE_KEY;
 
-        $secret = $this->config['clients'][$client_id]['client_secret'];
+        $secret = $this->config['client_secret'];
         $data = $this->makeJWE($data, $exp_time, $iss, $aud, $secret);
 
         $signedDataToken = $this->makeJWS($data, $exp_time, $iss, $aud, $jwk_pem);
