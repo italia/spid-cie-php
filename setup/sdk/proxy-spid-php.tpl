@@ -6,7 +6,7 @@ require_once("spid-php.php");
  * Class PROXY_SPID_PHP
  * It extends the SPID_PHP to utilize SDK as proxy.
  * URL to call proxy login is formed as follow:
-   /proxy-spid.php?client_id=<client_id>&action=login&redirect_uri=<redirect_uri>&idp=<idp>&state=<state>
+   /proxy.php?client_id=<client_id>&action=login&redirect_uri=<redirect_uri>&idp=<idp>&state=<state>
  * <client_id> and <redirect_uri> are configured during setup
  */
 class PROXY_SPID_PHP extends SPID_PHP {
@@ -27,7 +27,7 @@ class PROXY_SPID_PHP extends SPID_PHP {
         foreach($registry_idp as $registry_idp_entity) {
             $button_li .= "
                 <li class=\"spid-idp-button-link\" data-idp=\"" . $registry_idp_entity['organization_name'] . "\">
-                    <a href=\"/proxy-spid.php?client_id=".$this->client_id."&action=login&redirect_uri=".$this->redirect_uri."&idp=" . $registry_idp_entity['organization_name'] . "&state=".$this->state."\">
+                    <a href=\"/proxy.php?client_id=".$this->client_id."&action=login&redirect_uri=".$this->redirect_uri."&idp=" . $registry_idp_entity['organization_name'] . "&state=".$this->state."\">
                         <span class=\"spid-sr-only\">" . $registry_idp_entity['organization_name'] . "</span>
                         <img src=\"" . $registry_idp_entity['logo_uri'] . "\" 
                             onerror=\"this.src='" . $registry_idp_entity['logo_uri'] . "\" 
