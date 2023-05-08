@@ -41,7 +41,7 @@
     $clients        = $proxy_config['clients'];
     $action         = $_GET['action'];
     $client_id      = $_GET['client_id'];
-    $redirect_uri   = $_GET['redirect_uri'];
+    $redirect_uri   = isset($_GET['redirect_uri'])? $_GET['redirect_uri'] : $clients[$client_id]['redirect_uri'][0];
     $state          = $_GET['state'];
     $idp            = $_GET['idp'];
 
