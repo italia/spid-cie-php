@@ -422,8 +422,8 @@ di Response che contiene i dettagli dell'errore.
 [Michele D'Amico (damikael)](https://it.linkedin.com/in/damikael)
  
 ## Credits
-<a href="https://www.linfaservice.it" target="_blank"><img  style="border:1px solid #ccc; padding: 5px; height: 50px; margin-right: 20px;" src="https://www.linfaservice.it/common/linfaservice.png" alt="Linfa Service"></a>
-<a href="https://www.manydesigns.com" target="_blank"><img  style="border:1px solid #ccc; padding: 5px; height: 50px; margin-right: 20px;" src="https://www.manydesigns.com/img/logoMD.png" alt="ManyDesigns"></a>
+<a href="https://www.linfaservice.it" target="_blank"><img  style="border:1px solid #ccc; padding:5px; margin-right:20px; vertical-align:middle; width: 200px;" src="https://www.linfaservice.it/common/linfaservice.png" alt="Linfa Service"></a>
+<a href="https://www.manydesigns.com" target="_blank"><img  style="border:1px solid #ccc; padding:5px; margin-right:20px; vertical-align:middle; width: 200px;" src="https://manydesigns.com/wp-content/uploads/2022/12/Logo_Manydesigns.png" alt="ManyDesigns"></a>
   
 ## Contributors
 <a href = "https://github.com/italia/spid-php/contributors">
