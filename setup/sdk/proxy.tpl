@@ -49,20 +49,23 @@
 
         case "login":
 
-            $isCIE = ($idp=="CIE" || $idp=="CIE TEST");
-            $service = $isCIE? "cie" : "spid";
-        
-            $spidsdk = new SPID_PHP($production, $service);
-
-
-            if(!$spidsdk->isIdPAvailable($idp)) {
-                http_response_code(404);
-                if(DEBUG) echo "idp not found"; 
-                die(); 
-            }
-
             if(in_array($client_id, array_keys($clients))) {
                 if(in_array($redirect_uri, $clients[$client_id]['redirect_uri'])) {
+
+                    $isCIE = ($idp=="CIE" || $idp=="CIE TEST");
+                    $service = $isCIE? "cie" : "spid";
+                
+                    if(isset($clients[$client_id]['service'])) {
+                        $service = $clients[$client_id]['service'];
+                    }
+
+                    $spidsdk = new SPID_PHP($production, $service);
+
+                    if(!$spidsdk->isIdPAvailable($idp)) {
+                        http_response_code(404);
+                        if(DEBUG) echo "idp not found"; 
+                        die(); 
+                    }
 
                     if($spidsdk->isAuthenticated() 
                     && isset($_GET['idp']) 
