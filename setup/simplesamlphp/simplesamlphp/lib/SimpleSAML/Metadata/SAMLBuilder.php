@@ -823,6 +823,10 @@ class SAMLBuilder
         $e = new \SAML2\XML\md\ContactPerson();
         $e->setContactType($type);
 
+        if(isset($details['spidEntityType'])) {
+            $e->setEntityType($details['spidEntityType'], 'spid');
+        }
+
         $eexts = array();
         $ext_dom = \SAML2\DOMDocumentFactory::create();
 
@@ -897,7 +901,7 @@ class SAMLBuilder
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem);
             }
         }
-           
+
         $e->setExtensions($eexts);
 
         if (!empty($details['attributes'])) {

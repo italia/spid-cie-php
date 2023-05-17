@@ -25,6 +25,14 @@ class ContactPerson
     private $contactType;
 
     /**
+     * The entity type. (Avviso SPID n.19 v.4)
+     *
+     * @var string
+     */
+    private $entityType;
+    private $entityTypeNS;
+
+    /**
      * Extensions on this element.
      *
      * Array of extension elements.
@@ -92,6 +100,15 @@ class ContactPerson
             throw new \Exception('Missing contactType on ContactPerson.');
         }
         $this->setContactType($xml->getAttribute('contactType'));
+
+        if ($xml->hasAttribute('entityType')) {
+            // SPID Entity Type (Avviso SPID n.19 v.4)
+            if(substr($xml->getAttribute('entityType'), 0, 5)=='spid:') {
+                $this->setEntityType($xml->getAttribute('entityType'), 'spid');
+            } else {
+                $this->setEntityType($xml->getAttribute('entityType'));
+            }
+        }
 
         $this->setExtensions(Extensions::getList($xml));
 
@@ -163,6 +180,25 @@ class ContactPerson
         return $this->contactType;
     }
 
+    /**
+     * Collect the value of the entityType
+     *
+     * @return string
+     */
+    public function getEntityType() : string
+    {
+        return $this->entityType;
+    }
+
+    /**
+     * Collect the value of the entityTypeNS
+     *
+     * @return string
+     */
+    public function getEntityTypeNS() : string
+    {
+        return $this->entityTypeNS;
+    }
 
     /**
      * Set the value of the contactType-property
@@ -173,6 +209,23 @@ class ContactPerson
     public function setContactType(string $contactType) : void
     {
         $this->contactType = $contactType;
+    }
+
+    /**
+     * Set the value of the entityType
+     *
+     * @param string $entityType
+     * @return void
+     */
+    public function setEntityType(string $entityType, string $ns=null) : void
+    {
+        if($ns!=null && $ns!='') {
+            $this->entityType = $ns.':'.$entityType;
+            $this->entityTypeNS = $ns;
+        } else {
+            $this->entityType = $entityType;
+            $this->entityTypeNS = null;
+        }
     }
 
 
@@ -402,6 +455,10 @@ class ContactPerson
         $parent->appendChild($e);
 
         $e->setAttribute('contactType', $this->getContactType());
+
+        if ($this->entityType != null) {
+            $e->setAttribute($this->entityTypeNS . ($this->entityTypeNS? ':' : '') . 'entityType', $this->getEntityType());
+        }
 
         foreach ($this->getContactPersonAttributes() as $attr => $val) {
             $e->setAttribute($attr, $val);

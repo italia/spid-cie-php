@@ -44,6 +44,7 @@ class Metadata
      */
     public static $VALID_CONTACT_OPTIONS = [
         'contactType',
+        'spidEntityType',
         'emailAddress',
         'givenName',
         'surName',
