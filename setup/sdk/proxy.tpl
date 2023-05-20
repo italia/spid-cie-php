@@ -137,11 +137,13 @@
             $return = $redirect_uri? $redirect_uri : $clients[$client_id]['redirect_uri'][0];
 
             $service = "spid";
+            if($idp=="CIE" || $idp=="CIE TEST") $service = "cie";
+        
+            if(isset($clients[$client_id]['service'])) {
+                $service = $clients[$client_id]['service'];
+            }
+
             $spidsdk = new SPID_PHP($production, $service);
-            if(!$spidsdk->isAuthenticated()) {
-                $service = "cie";
-                $spidsdk = new SPID_PHP($production, $service);
-            };
 
             if($spidsdk->isAuthenticated()) {
                 /* 
