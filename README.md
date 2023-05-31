@@ -6,7 +6,7 @@
 [![SPID on forum.italia.it](https://img.shields.io/badge/Forum-SPID-blue.svg)](https://forum.italia.it/c/spid)
 ![SP SPID in produzione con spid-php](https://img.shields.io/badge/SP%20SPID%20in%20produzione%20con%20spid--php-90+-green)
 
-# spid-php
+# spid-cie-php
 Software Development Kit for easy SPID & CIE access integration with SimpleSAMLphp.\
 spid-php has been developed and is maintained by Michele D'Amico (@damikael). **It's highly recommended to use the latest release**.
 
