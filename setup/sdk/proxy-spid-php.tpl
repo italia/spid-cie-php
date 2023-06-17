@@ -23,6 +23,12 @@ class PROXY_SPID_PHP extends SPID_PHP {
         $registry_idp_json = file_get_contents('https://registry.spid.gov.it/entities-idp?output=json');
         $registry_idp = json_decode($registry_idp_json, true);
 
+        if($registry_idp!=null && is_array($registry_idp) && count($registry_idp)) {
+            file_put_contents('spid-idps.json', $registry_idp_json);
+        } else {
+            $registry_idp = json_decode(file_get_contents('spid-idps.json'), true);
+        }
+        
         $button_li = "";
         foreach($registry_idp as $registry_idp_entity) {
             $button_li .= "
