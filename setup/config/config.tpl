@@ -236,6 +236,14 @@ $config = array(
     'database.persistent' => false,
 
     /*
+     * Authsources storage
+     * if authsources.storage => 'database' get authsource configuration from database table 'authsources.database_table'
+     * else get authsource configuration from file /config/authsources.php (as default)
+     */
+    'authsources.storage' => 'file',
+    'authsources.database_table' => 'authsources',
+
+    /*
      * Database slave configuration is optional as well. If you are only
      * running a single database server, leave this blank. If you have
      * a master/slave configuration, you can define as many slave servers
