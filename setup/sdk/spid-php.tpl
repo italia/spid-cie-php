@@ -20,6 +20,21 @@
             {{IDPS}}
         }
 
+        public function getIdPList() {
+            include("vendor/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php");
+            
+            $list = [];
+            foreach($this->idps as $idp => $entity_id) {
+                array_push($list, array(
+                    'name' => $metadata[$entity_id]['name']['it'],
+                    'entity_id' => $entity_id,
+                    'code' => $idp,
+                    'logo_uri' => $metadata[$entity_id]['icon']
+                ));
+            }
+            return $list;
+        }
+
 	public function isSPIDEnabled() {
 	    return self::SPID_ENABLED;
 	}
