@@ -54,13 +54,14 @@
         'contacts' => array (
             0 => 
             array (
+            'cie' => true,
             'contactType' => 'administrative',
             'company' => {{ORGANIZATIONNAME}},
             'emailAddress' => {{ORGANIZATIONEMAILADDRESS}},
             'telephoneNumber' => {{ORGANIZATIONTELEPHONENUMBER}},
             'extensions' => 
                 array (
-                    'Public' => NULL,
+                    'Public' => true,
                     'IPACode' => {{ORGANIZATIONCODE}},
                     'Municipality' => {{ORGANIZATIONMUNICIPALITY}},
                     'Province' => {{ORGANIZATIONPROVINCE}},

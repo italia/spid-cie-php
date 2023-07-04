@@ -54,13 +54,14 @@
         'contacts' => array (
             0 => 
             array (
+            'cie' => true,
             'contactType' => 'administrative',
             'company' => {{ORGANIZATIONNAME}},
             'emailAddress' => {{ORGANIZATIONEMAILADDRESS}},
             'telephoneNumber' => {{ORGANIZATIONTELEPHONENUMBER}},
             'extensions' => 
                 array (
-                    'Private' => NULL,
+                    'Private' => true,
                     'VATNumber' => {{ORGANIZATIONCODE}},
                     'FiscalCode' => {{ORGANIZATIONFISCALCODE}},
                     'NACE2Code' => {{ORGANIZATIONNACE2CODE}},

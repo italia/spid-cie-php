@@ -55,6 +55,7 @@ class Metadata
         'spid.codeType',
         'spid.codeValue',
         'fpa',
+        'cie',
         'fpa.IdPaese',
         'fpa.IdCodice',
         'fpa.Denominazione',

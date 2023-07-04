@@ -830,6 +830,37 @@ class SAMLBuilder
         $eexts = array();
         $ext_dom = \SAML2\DOMDocumentFactory::create();
 
+        
+        if (isset($details['cie'])) {
+            if (isset($details['extensions']['Public'])) {
+                $ext_elem_type = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:Public', '');
+                $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:IPACode', $details['extensions']['IPACode']);
+
+                $eexts[] = new \SAML2\XML\Chunk($ext_elem_type);
+                $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
+            }
+
+            if (isset($details['extensions']['Private'])) {
+                $ext_elem_type = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:Private', '');
+                $eexts[] = new \SAML2\XML\Chunk($ext_elem_type);
+                $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:VATNumber', $details['extensions']['VATNumber']);
+                $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
+                $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:FiscalCode', $details['extensions']['FiscalCode']);
+                $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
+                $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:NACE2Code', $details['extensions']['NACE2Code']);
+                $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
+            }
+
+            $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:Municipality', $details['extensions']['Municipality']);
+            $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
+            $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:Province', $details['extensions']['Province']);
+            $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
+            $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:Country', $details['extensions']['Country']);
+            $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
+        }
+
+        
+        
 
         if(isset($details['spid'])) {
             if($details['spid.codeType']=='IPACode') {
