@@ -21,27 +21,27 @@
         }
 
         public function getIdPList() {
-            include("vendor/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php");
+            require_once("vendor/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php");
             
             $list = [];
-            foreach($this->idps as $idp => $entity_id) {
+            foreach($this->idps as $code => $entity_id) {
                 array_push($list, array(
                     'name' => $metadata[$entity_id]['name']['it'],
                     'entity_id' => $entity_id,
-                    'code' => $idp,
+                    'code' => $code,
                     'logo_uri' => $metadata[$entity_id]['icon']
                 ));
             }
             return $list;
         }
 
-	public function isSPIDEnabled() {
-	    return self::SPID_ENABLED;
-	}
+	      public function isSPIDEnabled() {
+	        return self::SPID_ENABLED;
+	      }
 
-	public function isCIEEnabled() {
-	    return self::CIE_ENABLED;
-	}
+	      public function isCIEEnabled() {
+	        return self::CIE_ENABLED;
+	      }
 	
         public function getIdP() {
             return $this->spid_auth->getAuthData('saml:sp:IdP');
@@ -168,11 +168,11 @@
                 }
             }
         }
-    
+
         public function getLogoutURL($returnTo = null) {
             return $this->spid_auth->getLogoutURL($returnTo);
         }
-            
+
         public function getAttributes() {
             return $this->spid_auth->getAttributes();
         }
@@ -531,8 +531,7 @@
 
             return $button_li;
         }
-        
-        
+
         public function insertCIEButton($size='default') {
             echo "
                 <div class=\"cie-button\" style=\"width: 280px;\">
