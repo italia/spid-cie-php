@@ -834,7 +834,7 @@ class Setup {
 		        $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert"
 		    );
 		    echo $colors->getColoredString("\nConfiguring OpenSSL... ", "white");
-		    if (!file_exists('openssl.cnf')) {
+		    if (!file_exists('spid-php-openssl.cnf')) {
 		        $openssl_config = fopen("spid-php-openssl.cnf", "w");
 		        fwrite($openssl_config, "oid_section = spid_oids\n");
 
@@ -848,8 +848,12 @@ class Setup {
 
 		        fwrite($openssl_config, "\n[ spid_oids ]\n");
 		        //fwrite($openssl_config, "organizationIdentifier=2.5.4.97\n");
-		        fwrite($openssl_config, "spid-privatesector-SP=1.3.76.16.4.3.1\n");
-		        fwrite($openssl_config, "spid-publicsector-SP=1.3.76.16.4.2.1\n");
+		        fwrite($openssl_config, "agidcert=1.3.76.16.6\n");
+						if($config['spIsPublicAdministration']) {
+							fwrite($openssl_config, "spid-publicsector-SP=1.3.76.16.4.2.1\n");
+						} else {
+							fwrite($openssl_config, "spid-privatesector-SP=1.3.76.16.4.3.1\n");
+						}
 		        fwrite($openssl_config, "uri=2.5.4.83\n");
 
 		        fwrite($openssl_config, "\n[ dn ]\n");
@@ -862,7 +866,16 @@ class Setup {
 		        //fwrite($openssl_config, "serialNumber=" . $config['spOrganizationCode'] . "\n");
 
 		        fwrite($openssl_config, "\n[ req_ext ]\n");
-		        fwrite($openssl_config, "certificatePolicies = @spid_policies\n");
+		        fwrite($openssl_config, "basicConstraints=CA:FALSE\n");
+		        fwrite($openssl_config, "keyUsage=critical,digitalSignature,nonRepudiation\n");
+		        fwrite($openssl_config, "certificatePolicies=@agid_policies,@spid_policies\n");
+
+		        fwrite($openssl_config, "\n[ agid_policies ]\n");
+		        fwrite($openssl_config, "policyIdentifier=agidcert\n");
+		        fwrite($openssl_config, "userNotice=@agidcert_notice\n");
+						
+						fwrite($openssl_config, "\n[ agidcert_notice ]\n");
+		        fwrite($openssl_config, "explicitText=\"agIDcert\"\n");
 
 		        fwrite($openssl_config, "\n[ spid_policies ]\n");
 		        switch ($config['spIsPublicAdministration']) {
@@ -878,7 +891,16 @@ class Setup {
 		                die();
 		                break;
 		        }
-		        echo $colors->getColoredString("OK\n", "green");
+		        fwrite($openssl_config, "userNotice=@spid_notice\n");
+					
+		        fwrite($openssl_config, "\n[ spid_notice ]\n");
+						if($config['spIsPublicAdministration']) {
+							fwrite($openssl_config, "explicitText=\"cert_SP_Pub\"\n");
+						} else {
+							fwrite($openssl_config, "explicitText=\"cert_SP_Priv\"\n");
+						}
+					
+					echo $colors->getColoredString("OK\n", "green");
 		    } 
 		    shell_exec(
 		            "openssl req -new -x509 -config spid-php-openssl.cnf -days 730 " .
@@ -908,7 +930,7 @@ class Setup {
 		        $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert"
 		    );
 		    echo $colors->getColoredString("\nConfiguring OpenSSL... ", "white");
-		    if (!file_exists('openssl.cnf')) {
+		    if (!file_exists('cie-php-openssl.cnf')) {
 		        $openssl_config = fopen("cie-php-openssl.cnf", "w");
 		        fwrite($openssl_config, "oid_section = cie_oids\n");
 

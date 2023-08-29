@@ -793,8 +793,9 @@ class SAMLBuilder {
         $e = new \SAML2\XML\md\ContactPerson();
         $e->setContactType($type);
 
-        if (isset($details['spidEntityType'])) {
-            $e->setEntityType($details['spidEntityType'], 'spid');
+        if(isset($details['spidEntityType'])) {
+            $this->entityDescriptor->setNamespace('spid', 'https://spid.gov.it/saml-extensions');
+            $e->setEntityType('spid:'.$details['spidEntityType'], 'spid:https://spid.gov.it/saml-extensions');
         }
 
         $eexts = array();
@@ -803,29 +804,29 @@ class SAMLBuilder {
         if (isset($details['cie'])) {
             $this->addNSCIE = true;
             if (isset($details['extensions']['Public'])) {
-                $ext_elem_type = $ext_dom->createElement('cie:Public', '');
-                $ext_elem_code = $ext_dom->createElement('cie:IPACode', $details['extensions']['IPACode']);
+                $ext_elem_type = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions','cie:Public', '');
+                $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions','cie:IPACode', $details['extensions']['IPACode']);
 
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_type);
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
             }
 
             if (isset($details['extensions']['Private'])) {
-                $ext_elem_type = $ext_dom->createElement('cie:Private', '');
+                $ext_elem_type = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions','cie:Private', '');
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_type);
-                $ext_elem_code = $ext_dom->createElement('cie:VATNumber', $details['extensions']['VATNumber']);
+                $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions','cie:VATNumber', $details['extensions']['VATNumber']);
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
-                $ext_elem_code = $ext_dom->createElement('cie:FiscalCode', $details['extensions']['FiscalCode']);
+                $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions','cie:FiscalCode', $details['extensions']['FiscalCode']);
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
-                $ext_elem_code = $ext_dom->createElement('cie:NACE2Code', $details['extensions']['NACE2Code']);
+                $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions','cie:NACE2Code', $details['extensions']['NACE2Code']);
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
             }
 
-            $ext_elem_code = $ext_dom->createElement('cie:Municipality', $details['extensions']['Municipality']);
+            $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions','cie:Municipality', $details['extensions']['Municipality']);
             $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
-            $ext_elem_code = $ext_dom->createElement('cie:Province', $details['extensions']['Province']);
+            $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions','cie:Province', $details['extensions']['Province']);
             $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
-            $ext_elem_code = $ext_dom->createElement('cie:Country', $details['extensions']['Country']);
+            $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions','cie:Country', $details['extensions']['Country']);
             $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
         }
 
@@ -897,8 +898,12 @@ class SAMLBuilder {
 
         if (isset($details['extensions'])) {
             $ns = $details['extensions']['ns'];
-            foreach ($details['extensions']['elements'] as $e_key => $e_val) {
-                $ext_elem = $ext_dom->createElementNS($ns, $e_key, $e_val ? $e_val : '');
+//            if(is_string($ns)&& substr($ns, 0, 5)=='spid:') {
+//                $this->entityDescriptor->setNamespace('spid', 'https://spid.gov.it/saml-extensions');
+//            }
+            
+            foreach($details['extensions']['elements'] as $e_key => $e_val) {
+                $ext_elem = $ext_dom->createElement($e_key, $e_val? $e_val : '');
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem);
             }
         }
