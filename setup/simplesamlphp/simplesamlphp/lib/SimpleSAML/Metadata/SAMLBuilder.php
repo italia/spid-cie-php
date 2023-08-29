@@ -36,16 +36,15 @@ use SimpleSAML\Utils;
  *
  * @package SimpleSAMLphp
  */
+class SAMLBuilder {
 
-class SAMLBuilder
-{
     /**
      * The EntityDescriptor we are building.
      *
      * @var \SAML2\XML\md\EntityDescriptor
      */
     private $entityDescriptor;
-
+    private $addNSCIE = false;
 
     /**
      * The maximum time in seconds the metadata should be cached.
@@ -54,14 +53,12 @@ class SAMLBuilder
      */
     private $maxCache = null;
 
-
     /**
      * The maximum time in seconds since the current time that this metadata should be considered valid.
      *
      * @var int|null
      */
     private $maxDuration = null;
-
 
     /**
      * Initialize the SAML builder.
@@ -72,8 +69,7 @@ class SAMLBuilder
      * to null.
      * @return void
      */
-    public function __construct($entityId, $maxCache = null, $maxDuration = null)
-    {
+    public function __construct($entityId, $maxCache = null, $maxDuration = null) {
         assert(is_string($entityId));
 
         $this->maxCache = $maxCache;
@@ -83,13 +79,11 @@ class SAMLBuilder
         $this->entityDescriptor->setEntityID($entityId);
     }
 
-
     /**
      * @param array $metadata
      * @return void
      */
-    private function setExpiration(array $metadata): void
-    {
+    private function setExpiration(array $metadata): void {
         if (array_key_exists('expire', $metadata)) {
             if ($metadata['expire'] - time() < $this->maxDuration) {
                 $this->maxDuration = $metadata['expire'] - time();
@@ -104,20 +98,20 @@ class SAMLBuilder
         }
     }
 
-
     /**
      * Retrieve the EntityDescriptor element which is generated for this entity.
      *
      * @return \DOMElement The EntityDescriptor element of this entity.
      */
-    public function getEntityDescriptor()
-    {
+    public function getEntityDescriptor() {
         $xml = $this->entityDescriptor->toXML();
+        if ($this->addNSCIE) {
+            $xml->setAttribute('xmlns:cie', 'https://www.cartaidentita.interno.gov.it/saml-extensions');
+        }
         $xml->ownerDocument->appendChild($xml);
 
         return $xml;
     }
-
 
     /**
      * Retrieve the EntityDescriptor as text.
@@ -128,8 +122,7 @@ class SAMLBuilder
      *
      * @return string The serialized EntityDescriptor.
      */
-    public function getEntityDescriptorText($formatted = true)
-    {
+    public function getEntityDescriptorText($formatted = true) {
         assert(is_bool($formatted));
 
         $xml = $this->getEntityDescriptor();
@@ -140,15 +133,13 @@ class SAMLBuilder
         return $xml->ownerDocument->saveXML();
     }
 
-
     /**
      * Add a SecurityTokenServiceType for ADFS metadata.
      *
      * @param array $metadata The metadata with the information about the SecurityTokenServiceType.
      * @return void
      */
-    public function addSecurityTokenServiceType($metadata)
-    {
+    public function addSecurityTokenServiceType($metadata) {
         assert(is_array($metadata));
         assert(isset($metadata['entityid']));
         assert(isset($metadata['metadata-set']));
@@ -168,7 +159,6 @@ class SAMLBuilder
         $this->entityDescriptor->addRoleDescriptor($e);
     }
 
-
     /**
      * Add extensions to the metadata.
      *
@@ -176,8 +166,7 @@ class SAMLBuilder
      * @param \SAML2\XML\md\RoleDescriptor $e Reference to the element where the Extensions element should be included.
      * @return void
      */
-    private function addExtensions(Configuration $metadata, RoleDescriptor $e): void
-    {
+    private function addExtensions(Configuration $metadata, RoleDescriptor $e): void {
         if ($metadata->hasValue('tags')) {
             $a = new Attribute();
             $a->setName('tags');
@@ -231,7 +220,7 @@ class SAMLBuilder
                 $ea->addChildren($a);
             }
             $this->entityDescriptor->setExtensions(
-                array_merge($this->entityDescriptor->getExtensions(), [$ea])
+                    array_merge($this->entityDescriptor->getExtensions(), [$ea])
             );
         }
 
@@ -251,7 +240,7 @@ class SAMLBuilder
                 }
             }
             $this->entityDescriptor->setExtensions(
-                array_merge($this->entityDescriptor->getExtensions(), [$ri])
+                    array_merge($this->entityDescriptor->getExtensions(), [$ri])
             );
         }
 
@@ -315,7 +304,6 @@ class SAMLBuilder
         }
     }
 
-
     /**
      * Add an Organization element based on data passed as parameters
      *
@@ -324,8 +312,7 @@ class SAMLBuilder
      * @param array $orgURL An array with the localized OrganizationURL.
      * @return void
      */
-    public function addOrganization(array $orgName, array $orgDisplayName, array $orgURL)
-    {
+    public function addOrganization(array $orgName, array $orgDisplayName, array $orgURL) {
         $org = new Organization();
 
         $org->setOrganizationName($orgName);
@@ -335,19 +322,17 @@ class SAMLBuilder
         $this->entityDescriptor->setOrganization($org);
     }
 
-
     /**
      * Add an Organization element based on metadata array.
      *
      * @param array $metadata The metadata we should extract the organization information from.
      * @return void
      */
-    public function addOrganizationInfo(array $metadata)
-    {
+    public function addOrganizationInfo(array $metadata) {
         if (
-            empty($metadata['OrganizationName']) ||
-            empty($metadata['OrganizationDisplayName']) ||
-            empty($metadata['OrganizationURL'])
+                empty($metadata['OrganizationName']) ||
+                empty($metadata['OrganizationDisplayName']) ||
+                empty($metadata['OrganizationURL'])
         ) {
             // empty or incomplete organization information
             return;
@@ -360,7 +345,6 @@ class SAMLBuilder
         $this->addOrganization($orgName, $orgDisplayName, $orgURL);
     }
 
-
     /**
      * Add a list of endpoints to metadata.
      *
@@ -370,8 +354,7 @@ class SAMLBuilder
      * @return array An array of endpoint objects,
      *     either \SAML2\XML\md\EndpointType or \SAML2\XML\md\IndexedEndpointType.
      */
-    private static function createEndpoints(array $endpoints, bool $indexed): array
-    {
+    private static function createEndpoints(array $endpoints, bool $indexed): array {
         $ret = [];
 
         foreach ($endpoints as &$ep) {
@@ -406,9 +389,9 @@ class SAMLBuilder
             }
             if (isset($ep['hoksso:ProtocolBinding'])) {
                 $t->setAttributeNS(
-                    Constants::NS_HOK,
-                    'hoksso:ProtocolBinding',
-                    Constants::BINDING_HTTP_REDIRECT
+                        Constants::NS_HOK,
+                        'hoksso:ProtocolBinding',
+                        Constants::BINDING_HTTP_REDIRECT
                 );
             }
 
@@ -418,7 +401,6 @@ class SAMLBuilder
         return $ret;
     }
 
-
     /**
      * Add an AttributeConsumingService element to the metadata.
      *
@@ -427,14 +409,14 @@ class SAMLBuilder
      * @return void
      */
     private function addAttributeConsumingService(
-        SPSSODescriptor $spDesc,
-        Configuration $metadata
+            SPSSODescriptor $spDesc,
+            Configuration $metadata
     ): void {
         $attributes = $metadata->getArray('attributes', []);
         $AttributeConsumingService = $metadata->getArray('AttributeConsumingService', []);
         $name = $metadata->getLocalizedString('name', null);
 
-        if (count($attributes)==0 && count($AttributeConsumingService)==0) {
+        if (count($attributes) == 0 && count($AttributeConsumingService) == 0) {
             // we cannot add an AttributeConsumingService without name and attributes
             return;
         }
@@ -445,11 +427,11 @@ class SAMLBuilder
          * Add an AttributeConsumingService element with information as name and description and list
          * of requested attributes
          */
-        /* 
+        /*
          * spid-php updated
          * only if it's not present AttributeConsumingService array
          */
-        if(!$AttributeConsumingService || count($AttributeConsumingService)==0) {
+        if (!$AttributeConsumingService || count($AttributeConsumingService) == 0) {
             $attributeconsumer = new AttributeConsumingService();
 
             $attributeconsumer->setIndex($metadata->getInteger('attributes.index', 0));
@@ -478,7 +460,7 @@ class SAMLBuilder
             }
 
             $spDesc->addAttributeConsumingService($attributeconsumer);
-        } 
+        }
 
 
 
@@ -486,7 +468,7 @@ class SAMLBuilder
          * Add all AttributeConsumingService element with information as name and description and list
          * of requested attributes
          */
-        foreach($AttributeConsumingService as $index=>$atcs) {
+        foreach ($AttributeConsumingService as $index => $atcs) {
 
             $name = $atcs['name'];
             $description = $atcs['description'];
@@ -497,33 +479,34 @@ class SAMLBuilder
             $attributeconsumer = new AttributeConsumingService();
             $attributeconsumer->setIndex($index);
 
-            if($isDefault) {
+            if ($isDefault) {
                 $attributeconsumer->setIsDefault($isDefault, false);
             }
 
-            if($name) $attributeconsumer->setServiceName($name);
-            if($description) $attributeconsumer->setServiceDescription($description);
+            if ($name)
+                $attributeconsumer->setServiceName($name);
+            if ($description)
+                $attributeconsumer->setServiceDescription($description);
             $nameFormat = $NameFormat;
 
             foreach ($attributes as $friendlyName => $attribute) {
                 $t = new RequestedAttribute();
                 $t->setName($attribute);
-                if(!is_int($friendlyName)) {
+                if (!is_int($friendlyName)) {
                     $t->setFriendlyName($friendlyName);
                 }
-                if($nameFormat !== Constants::NAMEFORMAT_UNSPECIFIED) {
+                if ($nameFormat !== Constants::NAMEFORMAT_UNSPECIFIED) {
                     $t->setNameFormat($nameFormat);
                 }
-                if(in_array($attribute, $attributesrequired, true)) {
+                if (in_array($attribute, $attributesrequired, true)) {
                     $t->setIsRequired(true);
                 }
                 $attributeconsumer->addRequestedAttribute($t);
             }
-    
+
             $spDesc->addAttributeConsumingService($attributeconsumer);
         }
     }
-
 
     /**
      * Add a specific type of metadata to an entity.
@@ -532,8 +515,7 @@ class SAMLBuilder
      * @param array  $metadata The metadata.
      * @return void
      */
-    public function addMetadata($set, $metadata)
-    {
+    public function addMetadata($set, $metadata) {
         assert(is_string($set));
         assert(is_array($metadata));
 
@@ -560,7 +542,6 @@ class SAMLBuilder
         }
     }
 
-
     /**
      * Add SAML 2.0 SP metadata.
      *
@@ -568,8 +549,7 @@ class SAMLBuilder
      * @param array $protocols The protocols supported. Defaults to \SAML2\Constants::NS_SAMLP.
      * @return void
      */
-    public function addMetadataSP20($metadata, $protocols = [Constants::NS_SAMLP])
-    {
+    public function addMetadataSP20($metadata, $protocols = [Constants::NS_SAMLP]) {
         assert(is_array($metadata));
         assert(is_array($protocols));
         assert(isset($metadata['entityid']));
@@ -599,11 +579,11 @@ class SAMLBuilder
         $acs_endpoints = $metadata->getEndpoints('AssertionConsumerService');
         $slo_endpoints = $metadata->getEndpoints('SingleLogoutService');
 
-        if(!empty($custom_acs)) {
+        if (!empty($custom_acs)) {
             $acs_endpoints[0]['Location'] = $custom_acs;
         }
 
-        if(!empty($custom_slo)) {
+        if (!empty($custom_slo)) {
             $slo_endpoints[0]['Location'] = $custom_slo;
         }
         /* CUSTOM Location */
@@ -620,7 +600,7 @@ class SAMLBuilder
         //$endpoints = $metadata->getEndpoints('AssertionConsumerService');
         foreach ($metadata->getArrayizeString('AssertionConsumerService.artifact', []) as $acs) {
             $endpoints[] = [
-                'Binding'  => Constants::BINDING_HTTP_ARTIFACT,
+                'Binding' => Constants::BINDING_HTTP_ARTIFACT,
                 'Location' => $acs,
             ];
         }
@@ -641,15 +621,13 @@ class SAMLBuilder
         }
     }
 
-
     /**
      * Add metadata of a SAML 2.0 identity provider.
      *
      * @param array $metadata The metadata.
      * @return void
      */
-    public function addMetadataIdP20($metadata)
-    {
+    public function addMetadataIdP20($metadata) {
         assert(is_array($metadata));
         assert(isset($metadata['entityid']));
         assert(isset($metadata['metadata-set']));
@@ -671,8 +649,8 @@ class SAMLBuilder
 
         if ($metadata->hasValue('ArtifactResolutionService')) {
             $e->setArtifactResolutionService(self::createEndpoints(
-                $metadata->getEndpoints('ArtifactResolutionService'),
-                true
+                            $metadata->getEndpoints('ArtifactResolutionService'),
+                            true
             ));
         }
 
@@ -691,15 +669,13 @@ class SAMLBuilder
         }
     }
 
-
     /**
      * Add metadata of a SAML 1.1 service provider.
      *
      * @param array $metadata The metadata.
      * @return void
      */
-    public function addMetadataSP11($metadata)
-    {
+    public function addMetadataSP11($metadata) {
         assert(is_array($metadata));
         assert(isset($metadata['entityid']));
         assert(isset($metadata['metadata-set']));
@@ -708,10 +684,10 @@ class SAMLBuilder
 
         $e = new SPSSODescriptor();
         $e->setProtocolSupportEnumeration(
-            array_merge(
-                $e->getProtocolSupportEnumeration(),
-                ['urn:oasis:names:tc:SAML:1.1:protocol']
-            )
+                array_merge(
+                        $e->getProtocolSupportEnumeration(),
+                        ['urn:oasis:names:tc:SAML:1.1:protocol']
+                )
         );
 
         $this->addCertificate($e, $metadata);
@@ -721,7 +697,7 @@ class SAMLBuilder
         $endpoints = $metadata->getEndpoints('AssertionConsumerService');
         foreach ($metadata->getArrayizeString('AssertionConsumerService.artifact', []) as $acs) {
             $endpoints[] = [
-                'Binding'  => 'urn:oasis:names:tc:SAML:1.0:profiles:artifact-01',
+                'Binding' => 'urn:oasis:names:tc:SAML:1.0:profiles:artifact-01',
                 'Location' => $acs,
             ];
         }
@@ -732,15 +708,13 @@ class SAMLBuilder
         $this->entityDescriptor->addRoleDescriptor($e);
     }
 
-
     /**
      * Add metadata of a SAML 1.1 identity provider.
      *
      * @param array $metadata The metadata.
      * @return void
      */
-    public function addMetadataIdP11($metadata)
-    {
+    public function addMetadataIdP11($metadata) {
         assert(is_array($metadata));
         assert(isset($metadata['entityid']));
         assert(isset($metadata['metadata-set']));
@@ -749,10 +723,10 @@ class SAMLBuilder
 
         $e = new IDPSSODescriptor();
         $e->setProtocolSupportEnumeration(
-            array_merge($e->getProtocolSupportEnumeration(), [
-                'urn:oasis:names:tc:SAML:1.1:protocol',
-                'urn:mace:shibboleth:1.0'
-            ])
+                array_merge($e->getProtocolSupportEnumeration(), [
+            'urn:oasis:names:tc:SAML:1.1:protocol',
+            'urn:mace:shibboleth:1.0'
+                ])
         );
 
         $this->addCertificate($e, $metadata);
@@ -764,7 +738,6 @@ class SAMLBuilder
         $this->entityDescriptor->addRoleDescriptor($e);
     }
 
-
     /**
      * Add metadata of a SAML attribute authority.
      *
@@ -772,8 +745,7 @@ class SAMLBuilder
      * \SimpleSAML\Metadata\SAMLParser.
      * @return void
      */
-    public function addAttributeAuthority(array $metadata)
-    {
+    public function addAttributeAuthority(array $metadata) {
         assert(isset($metadata['entityid']));
         assert(isset($metadata['metadata-set']));
 
@@ -787,15 +759,14 @@ class SAMLBuilder
 
         $e->setAttributeService(self::createEndpoints($metadata->getEndpoints('AttributeService'), false));
         $e->setAssertionIDRequestService(self::createEndpoints(
-            $metadata->getEndpoints('AssertionIDRequestService'),
-            false
+                        $metadata->getEndpoints('AssertionIDRequestService'),
+                        false
         ));
 
         $e->setNameIDFormat($metadata->getArrayizeString('NameIDFormat', []));
 
         $this->entityDescriptor->addRoleDescriptor($e);
     }
-
 
     /**
      * Add contact information.
@@ -811,8 +782,7 @@ class SAMLBuilder
      * @todo Change the signature to remove $type.
      * @todo Remove the capability to pass a name and parse it inside the method.
      */
-    public function addContact($type, $details)
-    {
+    public function addContact($type, $details) {
         assert(is_string($type));
         assert(is_array($details));
         assert(in_array($type, ['technical', 'support', 'administrative', 'billing', 'other'], true));
@@ -823,61 +793,61 @@ class SAMLBuilder
         $e = new \SAML2\XML\md\ContactPerson();
         $e->setContactType($type);
 
-        if(isset($details['spidEntityType'])) {
+        if (isset($details['spidEntityType'])) {
             $e->setEntityType($details['spidEntityType'], 'spid');
         }
 
         $eexts = array();
         $ext_dom = \SAML2\DOMDocumentFactory::create();
 
-        
         if (isset($details['cie'])) {
+            $this->addNSCIE = true;
             if (isset($details['extensions']['Public'])) {
-                $ext_elem_type = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:Public', '');
-                $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:IPACode', $details['extensions']['IPACode']);
+                $ext_elem_type = $ext_dom->createElement('cie:Public', '');
+                $ext_elem_code = $ext_dom->createElement('cie:IPACode', $details['extensions']['IPACode']);
 
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_type);
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
             }
 
             if (isset($details['extensions']['Private'])) {
-                $ext_elem_type = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:Private', '');
+                $ext_elem_type = $ext_dom->createElement('cie:Private', '');
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_type);
-                $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:VATNumber', $details['extensions']['VATNumber']);
+                $ext_elem_code = $ext_dom->createElement('cie:VATNumber', $details['extensions']['VATNumber']);
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
-                $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:FiscalCode', $details['extensions']['FiscalCode']);
+                $ext_elem_code = $ext_dom->createElement('cie:FiscalCode', $details['extensions']['FiscalCode']);
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
-                $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:NACE2Code', $details['extensions']['NACE2Code']);
+                $ext_elem_code = $ext_dom->createElement('cie:NACE2Code', $details['extensions']['NACE2Code']);
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
             }
 
-            $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:Municipality', $details['extensions']['Municipality']);
+            $ext_elem_code = $ext_dom->createElement('cie:Municipality', $details['extensions']['Municipality']);
             $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
-            $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:Province', $details['extensions']['Province']);
+            $ext_elem_code = $ext_dom->createElement('cie:Province', $details['extensions']['Province']);
             $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
-            $ext_elem_code = $ext_dom->createElementNS('https://www.cartaidentita.interno.gov.it/saml-extensions', 'cie:Country', $details['extensions']['Country']);
+            $ext_elem_code = $ext_dom->createElement('cie:Country', $details['extensions']['Country']);
             $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
         }
 
-        
-        
 
-        if(isset($details['spid'])) {
-            if($details['spid.codeType']=='IPACode') {
+
+
+        if (isset($details['spid'])) {
+            if ($details['spid.codeType'] == 'IPACode') {
                 $ext_elem_code = $ext_dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:IPACode', $details['spid.codeValue']);
                 $ext_elem_type = $ext_dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:Public', '');
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_type);
             }
 
-            if($details['spid.codeType']=='VATNumber') {
+            if ($details['spid.codeType'] == 'VATNumber') {
                 $ext_elem_code = $ext_dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:VATNumber', $details['spid.codeValue']);
                 $ext_elem_type = $ext_dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:Private', '');
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_type);
             }
 
-            if($details['spid.codeType']=='FiscalCode') {
+            if ($details['spid.codeType'] == 'FiscalCode') {
                 $ext_elem_code = $ext_dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:FiscalCode', $details['spid.codeValue']);
                 $ext_elem_type = $ext_dom->createElementNS('https://spid.gov.it/saml-extensions', 'spid:Private', '');
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem_code);
@@ -886,7 +856,7 @@ class SAMLBuilder
         }
 
         // SPID Avviso n.29 v.3 - Private
-        if(isset($details['fpa'])) {
+        if (isset($details['fpa'])) {
             $ext_elem_IdPaese = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:IdPaese', $details['fpa.IdPaese']);
             $ext_elem_IdCodice = $ext_dom->createElementNS('https://spid.gov.it/invoicing-extensions', 'fpa:IdCodice', $details['fpa.IdCodice']);
 
@@ -927,8 +897,8 @@ class SAMLBuilder
 
         if (isset($details['extensions'])) {
             $ns = $details['extensions']['ns'];
-            foreach($details['extensions']['elements'] as $e_key => $e_val) {
-                $ext_elem = $ext_dom->createElementNS($ns, $e_key, $e_val? $e_val : '');
+            foreach ($details['extensions']['elements'] as $e_key => $e_val) {
+                $ext_elem = $ext_dom->createElementNS($ns, $e_key, $e_val ? $e_val : '');
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem);
             }
         }
@@ -972,7 +942,6 @@ class SAMLBuilder
         $this->entityDescriptor->addContactPerson($e);
     }
 
-
     /**
      * Add a KeyDescriptor with an X509 certificate.
      *
@@ -981,15 +950,13 @@ class SAMLBuilder
      * @param string                      $x509data The certificate data.
      * @return void
      */
-    private function addX509KeyDescriptor(RoleDescriptor $rd, string $use, string $x509data): void
-    {
+    private function addX509KeyDescriptor(RoleDescriptor $rd, string $use, string $x509data): void {
         assert(in_array($use, ['encryption', 'signing'], true));
 
         $keyDescriptor = \SAML2\Utils::createKeyDescriptor($x509data);
         $keyDescriptor->setUse($use);
         $rd->addKeyDescriptor($keyDescriptor);
     }
-
 
     /**
      * Add a certificate.
@@ -1000,8 +967,7 @@ class SAMLBuilder
      * @param \SimpleSAML\Configuration    $metadata The metadata of the entity.
      * @return void
      */
-    private function addCertificate(RoleDescriptor $rd, Configuration $metadata): void
-    {
+    private function addCertificate(RoleDescriptor $rd, Configuration $metadata): void {
         $keys = $metadata->getPublicKeys();
         foreach ($keys as $key) {
             if ($key['type'] !== 'X509Certificate') {
