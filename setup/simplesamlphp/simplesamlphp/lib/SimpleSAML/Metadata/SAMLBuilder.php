@@ -824,7 +824,8 @@ class SAMLBuilder
         $e->setContactType($type);
 
         if(isset($details['spidEntityType'])) {
-            $e->setEntityType($details['spidEntityType'], 'spid');
+            $this->entityDescriptor->setNamespace('spid', 'https://spid.gov.it/saml-extensions');
+            $e->setEntityType('spid:'.$details['spidEntityType'], 'spid:https://spid.gov.it/saml-extensions');
         }
 
         $eexts = array();
@@ -927,8 +928,12 @@ class SAMLBuilder
 
         if (isset($details['extensions'])) {
             $ns = $details['extensions']['ns'];
+            if(substr($ns, 0, 5)=='spid:') {
+                $this->entityDescriptor->setNamespace('spid', 'https://spid.gov.it/saml-extensions');
+            }
+            
             foreach($details['extensions']['elements'] as $e_key => $e_val) {
-                $ext_elem = $ext_dom->createElementNS($ns, $e_key, $e_val? $e_val : '');
+                $ext_elem = $ext_dom->createElement($e_key, $e_val? $e_val : '');
                 $eexts[] = new \SAML2\XML\Chunk($ext_elem);
             }
         }

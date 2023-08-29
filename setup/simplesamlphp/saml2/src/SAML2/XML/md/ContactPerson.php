@@ -104,7 +104,7 @@ class ContactPerson
         if ($xml->hasAttribute('entityType')) {
             // SPID Entity Type (Avviso SPID n.19 v.4)
             if(substr($xml->getAttribute('entityType'), 0, 5)=='spid:') {
-                $this->setEntityType($xml->getAttribute('entityType'), 'spid');
+                $this->setEntityType($xml->getAttribute('entityType'), 'spid:https://spid.gov.it/saml-extensions');
             } else {
                 $this->setEntityType($xml->getAttribute('entityType'));
             }
@@ -219,13 +219,8 @@ class ContactPerson
      */
     public function setEntityType(string $entityType, string $ns=null) : void
     {
-        if($ns!=null && $ns!='') {
-            $this->entityType = $ns.':'.$entityType;
-            $this->entityTypeNS = $ns;
-        } else {
             $this->entityType = $entityType;
-            $this->entityTypeNS = null;
-        }
+            $this->entityTypeNS = $ns;
     }
 
 
@@ -457,7 +452,8 @@ class ContactPerson
         $e->setAttribute('contactType', $this->getContactType());
 
         if ($this->entityType != null) {
-            $e->setAttribute($this->entityTypeNS . ($this->entityTypeNS? ':' : '') . 'entityType', $this->getEntityType());
+            $attribute = ($this->entityTypeNS=='spid:https://spid.gov.it/saml-extensions')? 'spid:entityType' : 'entityType';
+            $e->setAttribute($attribute, $this->entityType);
         }
 
         foreach ($this->getContactPersonAttributes() as $attr => $val) {
