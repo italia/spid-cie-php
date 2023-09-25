@@ -823,6 +823,7 @@ class SAMLBuilder
         $e = new \SAML2\XML\md\ContactPerson();
         $e->setContactType($type);
 
+        // OLD
         if(isset($details['spidEntityType'])) {
             $this->entityDescriptor->setNamespace('spid', 'https://spid.gov.it/saml-extensions');
             $e->setEntityType('spid:'.$details['spidEntityType'], 'spid:https://spid.gov.it/saml-extensions');
@@ -897,9 +898,14 @@ class SAMLBuilder
 
         if (isset($details['extensions'])) {
             $ns = $details['extensions']['ns'];
+
             if(substr($ns, 0, 5)=='spid:') {
                 $this->entityDescriptor->setNamespace('spid', 'https://spid.gov.it/saml-extensions');
             }
+
+            if(substr($ns, 0, 4)=='cie:') {
+                $this->entityDescriptor->setNamespace('cie', 'https://www.cartaidentita.interno.gov.it/saml-extensions');
+            } 
             
             foreach($details['extensions']['elements'] as $e_key => $e_val) {
                 $ext_elem = $ext_dom->createElement($e_key, $e_val? $e_val : '');
