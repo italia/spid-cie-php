@@ -176,7 +176,7 @@ bool isSPIDEnabled()
 ```
 restituisce true se è stata eseguita le configurazione per SPID, false altrimenti
 
-### isAuthenticated
+### isCIEEnabled
 ```
 bool isCIEEnabled()
 ```
