@@ -899,13 +899,11 @@ class SAMLBuilder
         if (isset($details['extensions'])) {
             $ns = $details['extensions']['ns'];
 
-            if(substr($ns, 0, 5)=='spid:') {
-                $this->entityDescriptor->setNamespace('spid', 'https://spid.gov.it/saml-extensions');
+            if($ns!=null) {
+                $nsval = explode(':', $ns, 2);
+                if(count($nsval)!=2) throw new \Exception('ns must be of type ns:val');
+                $this->entityDescriptor->setNamespace($nsval[0], $nsval[1]);
             }
-
-            if(substr($ns, 0, 4)=='cie:') {
-                $this->entityDescriptor->setNamespace('cie', 'https://www.cartaidentita.interno.gov.it/saml-extensions');
-            } 
             
             foreach($details['extensions']['elements'] as $e_key => $e_val) {
                 $ext_elem = $ext_dom->createElement($e_key, $e_val? $e_val : '');
