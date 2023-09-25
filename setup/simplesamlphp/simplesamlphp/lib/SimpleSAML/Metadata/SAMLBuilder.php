@@ -823,6 +823,7 @@ class SAMLBuilder
         $e = new \SAML2\XML\md\ContactPerson();
         $e->setContactType($type);
 
+        // OLD
         if(isset($details['spidEntityType'])) {
             $this->entityDescriptor->setNamespace('spid', 'https://spid.gov.it/saml-extensions');
             $e->setEntityType('spid:'.$details['spidEntityType'], 'spid:https://spid.gov.it/saml-extensions');
@@ -897,8 +898,11 @@ class SAMLBuilder
 
         if (isset($details['extensions'])) {
             $ns = $details['extensions']['ns'];
-            if(substr($ns, 0, 5)=='spid:') {
-                $this->entityDescriptor->setNamespace('spid', 'https://spid.gov.it/saml-extensions');
+
+            if($ns!=null) {
+                $nsval = explode(':', $ns, 2);
+                if(count($nsval)!=2) throw new \Exception('ns must be of type ns:val');
+                $this->entityDescriptor->setNamespace($nsval[0], $nsval[1]);
             }
             
             foreach($details['extensions']['elements'] as $e_key => $e_val) {

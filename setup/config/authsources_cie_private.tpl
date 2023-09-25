@@ -60,13 +60,16 @@
             'telephoneNumber' => {{ORGANIZATIONTELEPHONENUMBER}},
             'extensions' => 
                 array (
-                    'Private' => NULL,
-                    'VATNumber' => {{ORGANIZATIONCODE}},
-                    'FiscalCode' => {{ORGANIZATIONFISCALCODE}},
-                    'NACE2Code' => {{ORGANIZATIONNACE2CODE}},
-                    'Municipality' => {{ORGANIZATIONMUNICIPALITY}},
-                    'Province' => {{ORGANIZATIONPROVINCE}},
-                    'Country' => {{ORGANIZATIONCOUNTRY}},
+                    'ns' => 'cie:https://www.cartaidentita.interno.gov.it/saml-extensions',
+                    'elements' => array(
+                        'cie:Private' => NULL,
+                        'cie:VATNumber' => {{ORGANIZATIONCODE}},
+                        'cie:FiscalCode' => {{ORGANIZATIONFISCALCODE}},
+                        'cie:NACE2Code' => {{ORGANIZATIONNACE2CODE}},
+                        'cie:Municipality' => {{ORGANIZATIONMUNICIPALITY}},
+                        'cie:Province' => {{ORGANIZATIONPROVINCE}},
+                        'cie:Country' => {{ORGANIZATIONCOUNTRY}},
+                    )
                 ),
             ),
         )
