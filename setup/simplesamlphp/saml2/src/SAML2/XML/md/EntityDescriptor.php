@@ -107,6 +107,11 @@ class EntityDescriptor extends SignedElementHelper
             $this->ns['spid'] = $xml->getAttribute('xmlns:spid');
         }
 
+        // get cie namespace if exists
+        if($xml->hasAttribute('xmlns:cie')) {
+            $this->ns['cie'] = $xml->getAttribute('xmlns:cie');
+        }
+
         if (!$xml->hasAttribute('entityID')) {
             throw new \Exception('Missing required attribute entityID on EntityDescriptor.');
         }
@@ -504,6 +509,11 @@ class EntityDescriptor extends SignedElementHelper
         // set spid namespace if exists
         if ($this->ns['spid'] !== null) {
             $e->setAttribute('xmlns:spid', $this->ns['spid']);
+        }
+
+        // set cie namespace if exists
+        if ($this->ns['cie'] !== null) {
+            $e->setAttribute('xmlns:cie', $this->ns['cie']);
         }
 
         $e->setAttribute('entityID', $this->entityID);

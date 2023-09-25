@@ -102,9 +102,13 @@ class ContactPerson
         $this->setContactType($xml->getAttribute('contactType'));
 
         if ($xml->hasAttribute('entityType')) {
-            // SPID Entity Type (Avviso SPID n.19 v.4)
+            // SPID Entity Type (Avviso SPID n.19 v.4) 
             if(substr($xml->getAttribute('entityType'), 0, 5)=='spid:') {
                 $this->setEntityType($xml->getAttribute('entityType'), 'spid:https://spid.gov.it/saml-extensions');
+
+            } else if(substr($xml->getAttribute('entityType'), 0, 4)=='cie:') {
+                $this->setEntityType($xml->getAttribute('entityType'), 'cie:https://www.cartaidentita.interno.gov.it/saml-extensions');
+            
             } else {
                 $this->setEntityType($xml->getAttribute('entityType'));
             }
@@ -452,7 +456,17 @@ class ContactPerson
         $e->setAttribute('contactType', $this->getContactType());
 
         if ($this->entityType != null) {
-            $attribute = ($this->entityTypeNS=='spid:https://spid.gov.it/saml-extensions')? 'spid:entityType' : 'entityType';
+
+            if($this->entityTypeNS=='spid:https://spid.gov.it/saml-extensions') {
+                $attribute = 'spid:entityType';
+                
+            } else if($this->entityTypeNS=='cie:https://www.cartaidentita.interno.gov.it/saml-extensions') {
+                $attribute = 'cie:entityType';
+
+            } else {
+                $attribute = 'entityType';
+            }
+
             $e->setAttribute($attribute, $this->entityType);
         }
 
