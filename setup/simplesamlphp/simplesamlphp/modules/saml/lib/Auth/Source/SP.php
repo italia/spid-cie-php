@@ -718,7 +718,7 @@ class SP extends \SimpleSAML\Auth\Source
         $b->setDestination($dst['Location']);
 
         /* SPID CUSTOM AttributeConsumingServiceIndex on Request */
-        if(!empty($state['saml:AttributeConsumingServiceIndex'])) {
+        if($state['saml:AttributeConsumingServiceIndex']!==null && $state['saml:AttributeConsumingServiceIndex']!=='') {
             $ar->setAttributeConsumingServiceIndex($state['saml:AttributeConsumingServiceIndex']);
         }
 

@@ -29,7 +29,7 @@
     const TOKEN_PUBLIC_CERT = "{{SDKHOME}}/cert/spid-sp.crt";
     const DEFAULT_SPID_LEVEL = 2;
     const DEFAULT_CIE_LEVEL = 3;
-    const DEFAULT_ATCS_INDEX = 0;
+    const DEFAULT_ATCS_INDEX = null;    // set to null to retrieve it from metadata
     const DEFAULT_EIDAS_ATCS_INDEX = 100;
     const DEFAULT_SECRET = "";
     const DEFAULT_TOKEN_EXPIRATION_TIME = 1200;
@@ -108,8 +108,8 @@
                     } else {
                         $spidcie_level = $clients[$client_id]['level'];
                         $atcs_index = $clients[$client_id]['atcs_index'];
-                        if($spidcie_level==null || !in_array($spidcie_level, [1,2,3])) $spidcie_level = $isCIE? DEFAULT_CIE_LEVEL : DEFAULT_SPID_LEVEL;
-                        if($atcs_index==null || !is_numeric($atcs_index)) $atcs_index = DEFAULT_ATCS_INDEX;
+                        if($spidcie_level===null || !in_array($spidcie_level, [1,2,3])) $spidcie_level = $isCIE? DEFAULT_CIE_LEVEL : DEFAULT_SPID_LEVEL;
+                        if($atcs_index===null || !is_numeric($atcs_index)) $atcs_index = DEFAULT_ATCS_INDEX;
 
                         if($idp=="EIDAS" || $idp=="EIDAS QA") $atcs_index = DEFAULT_EIDAS_ATCS_INDEX;
 
