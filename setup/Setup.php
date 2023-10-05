@@ -1202,10 +1202,20 @@ class Setup {
 
 
         // apply simplesamlphp patch for spid compliance
-        // needed only for templates
+        // needed only for templates and scripts, not for classes
         $filesystem->mirror(
             $config['installDir'] . "/setup/simplesamlphp/simplesamlphp/templates",
             $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/templates"
+        );
+
+        $filesystem->mirror(
+            $config['installDir'] . "/setup/simplesamlphp/simplesamlphp/modules/saml/www/sp",
+            $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/modules/saml/www/sp"
+        );
+
+        $filesystem->mirror(
+            $config['installDir'] . "/setup/simplesamlphp/simplesamlphp/www/assets/icons",
+            $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/assets/icons"
         );
 
         // write example files

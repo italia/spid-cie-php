@@ -187,7 +187,7 @@ if ($name !== null && !empty($attributes)) {
 }
 
 // add multiple AttributeConsumingService
-$metaArray20['AttributeConsumingService'] = $spconfig->getArray('AttributeConsumingService', $eps);
+$metaArray20['AttributeConsumingService'] = $spconfig->getArray('AttributeConsumingService', []);
 
 // add organization info
 $orgName = $spconfig->getLocalizedString('OrganizationName', null);
