@@ -1,0 +1,47 @@
+header {
+    background: linear-gradient(60deg,#003256,#316695, #ffffff, #ffffff);
+}
+
+.my-header {
+    background: #0085ce!important;
+    padding: 10px 50px!important;
+}
+
+.my-header .logo {
+    border: 0!important;
+    max-height: none!important;
+}
+
+#page-header .logo {
+    max-height: 3rem!important;
+}
+
+#page-footer {
+    /*background: #0085ce!important;*/
+    padding: 0!important;
+    margin-top: 0!important;
+}
+
+.spid-idp-button .spid-idp-button-menu li > a {
+    text-align: left!important;
+}
+.spid-idp-button .spid-idp-button-menu li > a img {
+    height: 45px!important;
+}
+
+footer {
+    display: none;
+}
+
+h2 {
+    font-size: 20px;
+    color: #ccc;
+}
+
+.button-spid {
+    border-radius: 0!important;
+}
+
+.align-center {
+    text-align: center;
+}

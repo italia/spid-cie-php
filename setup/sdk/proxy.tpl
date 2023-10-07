@@ -33,6 +33,7 @@
     const DEFAULT_EIDAS_ATCS_INDEX = 100;
     const DEFAULT_SECRET = "";
     const DEFAULT_TOKEN_EXPIRATION_TIME = 1200;
+    const PROXY_HOME = "/proxy-home.php";
     const DEBUG = false;
 
     $proxy_config = file_exists(PROXY_CONFIG_FILE)? json_decode(file_get_contents(PROXY_CONFIG_FILE), true) : array();
@@ -44,6 +45,13 @@
     $redirect_uri   = isset($_GET['redirect_uri'])? $_GET['redirect_uri'] : $clients[$client_id]['redirect_uri'][0];
     $state          = $_GET['state'];
     $idp            = $_GET['idp'];
+
+    $spidcie_level  = $clients[$client_id]['level'];
+    if($spidcie_level===null || !in_array($spidcie_level, [1,2,3])) $spidcie_level = $isCIE? DEFAULT_CIE_LEVEL : DEFAULT_SPID_LEVEL;
+
+    $atcs_index     = $clients[$client_id]['atcs_index'];
+    if($atcs_index===null || !is_numeric($atcs_index)) $atcs_index = DEFAULT_ATCS_INDEX;
+    if($idp=="EIDAS" || $idp=="EIDAS QA") $atcs_index = DEFAULT_EIDAS_ATCS_INDEX;
 
     switch($action) {
 
@@ -62,8 +70,16 @@
                     $spidsdk = new SPID_PHP($production, $service);
 
                     if(!$spidsdk->isIdPAvailable($idp)) {
-                        http_response_code(404);
-                        if(DEBUG) echo "idp not found"; 
+                        if(PROXY_HOME) {
+                            header('Location: ' . PROXY_HOME . 
+                                    '?client_id=' . $client_id .
+                                    '&level=' . $spidcie_level .
+                                    '&redirect_uri=' . $redirect_uri);
+                        } else {
+                            http_response_code(404);
+                            if(DEBUG) echo "idp not found"; 
+                        }
+
                         die(); 
                     }
 
@@ -106,12 +122,14 @@
                         die();
                 
                     } else {
+                        /*
                         $spidcie_level = $clients[$client_id]['level'];
                         $atcs_index = $clients[$client_id]['atcs_index'];
                         if($spidcie_level===null || !in_array($spidcie_level, [1,2,3])) $spidcie_level = $isCIE? DEFAULT_CIE_LEVEL : DEFAULT_SPID_LEVEL;
                         if($atcs_index===null || !is_numeric($atcs_index)) $atcs_index = DEFAULT_ATCS_INDEX;
 
                         if($idp=="EIDAS" || $idp=="EIDAS QA") $atcs_index = DEFAULT_EIDAS_ATCS_INDEX;
+                        */
 
                         $returnTo = $_SERVER['SCRIPT_URI'].'?action=login&idp='.$idp.'&client_id='.$client_id.'&redirect_uri='.$redirect_uri.'&state='.$state;
                         setcookie('SPIDPHP_PROXYRETURNTO', $returnTo, time()+60*5, '/');
