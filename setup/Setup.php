@@ -655,6 +655,7 @@ class Setup {
                     'clients'=> array(
                         $proxyClientID => array(
                             "name"=> "Default client",
+                            "logo"=> "/assets/img/logo.png",
                             "client_id"=> $proxyClientID,
                             "client_secret"=> $proxyClientSecret,
                             "redirect_uri"=> [$proxyRedirectURI]
