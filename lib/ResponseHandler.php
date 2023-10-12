@@ -101,6 +101,10 @@ abstract class ResponseHandler {
             'data' => $payload,                                 // Authentication Data
         ];
 
+        if(array_key_exists('fiscalNumber', $payload)) {        // Subject - fiscalNumber, only if exists
+            $data['sub'] = $payload['fiscalNumber'];
+        }
+
         $algorithmManager = new AlgorithmManager([new RS256()]);
         $jwk = JWKFactory::createFromKeyFile($jwk_pem);
         $jwsBuilder = new JWSBuilder($algorithmManager);
