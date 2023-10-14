@@ -820,6 +820,7 @@ class Message
         }
 
         $req_attributes = $spMetadata->getValue('attributes');
+        if($req_attributes==null) $req_attributes = array();
         $res_attributes_array = $assertion->getAttributes();
         $res_attributes = array();
         foreach($res_attributes_array as $a=>$v) {
