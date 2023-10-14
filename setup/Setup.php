@@ -1251,6 +1251,13 @@ class Setup {
             $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-login.tpl', true);
             $customized = str_replace(array_keys($vars), $vars, $template);
             file_put_contents($config['wwwDir'] . "/proxy-login.php", $customized);
+
+            if (!file_exists($config['wwwDir'] . "/proxy-home.php")) {
+                $template = file_get_contents($config['installDir'] . '/setup/sdk/proxy-home.tpl', true);
+                $customized = str_replace(array_keys($vars), $vars, $template);
+                file_put_contents($config['wwwDir'] . "/proxy-home.php", $customized);
+            }
+
             if (!file_exists($config['wwwDir'] . "/error.php")) {
                 // add error.tpl only if not exists
 		        $template = file_get_contents($config['installDir'] . '/setup/sdk/error.tpl', true);
