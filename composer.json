@@ -1,6 +1,6 @@
 {
     "config": {
-        "version": "3.18.1",
+        "version": "3.18.2",
         "allow-plugins": {
             "simplesamlphp/composer-module-installer": true
         }
