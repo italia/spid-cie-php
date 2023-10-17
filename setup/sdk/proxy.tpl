@@ -74,7 +74,8 @@
                             header('Location: ' . PROXY_HOME . 
                                     '?client_id=' . $client_id .
                                     '&level=' . $spidcie_level .
-                                    '&redirect_uri=' . $redirect_uri);
+                                    '&redirect_uri=' . $redirect_uri .
+                                    '&state=' . $state);
                         } else {
                             http_response_code(404);
                             if(DEBUG) echo "idp not found"; 
