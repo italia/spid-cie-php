@@ -658,6 +658,10 @@ class Setup {
                             "logo"=> "/assets/img/logo.png",
                             "client_id"=> $proxyClientID,
                             "client_secret"=> $proxyClientSecret,
+                            "level": 2,
+                            "atcs_index": 0,
+                            "handler": "Plain",
+                            "response_attributes_prefix": ""
                             "redirect_uri"=> [$proxyRedirectURI]
                         )
                     ),
