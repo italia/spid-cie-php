@@ -91,7 +91,9 @@
                         // dearray values
                         $data = array();
                         foreach($spidsdk->getAttributes() as $attribute=>$value) {
-                            $data[$attribute] = $value[0];
+                            $response_attributes_prefix = $proxy_config['clients'][$client_id]['response_attributes_prefix'];
+                            $response_attributes_prefix = $response_attributes_prefix? $response_attributes_prefix : '';
+                            $data[$response_attributes_prefix.$attribute] = $value[0];
                         }
 
                         $client_config = $proxy_config['clients'][$client_id];
