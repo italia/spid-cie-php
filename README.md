@@ -132,20 +132,18 @@ server {
     index index.php;
     location ~ \.php$ {
       include snippets/fastcgi-php.conf;  
-      fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;  
+      fastcgi_pass unix:/run/php/php8.1-fpm.sock;
     }
   }
   
   location /myservice/ {
+    alias /var/www/spid-cie-php/vendor/simplesamlphp/simplesamlphp/www/;
     index index.php;
-    location ~ \.php(/|$) {
-      fastcgi_split_path_info ^(.+?\.php)(/.+)$;
-      try_files $fastcgi_script_name =404;
-      set $path_info $fastcgi_path_info;
-      fastcgi_param PATH_INFO $path_info;
-      fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;  
-      fastcgi_index index.php;
-      include fastcgi.conf;
+    location ~ ^(?<prefix>/myservice)(?<phpfile>.+?\.php)(?<pathinfo>/.*)?$ {
+      fastcgi_param SCRIPT_FILENAME $document_root$phpfile;
+      fastcgi_param PATH_INFO $pathinfo if_not_empty;
+      fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+      include fastcgi_params;
     }
   }
 }
