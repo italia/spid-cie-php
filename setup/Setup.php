@@ -73,8 +73,8 @@ class Setup {
         $_fpaProvincia = "";
         $_fpaNazione = "IT";
         $_fpaOrganizationName = "";
-        $_fpaOrganizationEmailAddress = "";
-        $_fpaOrganizationTelephoneNumber = "";
+        $_fpaOrganizationEmailAddress = "info@organization.org"; // must be not null otherwise an error is raised in authentication
+        $_fpaOrganizationTelephoneNumber = "+3912345678"; // must be not null otherwise an error is raised in authentication
 
         $config = file_exists("spid-php-setup.json") ?
                 json_decode(file_get_contents("spid-php-setup.json"), true) : array();
