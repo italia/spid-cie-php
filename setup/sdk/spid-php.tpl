@@ -539,7 +539,7 @@
             }
 
             echo "<a href=\"?idp=CIE TEST\" class=\"italia-it-button italia-it-button-size-$size button-cie\" aria-haspopup=\"true\" aria-expanded=\"false\">
-                <img src=\"/spid/cie-graphics/SVG/entra_con_cie.svg\" alt=\"Entra con CIE\" />
+                <img src=\"/{{SERVICENAME}}/cie-graphics/SVG/entra_con_cie.svg\" alt=\"Entra con CIE\" />
                 <span class=\"sr-only\" style=\"display:none\">Entra con CIE</span>
             </a>";
         }
