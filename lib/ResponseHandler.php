@@ -101,7 +101,7 @@ abstract class ResponseHandler {
             'data' => $payload,                                 // Authentication Data
         ];
 
-        if(array_key_exists('fiscalNumber', $payload)) {        // Subject - fiscalNumber, only if exists
+        if(is_array($payload) && array_key_exists('fiscalNumber', $payload)) {        // Subject - fiscalNumber, only if exists
             $data['sub'] = $payload['fiscalNumber'];
         }
 
