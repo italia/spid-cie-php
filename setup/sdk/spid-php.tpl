@@ -532,18 +532,16 @@
             return $button_li;
         }
 
-        public function insertCIEButton($size='default') {
-            echo "
-                <div class=\"cie-button\" style=\"width: 280px;\">
-                    <a class=\"cie-button\" role=\"button\"
-                        href=\"?idp=CIE TEST\" >
-                        <span class=\"cie-button-icon\">
-                            <img aria-hidden=\"true\" src=\"/{{SERVICENAME}}/cie-graphics/SVG/entra_con_cie.svg\" alt=\"Entra con CIE\" />
-                        </span>
-                        <span class=\"sr-only\" style=\"display:none\">Entra con CIE</span>
-                    </a>
-                </div>
-            ";    
+        public function insertCIEButton($size = 'L') {
+            $size = strtolower($size);
+            if ($size == 'default') {
+                $size = 'l';
+            }
+
+            echo "<a href=\"?idp=CIE TEST\" class=\"italia-it-button italia-it-button-size-$size button-cie\" aria-haspopup=\"true\" aria-expanded=\"false\">
+                <img src=\"/{{SERVICENAME}}/cie-graphics/SVG/entra_con_cie.svg\" alt=\"Entra con CIE\" />
+                <span class=\"sr-only\" style=\"display:none\">Entra con CIE</span>
+            </a>";
         }
     }
 
