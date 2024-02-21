@@ -214,7 +214,7 @@
 
             if($isVerified) {
                 $payload_obj = json_decode($payload);
-                if($decrypt && array_key_exists('data', $payload_obj)) {
+                if($decrypt && isset($payload_obj->data)) {
                     $token = $payload_obj->data;
                     
                     $keyEncryptionAlgorithmManager = new AlgorithmManager([ new A256KW() ]);
