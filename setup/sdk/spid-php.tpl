@@ -392,7 +392,7 @@
                     $button_li .= "
                         <li class=\"spid-idp-button-link\" data-idp=\"" . $registry_idp_entity['organization_name'] . "\">
                             <button class=\"idp-button-idp-logo\" 
-                                name=\"" . $registry_idp_entity['organization_name'] ."\" 
+                                name=\"idp\" 
                                 value=\"" . $registry_idp_entity['organization_name'] . "\" type=\"submit\">
                                 <span class=\"spid-sr-only\">" . $registry_idp_entity['organization_name'] . "</span>
                                 <img class=\"spid-idp-button-logo\" 
