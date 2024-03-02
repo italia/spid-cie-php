@@ -701,7 +701,7 @@ $config = array(
      *
      * (This option replaces the old 'session.handler'-option.)
      */
-    'store.type'                    => 'phpsession',
+    'store.type'                    => {{STORETYPE}},
 
     /*
      * The DSN the sql datastore should connect to.
@@ -709,13 +709,13 @@ $config = array(
      * See http://www.php.net/manual/en/pdo.drivers.php for the various
      * syntaxes.
      */
-    'store.sql.dsn'                 => 'sqlite:/path/to/sqlitedatabase.sq3',
+    'store.sql.dsn'                 => {{STORESQLDNS}},
 
     /*
      * The username and password to use when connecting to the database.
      */
-    'store.sql.username' => null,
-    'store.sql.password' => null,
+    'store.sql.username' => {{STORESQLUSERNAME}},
+    'store.sql.password' => {{STORESQLPASSWORD}},
 
     /*
      * The prefix we should use on our tables.
