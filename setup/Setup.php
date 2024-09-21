@@ -73,8 +73,8 @@ class Setup {
         $_fpaProvincia = "";
         $_fpaNazione = "IT";
         $_fpaOrganizationName = "";
-        $_fpaOrganizationEmailAddress = "";
-        $_fpaOrganizationTelephoneNumber = "";
+        $_fpaOrganizationEmailAddress = "info@organization.org"; // must be not null otherwise an error is raised in authentication
+        $_fpaOrganizationTelephoneNumber = "+3912345678"; // must be not null otherwise an error is raised in authentication
 
         $config = file_exists("spid-php-setup.json") ?
                 json_decode(file_get_contents("spid-php-setup.json"), true) : array();
@@ -1013,12 +1013,19 @@ class Setup {
             } catch(Exception $e) {
                 $symlink_manual_creation_command= "WARNING! At the end of the installation execute as administrator this command:\n$mklink_cmd";
             }
-            
+
         } else {
             // linux
-            symlink($cmd_target, $cmd_link);
+            if (is_link($cmd_link)) {
+                if (readlink($cmd_link) != $cmd_target) {
+                    $symlink_manual_creation_command= "WARNING! At the end of the installation check the symbolic link at $cmd_link, it must link to $cmd_target";
+                }
+            }
+            else {
+                symlink($cmd_target, $cmd_link);
+            }
         }
-        
+
         if ($symlink_manual_creation_command === false) {
             echo $colors->getColoredString("OK", "green");
         } else {
