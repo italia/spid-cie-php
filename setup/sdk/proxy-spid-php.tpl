@@ -24,9 +24,9 @@ class PROXY_SPID_PHP extends SPID_PHP {
         $registry_idp = json_decode($registry_idp_json, true);
 
         if($registry_idp!=null && is_array($registry_idp) && count($registry_idp)) {
-            file_put_contents(__DIR__ . '/spid-idps.json', $registry_idp_json);
+            file_put_contents('spid-idps.json', $registry_idp_json);
         } else {
-            $registry_idp = json_decode(file_get_contents(__DIR__ . '/spid-idps.json'), true);
+            $registry_idp = json_decode(file_get_contents('spid-idps.json'), true);
         }
         
         $button_li = "";
