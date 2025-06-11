@@ -1399,10 +1399,12 @@ class Setup {
         $config = file_exists("spid-php-setup.json") ?
                 json_decode(file_get_contents("spid-php-setup.json"), true) : array();
         
-        $arrContextOptions = array("ssl" => array(
-                "verify_peer" => false,
-                "verify_peer_name" => true,
-        ));
+        $arrContextOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => true,
+            )
+        );
 
 
         if (!file_exists($config['installDir'] . "/vendor")) {
