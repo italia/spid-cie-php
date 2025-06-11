@@ -35,6 +35,9 @@ class Setup {
           : getenv("HOME");
         $_wwwDir = $_homeDir . "/public_html";
         $_installDir = getcwd();
+        $_loggingHandler = "file";
+        $_loggingDir = "log/";
+        $_logFile = "simplesamlphp.log";
         $_acsCustomLocation = "";
         $_sloCustomLocation = "";
         $_storeType = "phpsession"; // default session store type
@@ -108,6 +111,45 @@ class Setup {
             if ($config['wwwDir'] == null || $config['wwwDir'] == "") {
                 $config['wwwDir'] = $_wwwDir;
             }
+        }
+
+        if (!isset($config['loggingHandler'])) {
+            $loggingHandler = "";
+            while ($loggingHandler != "file" && $loggingHandler != "syslog" && $loggingHandler != "errorlog") { 
+                echo "Please insert the logging handler (" .
+                $colors->getColoredString("file", "green") . "|syslog|errorlog): ";
+                $loggingHandler = strtolower(readline());
+                if ($loggingHandler == null || $loggingHandler == "") { 
+                    $loggingHandler = $_loggingHandler;
+                }
+            }
+            
+            $config['loggingHandler'] = $loggingHandler;
+        }
+
+        if ($config['loggingHandler'] == 'file') {
+            if (!isset($config['loggingDir'])) {
+                echo "Please insert logging directory (" .
+                $colors->getColoredString($_loggingDir, "green") . "): ";
+                $colors->getColoredString('Remember to assign write permissions to the directory', "yellow");
+                $config['loggingDir'] = readline();
+                if ($config['loggingDir'] == null || $config['loggingDir'] == "") {
+                    $config['loggingDir'] = $_loggingDir;
+                }
+            }
+
+            if (!isset($config['logFile'])) {
+                echo "Please insert log file name (" .
+                $colors->getColoredString($_logFile, "green") . "): ";
+                $config['logFile'] = readline();
+                if ($config['logFile'] == null || $config['logFile'] == "") {
+                    $config['logFile'] = $_logFile;
+                }
+            }
+
+        } else {
+            $config['loggingDir'] = $_loggingDir;
+            $config['logFile'] = $_logFile;
         }
 
         if (!isset($config['serviceName'])) {
@@ -799,6 +841,13 @@ class Setup {
 
         echo $colors->getColoredString("\nCurrent directory: " . $config['installDir'], "yellow");
         echo $colors->getColoredString("\nWeb root directory: " . $config['wwwDir'], "yellow");
+        echo $colors->getColoredString("\nLogging Handler: " . $config['loggingHandler'], "yellow");
+        if($config['loggingHandler'] == 'file') {
+            echo $colors->getColoredString("\nLogging Directory: " . $config['loggingDir'], "yellow");
+            echo $colors->getColoredString("\nLog File Name: " . $config['logFile'], "yellow");
+        }
+        echo $colors->getColoredString("\nSession Store Type: " . $config['storeType'], "yellow");
+
         echo $colors->getColoredString("\nProduction: " . $config['production'], "yellow");
         echo $colors->getColoredString("\nService Name: " . $config['serviceName'], "yellow");
         echo $colors->getColoredString("\nEntity ID: " . $config['entityID'], "yellow");
@@ -1092,6 +1141,9 @@ class Setup {
         echo $colors->getColoredString("\nWrite config file... ", "white");
         $vars = array(
             "{{BASEURLPATH}}" => "'" . $config['serviceName'] . "/'",
+            "{{LOGGINGHANDLER}}" => "'" . $config['loggingHandler'] . "'",
+            "{{LOGGINGDIR}}" => "'" . $config['loggingDir'] . "'",
+            "{{LOGFILE}}" => "'" . $config['logFile'] . "'",
             "{{ADMIN_PASSWORD}}" => "'" . $config['adminPassword'] . "'",
             "{{SECRETSALT}}" => "'" . $config['secretsalt'] . "'",
             "{{TECHCONTACT_NAME}}" => "'" . $config['technicalContactName'] . "'",
