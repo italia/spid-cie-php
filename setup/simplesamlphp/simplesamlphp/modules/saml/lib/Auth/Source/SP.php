@@ -933,8 +933,8 @@ class SP extends \SimpleSAML\Auth\Source
              * cancel the current SSO attempt.
              */
             Logger::warning(
-                "Reauthentication after logout is needed. The IdP '${state['saml:sp:IdP']}' is not in the IDPList " .
-                "provided by the Service Provider '${state['core:SP']}'."
+                "Reauthentication after logout is needed. The IdP '{$state['saml:sp:IdP']}' is not in the IDPList " .
+                "provided by the Service Provider '{$state['core:SP']}'."
             );
 
             $state['saml:sp:IdPMetadata'] = $this->getIdPMetadata($state['saml:sp:IdP']);
