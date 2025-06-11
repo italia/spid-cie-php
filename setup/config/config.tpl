@@ -709,7 +709,7 @@ $config = array(
      * See http://www.php.net/manual/en/pdo.drivers.php for the various
      * syntaxes.
      */
-    'store.sql.dsn'                 => {{STORESQLDNS}},
+    'store.sql.dsn'                 => {{STORESQLDSN}},
 
     /*
      * The username and password to use when connecting to the database.

@@ -37,7 +37,10 @@ class Setup {
         $_installDir = getcwd();
         $_acsCustomLocation = "";
         $_sloCustomLocation = "";
-        $_storeType = "";
+        $_storeType = "phpsession"; // default session store type
+        $_storeSqlDsn = "mysql:host=localhost;dbname=saml";
+        $_storeSqlUsername = "admin";
+        $_storeSqlPassword = "password"; 
 
         $_serviceName = "myservice";
         $_spName = "Service Provider Name";
@@ -126,17 +129,56 @@ class Setup {
         }
 
         if (!isset($config['storeType'])) {
-            $scelta = "";
-            while ($scelta != "phpsession" && $scelta != "sql") { 
+            $storeType = "";
+            while ($storeType != "phpsession" && $storeType != "sqlite" && $storeType != "custom") { 
                 echo "Please insert the store type (" .
-                $colors->getColoredString("phpsession", "green") . "|sql): ";
-                $scelta = strtolower(readline());
-                if ($scelta == null || $scelta == "") { 
-                    $scelta = "phpsession";
+                $colors->getColoredString("phpsession", "green") . "|sqlite|custom): ";
+                $storeType = strtolower(readline());
+                if ($storeType == null || $storeType == "") { 
+                    $storeType = $_storeType;
                 }
             }
-            $config['storeType'] = $scelta;
+            
+            $config['storeType'] = $storeType;
         }
+
+        if($config['storeType']=="sqlite") {
+            $config['storeSqlDsn'] = "sqlite:" . $config['installDir'] . "/session.sqlite";
+            $config['storeSqlUsername'] = "root";
+            $config['storeSqlPassword'] = bin2hex(random_bytes(8));
+
+        } else if($config['storeType']=="custom") {
+
+            echo "Please insert the store sql dsn (" .
+            $colors->getColoredString($_storeSqlDsn, "green") . "): ";
+            $storeSqlDsn = strtolower(readline());
+            if ($storeSqlDsn == null || $storeSqlDsn == "") { 
+                $storeSqlDsn = $_storeSqlDsn;
+            }                
+            echo "Please insert the store sql username (" .
+            $colors->getColoredString($_storeSqlUsername, "green") . "): ";
+            $storeSqlUsername = strtolower(readline());
+            if ($storeSqlUsername == null || $storeSqlUsername == "") { 
+                $storeSqlUsername = $_storeSqlUsername;
+            }
+            echo "Please insert the store sql password (" .
+            $colors->getColoredString($_storeSqlPassword, "green") . "): ";
+            $storeSqlPassword = strtolower(readline());
+            if ($storeSqlPassword == null || $storeSqlPassword == "") { 
+                $storeSqlPassword = $_storeSqlPassword;
+            }
+
+            $config['storeSqlDsn'] = $storeSqlDsn;
+            $config['storeSqlUsername'] = $storeSqlUsername;
+            $config['storeSqlPassword'] = $storeSqlPassword;
+
+        } else {
+
+            $config['storeSqlDsn'] = $_storeSqlDsn;
+            $config['storeSqlUsername'] = $_storeSqlUsername;
+            $config['storeSqlPassword'] = $_storeSqlPassword;
+        }
+
 
         if (!isset($config['entityID'])) {
             echo "Please insert your EntityID, must start with http:// or https:// (" .
@@ -1056,11 +1098,11 @@ class Setup {
             "{{TECHCONTACT_EMAIL}}" => "'" . $config['technicalContactEmail'] . "'",
             "{{ACSCUSTOMLOCATION}}" => "'" . $config['acsCustomLocation'] . "'",
             "{{SLOCUSTOMLOCATION}}" => "'" . $config['sloCustomLocation'] . "'",
-            "{{SP_DOMAIN}}" => "'." . $config['spDomain'] . "'",
-            "{{STORETYPE}}" => "'" . $config['storeType'] . "'",
-            "{{STORESQLDNS}}" => "'sqlite:" . ($config['storeType'] == 'sql' ? $config['installDir'] : "/path/to") . "/sqlitedatabase.sq3'",
-            "{{STORESQLUSERNAME}}" => ($config['storeType'] == 'sql' ? "'root'": "null"),
-            "{{STORESQLPASSWORD}}" => ($config['storeType'] == 'sql' ? "'" . bin2hex(random_bytes(8)) . "'": "null")
+            "{{SP_DOMAIN}}" => "'" . $config['spDomain'] . "'",
+            "{{STORETYPE}}" => "'" . ($config['storeType']=='phpsession'? "phpsession" : "sql") . "'",
+            "{{STORESQLDSN}}" => "'" . $config['storeSqlDsn'] . "'",
+            "{{STORESQLUSERNAME}}" => "'" . $config['storeSqlUsername'] . "'",
+            "{{STORESQLPASSWORD}}" => "'" . $config['storeSqlPassword'] . "'",
         );
         $template = file_get_contents($config['installDir'] . '/setup/config/config.tpl', true);
         $customized = str_replace(array_keys($vars), $vars, $template);
