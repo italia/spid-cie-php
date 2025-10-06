@@ -25,8 +25,10 @@
     use Jose\Component\Encryption\JWEDecrypter;
 
     const PROXY_CONFIG_FILE = "{{SDKHOME}}/spid-php-proxy.json";
-    const TOKEN_PRIVATE_KEY = "{{SDKHOME}}/cert/spid-sp.pem";
-    const TOKEN_PUBLIC_CERT = "{{SDKHOME}}/cert/spid-sp.crt";
+    const TOKEN_PRIVATE_SPID_KEY = "{{SDKHOME}}/cert/spid-sp.pem";
+    const TOKEN_PUBLIC_SPID_CERT = "{{SDKHOME}}/cert/spid-sp.crt";
+    const TOKEN_PRIVATE_CIE_KEY = "{{SDKHOME}}/cert/cie-sp.pem";
+    const TOKEN_PUBLIC_CIE_CERT = "{{SDKHOME}}/cert/cie-sp.crt";
     const DEFAULT_SPID_LEVEL = 2;
     const DEFAULT_CIE_LEVEL = 3;
     const DEFAULT_ATCS_INDEX = null;    // set to null to retrieve it from metadata
@@ -120,6 +122,8 @@
                         $handler->set('providerId', $spidsdk->getIdP());
                         $handler->set('providerName', $spidsdk->getIdPKey());
                         $handler->set('responseId', $spidsdk->getResponseID());
+                        $handler->set('privateKey', $isCIE? TOKEN_PRIVATE_CIE_KEY : TOKEN_PRIVATE_SPID_KEY);
+                        $handler->set('publicCert', $isCIE? TOKEN_PUBLIC_CIE_CERT : TOKEN_PUBLIC_SPID_CERT);
                         
                         $handler->sendResponse($redirect_uri, $data, $state);
                         die();
@@ -201,12 +205,13 @@
         case "verify": 
             $token = $_GET['token'];
             $secret = $_GET['secret']?:'';
+            $service = $_GET['service']?:'spid';
             if(!$token) http_response_code(400);
             $decrypt = ($_GET['decrypt'] && strtoupper($_GET['decrypt'])=='Y')? true:false; 
 
             $algorithmManager = new AlgorithmManager([new RS256()]);
             $jwsVerifier = new JWSVerifier($algorithmManager);
-            $jwk = JWKFactory::createFromKeyFile(TOKEN_PUBLIC_CERT);
+            $jwk = JWKFactory::createFromKeyFile(($service=='cie')? TOKEN_PUBLIC_CIE_CERT: TOKEN_PUBLIC_SPID_CERT);
             $serializerManager = new JWSSerializerManager([ new JWSSerializer() ]);
             $jws = $serializerManager->unserialize($token);
             $isVerified = $jwsVerifier->verifyWithKey($jws, $jwk, 0);
@@ -264,4 +269,3 @@
 
 
 ?>
-

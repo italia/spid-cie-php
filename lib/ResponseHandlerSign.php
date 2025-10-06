@@ -8,7 +8,7 @@ class ResponseHandlerSign extends ResponseHandler {
         $exp_time = $this->config['tokenExpTime'] ?: DEFAULT_TOKEN_EXPIRATION_TIME;
         $iss = $this->issuer;
         $aud = $redirect_uri;
-        $jwk_pem = TOKEN_PRIVATE_KEY;
+        $jwk_pem = $this->privateKey;
 
         $signedDataToken = $this->makeJWS($data, $exp_time, $iss, $aud, $jwk_pem);
         echo "<input type=\"hidden\" name=\"data\" value=\"".$signedDataToken."\" />";

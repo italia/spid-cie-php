@@ -8,7 +8,7 @@ class ResponseHandlerEncryptSign extends ResponseHandler {
         $exp_time = $this->config['tokenExpTime'] ?: DEFAULT_TOKEN_EXPIRATION_TIME;
         $iss = $this->issuer;
         $aud = $redirect_uri;
-        $jwk_pem = TOKEN_PRIVATE_KEY;
+        $jwk_pem = $this->privateKey;
 
         $secret = $this->config['client_secret'];
         $data = $this->makeJWE($data, $exp_time, $iss, $aud, $secret);
