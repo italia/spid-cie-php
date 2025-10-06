@@ -507,12 +507,12 @@ class EntityDescriptor extends SignedElementHelper
         }
 
         // set spid namespace if exists
-        if ($this->ns['spid'] !== null) {
+        if (@$this->ns['spid'] !== null) {
             $e->setAttribute('xmlns:spid', $this->ns['spid']);
         }
 
         // set cie namespace if exists
-        if ($this->ns['cie'] !== null) {
+        if (@$this->ns['cie'] !== null) {
             $e->setAttribute('xmlns:cie', $this->ns['cie']);
         }
 
