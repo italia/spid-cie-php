@@ -10,6 +10,10 @@
         abstract public function getAttributes();
         abstract public function getAttribute($attribute);
         abstract public function isAuthenticated();
+        abstract public function getSPIDButtonCSS();
+        abstract public function getSPIDButtonJS();
+        abstract public function getSPIDButton($size);
+        abstract public function getSPIDSmartButton($size);
         abstract public function insertSPIDButtonCSS();
         abstract public function insertSPIDButtonJS();
         abstract public function insertSPIDButton($size);

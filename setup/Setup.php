@@ -35,8 +35,15 @@ class Setup {
           : getenv("HOME");
         $_wwwDir = $_homeDir . "/public_html";
         $_installDir = getcwd();
+        $_loggingHandler = "file";
+        $_loggingDir = "log/";
+        $_logFile = "simplesamlphp.log";
         $_acsCustomLocation = "";
         $_sloCustomLocation = "";
+        $_storeType = "phpsession"; // default session store type
+        $_storeSqlDsn = "mysql:host=localhost;dbname=saml";
+        $_storeSqlUsername = "admin";
+        $_storeSqlPassword = "password"; 
 
         $_serviceName = "myservice";
         $_spName = "Service Provider Name";
@@ -106,6 +113,45 @@ class Setup {
             }
         }
 
+        if (!isset($config['loggingHandler'])) {
+            $loggingHandler = "";
+            while ($loggingHandler != "file" && $loggingHandler != "syslog" && $loggingHandler != "errorlog") { 
+                echo "Please insert the logging handler (" .
+                $colors->getColoredString("file", "green") . "|syslog|errorlog): ";
+                $loggingHandler = strtolower(readline());
+                if ($loggingHandler == null || $loggingHandler == "") { 
+                    $loggingHandler = $_loggingHandler;
+                }
+            }
+            
+            $config['loggingHandler'] = $loggingHandler;
+        }
+
+        if ($config['loggingHandler'] == 'file') {
+            if (!isset($config['loggingDir'])) {
+                echo "Please insert logging directory (" .
+                $colors->getColoredString($_loggingDir, "green") . "): ";
+                $colors->getColoredString('Remember to assign write permissions to the directory', "yellow");
+                $config['loggingDir'] = readline();
+                if ($config['loggingDir'] == null || $config['loggingDir'] == "") {
+                    $config['loggingDir'] = $_loggingDir;
+                }
+            }
+
+            if (!isset($config['logFile'])) {
+                echo "Please insert log file name (" .
+                $colors->getColoredString($_logFile, "green") . "): ";
+                $config['logFile'] = readline();
+                if ($config['logFile'] == null || $config['logFile'] == "") {
+                    $config['logFile'] = $_logFile;
+                }
+            }
+
+        } else {
+            $config['loggingDir'] = $_loggingDir;
+            $config['logFile'] = $_logFile;
+        }
+
         if (!isset($config['serviceName'])) {
             do {                    
                 echo "Please insert name for service endpoint (" .
@@ -123,6 +169,58 @@ class Setup {
             $config['serviceName'] = $serviceName;
             
         }
+
+        if (!isset($config['storeType'])) {
+            $storeType = "";
+            while ($storeType != "phpsession" && $storeType != "sqlite" && $storeType != "custom") { 
+                echo "Please insert the store type (" .
+                $colors->getColoredString("phpsession", "green") . "|sqlite|custom): ";
+                $storeType = strtolower(readline());
+                if ($storeType == null || $storeType == "") { 
+                    $storeType = $_storeType;
+                }
+            }
+            
+            $config['storeType'] = $storeType;
+        }
+
+        if($config['storeType']=="sqlite") {
+            $config['storeSqlDsn'] = "sqlite:" . $config['installDir'] . "/session.sqlite";
+            $config['storeSqlUsername'] = "root";
+            $config['storeSqlPassword'] = bin2hex(random_bytes(8));
+
+        } else if($config['storeType']=="custom") {
+
+            echo "Please insert the store sql dsn (" .
+            $colors->getColoredString($_storeSqlDsn, "green") . "): ";
+            $storeSqlDsn = strtolower(readline());
+            if ($storeSqlDsn == null || $storeSqlDsn == "") { 
+                $storeSqlDsn = $_storeSqlDsn;
+            }                
+            echo "Please insert the store sql username (" .
+            $colors->getColoredString($_storeSqlUsername, "green") . "): ";
+            $storeSqlUsername = strtolower(readline());
+            if ($storeSqlUsername == null || $storeSqlUsername == "") { 
+                $storeSqlUsername = $_storeSqlUsername;
+            }
+            echo "Please insert the store sql password (" .
+            $colors->getColoredString($_storeSqlPassword, "green") . "): ";
+            $storeSqlPassword = strtolower(readline());
+            if ($storeSqlPassword == null || $storeSqlPassword == "") { 
+                $storeSqlPassword = $_storeSqlPassword;
+            }
+
+            $config['storeSqlDsn'] = $storeSqlDsn;
+            $config['storeSqlUsername'] = $storeSqlUsername;
+            $config['storeSqlPassword'] = $storeSqlPassword;
+
+        } else {
+
+            $config['storeSqlDsn'] = $_storeSqlDsn;
+            $config['storeSqlUsername'] = $_storeSqlUsername;
+            $config['storeSqlPassword'] = $_storeSqlPassword;
+        }
+
 
         if (!isset($config['entityID'])) {
             echo "Please insert your EntityID, must start with http:// or https:// (" .
@@ -661,6 +759,7 @@ class Setup {
                             "level" => 2,
                             "atcs_index" => 0,
                             "handler" => "Plain",
+                            "tokenExpTime" => 1200, //20 minutes as default
                             "response_attributes_prefix" => "",
                             "redirect_uri"=> [$proxyRedirectURI],
                         )
@@ -743,6 +842,13 @@ class Setup {
 
         echo $colors->getColoredString("\nCurrent directory: " . $config['installDir'], "yellow");
         echo $colors->getColoredString("\nWeb root directory: " . $config['wwwDir'], "yellow");
+        echo $colors->getColoredString("\nLogging Handler: " . $config['loggingHandler'], "yellow");
+        if($config['loggingHandler'] == 'file') {
+            echo $colors->getColoredString("\nLogging Directory: " . $config['loggingDir'], "yellow");
+            echo $colors->getColoredString("\nLog File Name: " . $config['logFile'], "yellow");
+        }
+        echo $colors->getColoredString("\nSession Store Type: " . $config['storeType'], "yellow");
+
         echo $colors->getColoredString("\nProduction: " . $config['production'], "yellow");
         echo $colors->getColoredString("\nService Name: " . $config['serviceName'], "yellow");
         echo $colors->getColoredString("\nEntity ID: " . $config['entityID'], "yellow");
@@ -1036,13 +1142,20 @@ class Setup {
         echo $colors->getColoredString("\nWrite config file... ", "white");
         $vars = array(
             "{{BASEURLPATH}}" => "'" . $config['serviceName'] . "/'",
+            "{{LOGGINGHANDLER}}" => "'" . $config['loggingHandler'] . "'",
+            "{{LOGGINGDIR}}" => "'" . $config['loggingDir'] . "'",
+            "{{LOGFILE}}" => "'" . $config['logFile'] . "'",
             "{{ADMIN_PASSWORD}}" => "'" . $config['adminPassword'] . "'",
             "{{SECRETSALT}}" => "'" . $config['secretsalt'] . "'",
             "{{TECHCONTACT_NAME}}" => "'" . $config['technicalContactName'] . "'",
             "{{TECHCONTACT_EMAIL}}" => "'" . $config['technicalContactEmail'] . "'",
             "{{ACSCUSTOMLOCATION}}" => "'" . $config['acsCustomLocation'] . "'",
             "{{SLOCUSTOMLOCATION}}" => "'" . $config['sloCustomLocation'] . "'",
-            "{{SP_DOMAIN}}" => "'." . $config['spDomain'] . "'"
+            "{{SP_DOMAIN}}" => "'" . $config['spDomain'] . "'",
+            "{{STORETYPE}}" => "'" . ($config['storeType']=='phpsession'? "phpsession" : "sql") . "'",
+            "{{STORESQLDSN}}" => "'" . $config['storeSqlDsn'] . "'",
+            "{{STORESQLUSERNAME}}" => "'" . $config['storeSqlUsername'] . "'",
+            "{{STORESQLPASSWORD}}" => "'" . $config['storeSqlPassword'] . "'",
         );
         $template = file_get_contents($config['installDir'] . '/setup/config/config.tpl', true);
         $customized = str_replace(array_keys($vars), $vars, $template);
@@ -1339,10 +1452,12 @@ class Setup {
         $config = file_exists("spid-php-setup.json") ?
                 json_decode(file_get_contents("spid-php-setup.json"), true) : array();
         
-        $arrContextOptions = array("ssl" => array(
-                "verify_peer" => false,
-                "verify_peer_name" => true,
-        ));
+        $arrContextOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => true,
+            )
+        );
 
 
         if (!file_exists($config['installDir'] . "/vendor")) {

@@ -73,7 +73,7 @@ Al termine dell'installazione tutte le configurazioni sono salvate nei file *spi
 
 ## Disinstallazione
 ```
-# composer uninstall
+# composer run-script uninstall
 ```
 La disinstallazione non cancella gli eventuali file *spid-php-setup.json*, *spid-php-openssl.cnf* e *spid-php-proxy.json* locali che contengono le configurazioni inserite durante il processo in installazione.
 

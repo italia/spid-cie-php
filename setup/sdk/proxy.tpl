@@ -25,8 +25,10 @@
     use Jose\Component\Encryption\JWEDecrypter;
 
     const PROXY_CONFIG_FILE = "{{SDKHOME}}/spid-php-proxy.json";
-    const TOKEN_PRIVATE_KEY = "{{SDKHOME}}/cert/spid-sp.pem";
-    const TOKEN_PUBLIC_CERT = "{{SDKHOME}}/cert/spid-sp.crt";
+    const TOKEN_PRIVATE_SPID_KEY = "{{SDKHOME}}/cert/spid-sp.pem";
+    const TOKEN_PUBLIC_SPID_CERT = "{{SDKHOME}}/cert/spid-sp.crt";
+    const TOKEN_PRIVATE_CIE_KEY = "{{SDKHOME}}/cert/cie-sp.pem";
+    const TOKEN_PUBLIC_CIE_CERT = "{{SDKHOME}}/cert/cie-sp.crt";
     const DEFAULT_SPID_LEVEL = 2;
     const DEFAULT_CIE_LEVEL = 3;
     const DEFAULT_ATCS_INDEX = null;    // set to null to retrieve it from metadata
@@ -60,12 +62,14 @@
             if(in_array($client_id, array_keys($clients))) {
                 if(in_array($redirect_uri, $clients[$client_id]['redirect_uri'])) {
 
-                    $isCIE = ($idp=="CIE" || $idp=="CIE TEST");
-                    $service = $isCIE? "cie" : "spid";
-                
+                    $service = "spid";
+
                     if(isset($clients[$client_id]['service'])) {
                         $service = $clients[$client_id]['service'];
                     }
+
+                    $isCIE = ($idp=="CIE" || $idp=="CIE TEST");
+                    $service = $isCIE? "cie" : $service;
 
                     $spidsdk = new SPID_PHP($production, $service);
 
@@ -120,6 +124,8 @@
                         $handler->set('providerId', $spidsdk->getIdP());
                         $handler->set('providerName', $spidsdk->getIdPKey());
                         $handler->set('responseId', $spidsdk->getResponseID());
+                        $handler->set('privateKey', $isCIE? TOKEN_PRIVATE_CIE_KEY : TOKEN_PRIVATE_SPID_KEY);
+                        $handler->set('publicCert', $isCIE? TOKEN_PUBLIC_CIE_CERT : TOKEN_PUBLIC_SPID_CERT);
                         
                         $handler->sendResponse($redirect_uri, $data, $state);
                         die();
@@ -158,8 +164,8 @@
             $return = $redirect_uri? $redirect_uri : $clients[$client_id]['redirect_uri'][0];
             $return .= (strpos($return, '?') !== false)? '&state='.$state : '?state='.$state;
 
+            /* LOGOUT FOR SPID SERVICE */
             $service = "spid";
-            if($idp=="CIE" || $idp=="CIE TEST") $service = "cie";
         
             if(isset($clients[$client_id]['service'])) {
                 $service = $clients[$client_id]['service'];
@@ -171,42 +177,44 @@
                 /* 
                  * Uncomment to exec local logout instead of IdP logout
                  */
-                /*
+                
                 $sspSession = \SimpleSAML\Session::getSessionFromRequest();
                 $sspSession->doLogout($service);
-                header("location: " . $return);
-                */
-
-                $idp = $spidsdk->getIdPKey();
-
-                if($idp=='EIDAS' || $idp=='EIDAS QA') {
-
-                    $sspSession = \SimpleSAML\Session::getSessionFromRequest();
-                    $sspSession->doLogout('spid');
-                    header("location: " . $return);
-
-                } else {
-
-                    $spidsdk->logout();
-                }
-                
-                die();
-            } else {
-                header("location: " . $return);
-                die();
             }
+
+            /* LOGOUT FOR CIE SERVICE */
+            $service = "cie";
+        
+            if(isset($clients[$client_id]['service'])) {
+                $service = $clients[$client_id]['service'];
+            }
+
+            $spidsdk = new SPID_PHP($production, $service);
+
+            if($spidsdk->isAuthenticated()) {
+                /* 
+                 * Uncomment to exec local logout instead of IdP logout
+                 */
+                
+                $sspSession = \SimpleSAML\Session::getSessionFromRequest();
+                $sspSession->doLogout($service);
+            }            
+
+            header("location: " . $return);
+            die();            
 
         break;
 
         case "verify": 
             $token = $_GET['token'];
             $secret = $_GET['secret']?:'';
+            $service = $_GET['service']?:'spid';
             if(!$token) http_response_code(400);
             $decrypt = ($_GET['decrypt'] && strtoupper($_GET['decrypt'])=='Y')? true:false; 
 
             $algorithmManager = new AlgorithmManager([new RS256()]);
             $jwsVerifier = new JWSVerifier($algorithmManager);
-            $jwk = JWKFactory::createFromKeyFile(TOKEN_PUBLIC_CERT);
+            $jwk = JWKFactory::createFromKeyFile(($service=='cie')? TOKEN_PUBLIC_CIE_CERT: TOKEN_PUBLIC_SPID_CERT);
             $serializerManager = new JWSSerializerManager([ new JWSSerializer() ]);
             $jws = $serializerManager->unserialize($token);
             $isVerified = $jwsVerifier->verifyWithKey($jws, $jwk, 0);
@@ -264,4 +272,3 @@
 
 
 ?>
-

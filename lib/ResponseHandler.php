@@ -18,18 +18,20 @@ use Jose\Component\Encryption\Serializer\JWESerializerManager;
 use Jose\Component\Encryption\Serializer\CompactSerializer as JWESerializer;
 use Jose\Component\Encryption\JWEDecrypter;
 
+const TOKEN_PRIVATE_KEY = "../cert/spid-sp.pem";
+const TOKEN_PUBLIC_CERT = "../cert/spid-sp.crt";
+const DEFAULT_SECRET = "";
+const DEFAULT_TOKEN_EXPIRATION_TIME = 1200;
+
 
 abstract class ResponseHandler {
-
-    const TOKEN_PRIVATE_KEY = "../cert/spid-sp.pem";
-    const TOKEN_PUBLIC_CERT = "../cert/spid-sp.crt";
-    const DEFAULT_SECRET = "";
-    const DEFAULT_TOKEN_EXPIRATION_TIME = 1200;
-
 
     function __construct($issuer, $config) {
         $this->issuer = $issuer;
         $this->config = $config;
+        
+        $this->privateKey = TOKEN_PRIVATE_KEY;
+        $this->publicCert = TOKEN_PUBLIC_CERT;
     }
 
     function set($key, $value) {

@@ -184,7 +184,7 @@
                                                     </div>
                                                     <div class="col-12 col-md-6 text-center">
                                                         <a id="btn-accedi" type="submit" class="btn p-0 border-0 my-3"
-                                                            href="/proxy-spid.php?action=login&client_id=<?php echo $client_id; ?>&redirect_uri=<?php echo $redirect_uri; ?>&idp=CIE&state=<?php echo $state; ?>">
+                                                            href="/proxy.php?action=login&client_id=<?php echo $client_id; ?>&redirect_uri=<?php echo $redirect_uri; ?>&idp=<?php echo $production? "CIE" : "CIE TEST"; ?>&state=<?php echo $state; ?>">
                                                             <img class="img-fluid" src="/assets/img/button_cie.png" alt="">
                                                             <span class="sr-only">Accedi con identità digitale CIE</span>
                                                         </a>
@@ -223,7 +223,7 @@
             /***
              * questo branch non viene raggiunto perchè utilizzando 
              * $spidsdk->insertSPIDButton per simplicità
-             * il login viene effettuato da proxy-spid.php 
+             * il login viene effettuato da proxy.php 
              * con i valori di spid_level e atcs_index predefiniti
              * in spid-php-proxy.json
              * Quindi ogni applicativo (compreso OIDC Plugin)
@@ -246,7 +246,7 @@
 
     } else {
         $idp = $spidsdk->getIdPKey();
-        $proxy_url = "/proxy-spid.php?action=login&client_id=".$client_id.
+        $proxy_url = "/proxy.php?action=login&client_id=".$client_id.
                         "&redirect_uri=".$redirect_uri.
                         "&state=".$state.
                         "&idp=".$idp;

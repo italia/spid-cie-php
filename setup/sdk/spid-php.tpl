@@ -8,6 +8,7 @@
         private $idps = array();
         private $purpose = null;
         private $service = 'spid';
+        private $production = false;
         
         public const SPID_ENABLED = {{SPID_ENABLED}};
         public const CIE_ENABLED = {{CIE_ENABLED}};
@@ -186,14 +187,19 @@
             return $this->spid_auth->isAuthenticated();
         }
 
-        public function insertSPIDButtonCSS() {
-            echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/{{SERVICENAME}}/spid-sp-access-button/css/spid-sp-access-button.min.css\" />";
+        public function getSPIDButtonCSS() {
+            return "<link type=\"text/css\" rel=\"stylesheet\" href=\"/{{SERVICENAME}}/spid-sp-access-button/css/spid-sp-access-button.min.css\" />";
         }
 
-        public function insertSPIDButtonJS() {
-            echo "<script type=\"text/javascript\" src=\"/{{SERVICENAME}}/spid-sp-access-button/js/jquery.min.js\"></script>";
-            echo "<script type=\"text/javascript\" src=\"/{{SERVICENAME}}/spid-sp-access-button/js/spid-sp-access-button.min.js\"></script>";
-            echo "
+        public function insertSPIDButtonCSS() {
+            echo $this->getSPIDButtonCSS();
+        }
+
+        public function getSPIDButtonJS() {
+            $val = "";
+            $val .= "<script type=\"text/javascript\" src=\"/{{SERVICENAME}}/spid-sp-access-button/js/jquery.min.js\"></script>";
+            $val .= "<script type=\"text/javascript\" src=\"/{{SERVICENAME}}/spid-sp-access-button/js/spid-sp-access-button.min.js\"></script>";
+            $val .= "
                 <script>
                     $(document).ready(function(){
                         var rootList = $(\"#spid-idp-list-small-root-get\");
@@ -275,10 +281,16 @@
                         rootList.append(lnkList);
                     });
                 </script>            
-            ";            
+            ";
+            
+            return $val;
         }
 
-        public function insertSPIDButton($size, $method='GET') {
+        public function insertSPIDButtonJS() {
+            echo $this->getSPIDButtonJS();
+        }
+
+        public function getSPIDButton($size, $method='GET') {
 			$size = strtoupper($size);
 			$method = strtolower($method);
 
@@ -354,13 +366,17 @@
                 $button = "<form name=\"spid_idp_access\" action=\"#\" method=\"post\">" . $button . "</form>";
             }
 
-            echo $button;
+            return $button;
         }
 
-        public function insertSPIDSmartButton($size) {
+        public function insertSPIDButton($size, $method='GET') {
+            echo $this->getSPIDButton($size, $method);
+        }
+
+        public function getSPIDSmartButton($size) {
             $url = $this->spid_auth->getLoginURL();
           
-            echo "
+            return "
                 <link rel='stylesheet' href='/{{SERVICENAME}}/css/agid-spid-enter.css'>
                 <div class='agid-spid-enter-button agid-spid-enter-button-size-".strtolower($size)."'>
                     <button class='agid-spid-enter agid-spid-enter-size-".strtolower($size)."' onclick=\"location.href='".$url."'\">
@@ -373,10 +389,14 @@
             ";       
         }
 
+        public function insertSPIDSmartButton($size) {
+            echo $this->getSPIDSmartButton($size);
+        }
+
         public function addSPIDButtonListItems($method='GET'): string {
 			$method = strtolower($method);
 
-            $registry_idp_json = file_get_contents('https://registry.spid.gov.it/entities-idp?output=json');
+            $registry_idp_json = @file_get_contents('https://registry.spid.gov.it/entities-idp?output=json');
             $registry_idp = json_decode($registry_idp_json, true);
 
             if($registry_idp!=null && is_array($registry_idp) && count($registry_idp)) {
@@ -532,16 +552,22 @@
             return $button_li;
         }
 
-        public function insertCIEButton($size = 'L') {
+        public function getCIEButton($size = 'L') {
             $size = strtolower($size);
             if ($size == 'default') {
                 $size = 'l';
             }
 
-            echo "<a href=\"?idp=CIE TEST\" class=\"italia-it-button italia-it-button-size-$size button-cie\" aria-haspopup=\"true\" aria-expanded=\"false\">
+            $idp = $this->production? "CIE" : "CIE TEST";
+
+            return "<a href=\"?idp=" . $idp . "\" class=\"italia-it-button italia-it-button-size-$size button-cie\" aria-haspopup=\"true\" aria-expanded=\"false\">
                 <img src=\"/{{SERVICENAME}}/cie-graphics/SVG/entra_con_cie.svg\" alt=\"Entra con CIE\" />
                 <span class=\"sr-only\" style=\"display:none\">Entra con CIE</span>
             </a>";
+        }
+
+        public function insertCIEButton($size = 'L') {
+            echo $this->getCIEButton($size);
         }
     }
 

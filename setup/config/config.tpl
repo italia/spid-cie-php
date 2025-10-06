@@ -23,7 +23,7 @@ $config = array(
      */
     'baseurlpath' => {{BASEURLPATH}},
     'certdir' => 'cert/',
-    'loggingdir' => 'log/',
+    'loggingdir' => {{LOGGINGDIR}},
     'datadir' => 'data/',
 
     'acsCustomLocation' => {{ACSCUSTOMLOCATION}},
@@ -128,7 +128,7 @@ $config = array(
      *
      */
     'logging.level' => SimpleSAML\Logger::DEBUG,
-    'logging.handler' => 'file',
+    'logging.handler' => {{LOGGINGHANDLER}},
 
     /*
      * Specify the format of the logs. Its use varies depending on the log handler used (for instance, you cannot
@@ -175,11 +175,11 @@ $config = array(
      * The process name that should be used when logging to syslog.
      * The value is also written out by the other logging handlers.
      */
-    'logging.processname' => 'simplesamlphp',
+    'logging.processname' => 'spid-cie-php',
 
     /* Logging: file - Logfilename in the loggingdir from above.
      */
-    'logging.logfile' => 'simplesamlphp.log',
+    'logging.logfile' => {{LOGFILE}},
 
     /* (New) statistics output configuration.
      *
@@ -701,7 +701,7 @@ $config = array(
      *
      * (This option replaces the old 'session.handler'-option.)
      */
-    'store.type'                    => 'phpsession',
+    'store.type'                    => {{STORETYPE}},
 
     /*
      * The DSN the sql datastore should connect to.
@@ -709,13 +709,13 @@ $config = array(
      * See http://www.php.net/manual/en/pdo.drivers.php for the various
      * syntaxes.
      */
-    'store.sql.dsn'                 => 'sqlite:/path/to/sqlitedatabase.sq3',
+    'store.sql.dsn'                 => {{STORESQLDSN}},
 
     /*
      * The username and password to use when connecting to the database.
      */
-    'store.sql.username' => null,
-    'store.sql.password' => null,
+    'store.sql.username' => {{STORESQLUSERNAME}},
+    'store.sql.password' => {{STORESQLPASSWORD}},
 
     /*
      * The prefix we should use on our tables.
