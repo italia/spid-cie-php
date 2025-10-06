@@ -759,6 +759,7 @@ class Setup {
                             "level" => 2,
                             "atcs_index" => 0,
                             "handler" => "Plain",
+                            "tokenExpTime" => 1200, //20 minutes as default
                             "response_attributes_prefix" => "",
                             "redirect_uri"=> [$proxyRedirectURI],
                         )
