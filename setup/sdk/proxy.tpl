@@ -62,12 +62,14 @@
             if(in_array($client_id, array_keys($clients))) {
                 if(in_array($redirect_uri, $clients[$client_id]['redirect_uri'])) {
 
-                    $isCIE = ($idp=="CIE" || $idp=="CIE TEST");
-                    $service = $isCIE? "cie" : "spid";
-                
+                    $service = "spid";
+
                     if(isset($clients[$client_id]['service'])) {
                         $service = $clients[$client_id]['service'];
                     }
+
+                    $isCIE = ($idp=="CIE" || $idp=="CIE TEST");
+                    $service = $isCIE? "cie" : $service;
 
                     $spidsdk = new SPID_PHP($production, $service);
 
@@ -162,8 +164,8 @@
             $return = $redirect_uri? $redirect_uri : $clients[$client_id]['redirect_uri'][0];
             $return .= (strpos($return, '?') !== false)? '&state='.$state : '?state='.$state;
 
+            /* LOGOUT FOR SPID SERVICE */
             $service = "spid";
-            if($idp=="CIE" || $idp=="CIE TEST") $service = "cie";
         
             if(isset($clients[$client_id]['service'])) {
                 $service = $clients[$client_id]['service'];
@@ -175,30 +177,31 @@
                 /* 
                  * Uncomment to exec local logout instead of IdP logout
                  */
-                /*
+                
                 $sspSession = \SimpleSAML\Session::getSessionFromRequest();
                 $sspSession->doLogout($service);
-                header("location: " . $return);
-                */
-
-                $idp = $spidsdk->getIdPKey();
-
-                if($idp=='EIDAS' || $idp=='EIDAS QA') {
-
-                    $sspSession = \SimpleSAML\Session::getSessionFromRequest();
-                    $sspSession->doLogout('spid');
-                    header("location: " . $return);
-
-                } else {
-
-                    $spidsdk->logout();
-                }
-                
-                die();
-            } else {
-                header("location: " . $return);
-                die();
             }
+
+            /* LOGOUT FOR CIE SERVICE */
+            $service = "cie";
+        
+            if(isset($clients[$client_id]['service'])) {
+                $service = $clients[$client_id]['service'];
+            }
+
+            $spidsdk = new SPID_PHP($production, $service);
+
+            if($spidsdk->isAuthenticated()) {
+                /* 
+                 * Uncomment to exec local logout instead of IdP logout
+                 */
+                
+                $sspSession = \SimpleSAML\Session::getSessionFromRequest();
+                $sspSession->doLogout($service);
+            }            
+
+            header("location: " . $return);
+            die();            
 
         break;
 
