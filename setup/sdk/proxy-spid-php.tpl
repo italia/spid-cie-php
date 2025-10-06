@@ -16,6 +16,7 @@ class PROXY_SPID_PHP extends SPID_PHP {
         $this->client_id = $client_id;
         $this->redirect_uri = urlencode($redirect_uri);
         $this->state = $state;
+        $this->production = $production;
     }
 
     public function addSPIDButtonListItems($method='GET'): string{
@@ -100,12 +101,12 @@ class PROXY_SPID_PHP extends SPID_PHP {
         return $button_li;
     }
 
-
-	public function insertCIEButton($size='default') {
+	public function insertCIEButton($size = 'L') {
+        $idp = $this->production? "CIE" : "CIE TEST";
 	    echo "
 		<div class=\"cie-button\"  style=\"width: 280px;\">
 		    <a class=\"cie-button\" role=\"button\"
-		        href=\"/proxy.php?client_id=".$this->client_id."&action=login&redirect_uri=".$this->redirect_uri."&idp=CIE TEST&state=".$this->state."\">
+		        href=\"/proxy.php?client_id=".$this->client_id."&action=login&redirect_uri=".$this->redirect_uri."&idp=" . $idp . "&state=".$this->state."\">
 		        <span class=\"cie-button-icon\">
 		            <img aria-hidden=\"true\" src=\"/{{SERVICENAME}}/cie-graphics/SVG/entra_con_cie.svg\" alt=\"Entra con CIE\" alt=\"Entra con CIE\" />
 		        </span>

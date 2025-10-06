@@ -184,7 +184,7 @@
                                                     </div>
                                                     <div class="col-12 col-md-6 text-center">
                                                         <a id="btn-accedi" type="submit" class="btn p-0 border-0 my-3"
-                                                            href="/proxy.php?action=login&client_id=<?php echo $client_id; ?>&redirect_uri=<?php echo $redirect_uri; ?>&idp=CIE&state=<?php echo $state; ?>">
+                                                            href="/proxy.php?action=login&client_id=<?php echo $client_id; ?>&redirect_uri=<?php echo $redirect_uri; ?>&idp=<?php echo $production? "CIE" : "CIE TEST"; ?>&state=<?php echo $state; ?>">
                                                             <img class="img-fluid" src="/assets/img/button_cie.png" alt="">
                                                             <span class="sr-only">Accedi con identità digitale CIE</span>
                                                         </a>
