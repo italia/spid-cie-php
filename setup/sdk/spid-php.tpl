@@ -8,6 +8,7 @@
         private $idps = array();
         private $purpose = null;
         private $service = 'spid';
+        private $production = false;
         
         public const SPID_ENABLED = {{SPID_ENABLED}};
         public const CIE_ENABLED = {{CIE_ENABLED}};
