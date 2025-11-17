@@ -4,7 +4,7 @@
 [![Join the #spid-php channel](https://img.shields.io/badge/Slack%20channel-%23spid--php-blue.svg?logo=slack)](https://developersitalia.slack.com/messages/CB6DCK274)
 [![Get invited](https://slack.developers.italia.it/badge.svg)](https://slack.developers.italia.it/)
 [![SPID on forum.italia.it](https://img.shields.io/badge/Forum-SPID-blue.svg)](https://forum.italia.it/c/spid)
-![SP SPID in produzione con spid-php](https://img.shields.io/badge/SP%20SPID%20in%20produzione%20con%20spid--php-300+-green)
+![SP SPID in produzione con spid-php](https://img.shields.io/badge/SP%20SPID%20in%20produzione%20con%20spid--php-500+-green)
 
 # spid-cie-php
 Software Development Kit for easy SPID & CIE access integration with SimpleSAMLphp.\
@@ -421,7 +421,7 @@ di Response che contiene i dettagli dell'errore.
  
 ## Credits
 <a href="https://www.linfaservice.it" target="_blank"><img  style="border:1px solid #ccc; padding:5px; margin-right:20px; vertical-align:middle; width: 200px;" src="https://www.linfaservice.it/common/linfaservice.png" alt="Linfa Service"></a>
-<a href="https://www.manydesigns.com" target="_blank"><img  style="border:1px solid #ccc; padding:5px; margin-right:20px; vertical-align:middle; width: 200px;" src="https://manydesigns.com/wp-content/uploads/2022/12/Logo_Manydesigns.png" alt="ManyDesigns"></a>
+<a href="https://www.manydesigns.com" target="_blank"><img  style="border:1px solid #ccc; padding:5px; margin-right:20px; vertical-align:middle; width: 200px;" src="https://manydesigns.com/wp-content/uploads/2025/08/logo-md.png" alt="ManyDesigns"></a>
   
 ## Contributors
 <a href = "https://github.com/italia/spid-php/contributors">
@@ -495,7 +495,3 @@ di Response che contiene i dettagli dell'errore.
 |HTTP-Redirect binding|✓||
 |HTTP-POST binding|✓||
 |PartialLogout customization|✓||
-|**AttributeQuery generation (2.2.2.1):**||
-|generation of AttributeQuery XML|||
-|SOAP binding (client)|||
-
