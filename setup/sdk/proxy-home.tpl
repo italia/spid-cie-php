@@ -20,7 +20,7 @@
     $client_id = isset($_GET['client_id'])? $_GET['client_id'] : null;
     $level = (isset($_GET['level']) && $_GET['level'])? $_GET['level'] : 2;
     $redirect_uri = isset($_GET['redirect_uri'])? urldecode($_GET['redirect_uri']) : null;
-    $state = (isset($_GET['state']) && $_GET['state'])? $_GET['state'] : '';
+    $state = htmlspecialchars((isset($_GET['state']) && $_GET['state'])? $_GET['state'] : '');
     $idp = isset($_GET['idp'])? $_GET['idp'] : null;
 
     if($client_id==null || $client_id=='') { 
@@ -33,7 +33,7 @@
         die(); 
     }
 
-    if($level==null || $level=='') { 
+    if(!in_array($level, [1, 2, 3])) { 
         http_response_code(404); 
         if(DEBUG) {
             echo "level not provided";
@@ -77,6 +77,16 @@
     $service = "service";
     if($idp=="CIE" || $idp=="CIE TEST") $service = "cie";
     $spidsdk = new PROXY_SPID_PHP($client_id, $redirect_uri, $state, $production, $service);
+
+    if($idp && !$spidsdk->isIdPAvailable($idp)) { 
+        http_response_code(404); 
+        if(DEBUG) {
+            echo "idp not avaiable"; 
+        } else {
+            header("Location: " . ERR_REDIRECT);
+        }
+        die(); 
+    }
 
     //$spidsdk->setPurpose("P");
 
@@ -220,28 +230,12 @@
 
 <?php
         } else {
-            /***
-             * questo branch non viene raggiunto perchè utilizzando 
-             * $spidsdk->insertSPIDButton per simplicità
-             * il login viene effettuato da proxy.php 
-             * con i valori di spid_level e atcs_index predefiniti
-             * in spid-php-proxy.json
-             * Quindi ogni applicativo (compreso OIDC Plugin)
-             * non può gestirli a runtime
-             **/
+            $proxy_url = "/proxy.php?action=login&client_id=".$client_id.
+                            "&redirect_uri=".$redirect_uri.
+                            "&state=".$state.
+                            "&idp=".$idp;
 
-            if($spidsdk->isIdPAvailable($idp)) {
-                $spidsdk->login($idp, $level, "", 0); 
-            } else {
-                if(DEBUG) {
-                    echo "idp not valid";
-                } else {
-                    header("Location: " . ERR_REDIRECT);
-                }
-            }
-
-            // set AttributeConsumingServiceIndex 2
-            //$spidsdk->login($idp, 2, "", 2);
+            header("Location: " . $proxy_url);
         }
 
     } else {
