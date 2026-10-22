@@ -49,6 +49,7 @@ class Setup {
         $_spName = "Service Provider Name";
         $_spDescription = "Service Provider Description";
         $_spOrganizationName = "Organization Name";
+        $_spCertOrganizationName = "Certificate Organization Name";
         $_spOrganizationDisplayName = "Organization Display Name";
         $_spOrganizationURL = "https://www.organization.org";
         $_entityID = "https://localhost";
@@ -278,11 +279,20 @@ class Setup {
         }
 
         if (!isset($config['spOrganizationName'])) {
-            echo "Please insert your Organization Name (" .
+            echo "Please insert your Organization Name. Will be used in the md:OrganizationName and md:Company tags of the metadata (" .
             $colors->getColoredString($_spOrganizationName, "green") . "): ";
             $config['spOrganizationName'] = str_replace("'", "\'", readline());
             if ($config['spOrganizationName'] == null || $config['spOrganizationName'] == "") {
                 $config['spOrganizationName'] = $_spOrganizationName;
+            }
+        }
+
+        if (!isset($config['spCertOrganizationName'])) {
+            echo "Please insert your Organization Name. Will be used for certificate creation (" .
+            $colors->getColoredString($_spCertOrganizationName, "green") . "): ";
+            $config['spCertOrganizationName'] = str_replace("'", "\'", readline());
+            if ($config['spCertOrganizationName'] == null || $config['spCertOrganizationName'] == "") {
+                $config['spCertOrganizationName'] = $_spCertOrganizationName;
             }
         }
 
@@ -856,6 +866,7 @@ class Setup {
         echo $colors->getColoredString("\nService Provider Name: " . $config['spName'], "yellow");
         echo $colors->getColoredString("\nService Provider Description: " . $config['spDescription'], "yellow");
         echo $colors->getColoredString("\nOrganization Name: " . $config['spOrganizationName'], "yellow");
+        echo $colors->getColoredString("\nOrganization Name (certificate): " . $config['spCertOrganizationName'], "yellow");
         echo $colors->getColoredString("\nOrganization Display Name: " . $config['spOrganizationDisplayName'], "yellow");
         echo $colors->getColoredString("\nOrganization URL: " . $config['spOrganizationURL'], "yellow");
         echo $colors->getColoredString("\nAttribute Consuming Service Index: " . $config['acsIndex'], "yellow");
@@ -968,7 +979,7 @@ class Setup {
 		        fwrite($openssl_config, "uri=2.5.4.83\n");
 
 		        fwrite($openssl_config, "\n[ dn ]\n");
-		        fwrite($openssl_config, "organizationName=" . $config['spOrganizationName'] . "\n");
+		        fwrite($openssl_config, "organizationName=" . $config['spCertOrganizationName'] . "\n");
 		        fwrite($openssl_config, "commonName=" . $config['spOrganizationDisplayName'] . "\n");
 		        fwrite($openssl_config, "uri=" . $config['entityID'] . "\n");
 		        fwrite($openssl_config, "organizationIdentifier=" . $config['spOrganizationIdentifier'] . "\n");
@@ -1058,7 +1069,7 @@ class Setup {
 		        fwrite($openssl_config, "uri=2.5.4.83\n");
 
 		        fwrite($openssl_config, "\n[ dn ]\n");
-		        fwrite($openssl_config, "organizationName=" . $config['spOrganizationName'] . "\n");
+		        fwrite($openssl_config, "organizationName=" . $config['spCertOrganizationName'] . "\n");
 		        fwrite($openssl_config, "commonName=" . $config['spOrganizationDisplayName'] . "\n");
 		        fwrite($openssl_config, "uri=" . $config['entityID'] . "\n");
 		        fwrite($openssl_config, "organizationIdentifier=" . $config['spOrganizationIdentifier'] . "\n");
