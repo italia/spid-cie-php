@@ -42,6 +42,11 @@
 
                 $spidsdk->insertSPIDButtonJS(); 
             }
+
+            if($spidsdk->isEIDASEnabled()) {
+                echo "<p>EIDAS BUTTON</p>";
+                $spidsdk->insertEIDASButton();
+            }            
             
             if($spidsdk->isCIEEnabled()) {
                 echo "<p>CIE BUTTON</p>";

@@ -11,6 +11,7 @@
         private $production = false;
         
         public const SPID_ENABLED = {{SPID_ENABLED}};
+        public const EIDAS_ENABLED = {{EIDAS_ENABLED}};
         public const CIE_ENABLED = {{CIE_ENABLED}};
 
         function __construct($production=false, $service='spid') {
@@ -39,6 +40,10 @@
 	      public function isSPIDEnabled() {
 	        return self::SPID_ENABLED;
 	      }
+
+	      public function isEIDASEnabled() {
+	        return self::EIDAS_ENABLED;
+	      }          
 
 	      public function isCIEEnabled() {
 	        return self::CIE_ENABLED;
@@ -569,6 +574,28 @@
         public function insertCIEButton($size = 'L') {
             echo $this->getCIEButton($size);
         }
+
+        public function getEIDASButton($size = 'L') {
+            if($this->isEIDASEnabled()) {
+                $size = strtolower($size);
+                if ($size == 'default') {
+                    $size = 'l';
+                }
+
+                $idp = $this->production? "EIDAS" : "EIDAS QA";
+
+                return "<a href=\"?idp=" . $idp . "\" class=\"italia-it-button italia-it-button-size-$size button-eidas\" aria-haspopup=\"false\" aria-expanded=\"false\">
+                    <span class=\"italia-it-button-icon\"><img src=\"/{{SERVICENAME}}/eidas-sp-access-button/img/ficep-it-eidas-ybw.svg\" alt=\"Entra con eIDAS\" /></span>
+                    <span class=\"italia-it-button-text sr-only\" style=\"display:none\">Login with eIDAS</span>             
+                </a>";   
+            }       
+        }
+
+        public function insertEIDASButton($size = 'L') {
+            if($this->isEIDASEnabled()) {
+                echo $this->getEIDASButton($size);
+            }
+        }        
     }
 
 ?>

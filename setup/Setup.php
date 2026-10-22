@@ -554,7 +554,15 @@ class Setup {
             $config['addSPID'] = ($config['addSPID'] != null &&
                     strtoupper($config['addSPID']) == "N") ? false : true;
         }
-        
+
+        if (!isset($config['addEIDAS'])) {
+            echo "Setup eIDAS ? (" .
+            $colors->getColoredString("Y", "green") . "): ";
+            $config['addEIDAS'] = readline();
+            $config['addEIDAS'] = ($config['addEIDAS'] != null &&
+                    strtoupper($config['addEIDAS']) == "N") ? false : true;
+        }
+
         if (!isset($config['addCIE'])) {
             echo "Setup CIE ? (" .
             $colors->getColoredString("Y", "green") . "): ";
@@ -871,6 +879,7 @@ class Setup {
         echo $colors->getColoredString("\nOrganization URL: " . $config['spOrganizationURL'], "yellow");
         echo $colors->getColoredString("\nAttribute Consuming Service Index: " . $config['acsIndex'], "yellow");
         echo $colors->getColoredString(($config['addSPID']) ? "Y" : "N", "yellow");
+        echo $colors->getColoredString(($config['addEIDAS']) ? "Y" : "N", "yellow");
         echo $colors->getColoredString(($config['addCIE']) ? "Y" : "N", "yellow");
         if($config['addSPID']) {
             echo $colors->getColoredString("\nAdd configuration for SPID Demo (demo.spid.gov.it): ", "yellow");
@@ -946,156 +955,156 @@ class Setup {
 
         // create SPID certificates
         if($config['addSPID']) {
-		if (file_exists($config['installDir'] . "/cert/spid-sp.crt") && file_exists($config['installDir'] . "/cert/spid-sp.pem")) {
-		    echo $colors->getColoredString("\nSkipping SPID certificates generation", "white");
-		    $dest = $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert";
-		    $filesystem->mkdir($dest);
-		    $filesystem->mirror($config['installDir'] . "/cert", $dest);
-		} else {
-		    $filesystem->mkdir(
-		        $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert"
-		    );
-		    echo $colors->getColoredString("\nConfiguring OpenSSL... ", "white");
-		    if (!file_exists('spid-php-openssl.cnf')) {
-		        $openssl_config = fopen("spid-php-openssl.cnf", "w");
-		        fwrite($openssl_config, "oid_section = spid_oids\n");
+            if (file_exists($config['installDir'] . "/cert/spid-sp.crt") && file_exists($config['installDir'] . "/cert/spid-sp.pem")) {
+                echo $colors->getColoredString("\nSkipping SPID certificates generation", "white");
+                $dest = $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert";
+                $filesystem->mkdir($dest);
+                $filesystem->mirror($config['installDir'] . "/cert", $dest);
+            } else {
+                $filesystem->mkdir(
+                    $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert"
+                );
+                echo $colors->getColoredString("\nConfiguring OpenSSL... ", "white");
+                if (!file_exists('spid-php-openssl.cnf')) {
+                    $openssl_config = fopen("spid-php-openssl.cnf", "w");
+                    fwrite($openssl_config, "oid_section = spid_oids\n");
 
-		        fwrite($openssl_config, "\n[ req ]\n");
-		        fwrite($openssl_config, "default_bits = 3072\n");
-		        fwrite($openssl_config, "default_md = sha256\n");
-		        fwrite($openssl_config, "distinguished_name = dn\n");
-		        fwrite($openssl_config, "encrypt_key = no\n");
-		        fwrite($openssl_config, "prompt = no\n");
-		        fwrite($openssl_config, "req_extensions  = req_ext\n");
+                    fwrite($openssl_config, "\n[ req ]\n");
+                    fwrite($openssl_config, "default_bits = 3072\n");
+                    fwrite($openssl_config, "default_md = sha256\n");
+                    fwrite($openssl_config, "distinguished_name = dn\n");
+                    fwrite($openssl_config, "encrypt_key = no\n");
+                    fwrite($openssl_config, "prompt = no\n");
+                    fwrite($openssl_config, "req_extensions  = req_ext\n");
 
-		        fwrite($openssl_config, "\n[ spid_oids ]\n");
-		        //fwrite($openssl_config, "organizationIdentifier=2.5.4.97\n");
-		        fwrite($openssl_config, "agidcert=1.3.76.16.6\n");
-						if($config['spIsPublicAdministration']) {
-							fwrite($openssl_config, "spid-publicsector-SP=1.3.76.16.4.2.1\n");
-						} else {
-							fwrite($openssl_config, "spid-privatesector-SP=1.3.76.16.4.3.1\n");
-						}
-		        fwrite($openssl_config, "uri=2.5.4.83\n");
+                    fwrite($openssl_config, "\n[ spid_oids ]\n");
+                    //fwrite($openssl_config, "organizationIdentifier=2.5.4.97\n");
+                    fwrite($openssl_config, "agidcert=1.3.76.16.6\n");
+                            if($config['spIsPublicAdministration']) {
+                                fwrite($openssl_config, "spid-publicsector-SP=1.3.76.16.4.2.1\n");
+                            } else {
+                                fwrite($openssl_config, "spid-privatesector-SP=1.3.76.16.4.3.1\n");
+                            }
+                    fwrite($openssl_config, "uri=2.5.4.83\n");
 
-		        fwrite($openssl_config, "\n[ dn ]\n");
-		        fwrite($openssl_config, "organizationName=" . $config['spCertOrganizationName'] . "\n");
-		        fwrite($openssl_config, "commonName=" . $config['spOrganizationDisplayName'] . "\n");
-		        fwrite($openssl_config, "uri=" . $config['entityID'] . "\n");
-		        fwrite($openssl_config, "organizationIdentifier=" . $config['spOrganizationIdentifier'] . "\n");
-		        fwrite($openssl_config, "countryName=" . $config['spCountryName'] . "\n");
-		        fwrite($openssl_config, "localityName=" . $config['spLocalityName'] . "\n");
-		        //fwrite($openssl_config, "serialNumber=" . $config['spOrganizationCode'] . "\n");
+                    fwrite($openssl_config, "\n[ dn ]\n");
+                    fwrite($openssl_config, "organizationName=" . $config['spCertOrganizationName'] . "\n");
+                    fwrite($openssl_config, "commonName=" . $config['spOrganizationDisplayName'] . "\n");
+                    fwrite($openssl_config, "uri=" . $config['entityID'] . "\n");
+                    fwrite($openssl_config, "organizationIdentifier=" . $config['spOrganizationIdentifier'] . "\n");
+                    fwrite($openssl_config, "countryName=" . $config['spCountryName'] . "\n");
+                    fwrite($openssl_config, "localityName=" . $config['spLocalityName'] . "\n");
+                    //fwrite($openssl_config, "serialNumber=" . $config['spOrganizationCode'] . "\n");
 
-		        fwrite($openssl_config, "\n[ req_ext ]\n");
-		        fwrite($openssl_config, "basicConstraints=CA:FALSE\n");
-		        fwrite($openssl_config, "keyUsage=critical,digitalSignature,nonRepudiation\n");
-		        fwrite($openssl_config, "certificatePolicies=@agid_policies,@spid_policies\n");
+                    fwrite($openssl_config, "\n[ req_ext ]\n");
+                    fwrite($openssl_config, "basicConstraints=CA:FALSE\n");
+                    fwrite($openssl_config, "keyUsage=critical,digitalSignature,nonRepudiation\n");
+                    fwrite($openssl_config, "certificatePolicies=@agid_policies,@spid_policies\n");
 
-		        fwrite($openssl_config, "\n[ agid_policies ]\n");
-		        fwrite($openssl_config, "policyIdentifier=agidcert\n");
-		        fwrite($openssl_config, "userNotice=@agidcert_notice\n");
-						
-						fwrite($openssl_config, "\n[ agidcert_notice ]\n");
-		        fwrite($openssl_config, "explicitText=\"agIDcert\"\n");
+                    fwrite($openssl_config, "\n[ agid_policies ]\n");
+                    fwrite($openssl_config, "policyIdentifier=agidcert\n");
+                    fwrite($openssl_config, "userNotice=@agidcert_notice\n");
+                            
+                            fwrite($openssl_config, "\n[ agidcert_notice ]\n");
+                    fwrite($openssl_config, "explicitText=\"agIDcert\"\n");
 
-		        fwrite($openssl_config, "\n[ spid_policies ]\n");
-		        switch ($config['spIsPublicAdministration']) {
-		            case true: fwrite($openssl_config, "policyIdentifier = spid-publicsector-SP\n");
-		                break;
-		            case false: fwrite($openssl_config, "policyIdentifier = spid-privatesector-SP\n");
-		                break;
+                    fwrite($openssl_config, "\n[ spid_policies ]\n");
+                    switch ($config['spIsPublicAdministration']) {
+                        case true: fwrite($openssl_config, "policyIdentifier = spid-publicsector-SP\n");
+                            break;
+                        case false: fwrite($openssl_config, "policyIdentifier = spid-privatesector-SP\n");
+                            break;
 
-		            default:
-		                echo $colors->getColoredString("Your Organization type is not correctly set. Please retry installation. Found: " . $config['spIsPublicAdministration'] . "\n", "red");
-		                fwrite($openssl_config, "ERROR- Interrupted\n");
-		                fclose($openssl_config);
-		                die();
-		                break;
-		        }
-		        fwrite($openssl_config, "userNotice=@spid_notice\n");
-					
-		        fwrite($openssl_config, "\n[ spid_notice ]\n");
-						if($config['spIsPublicAdministration']) {
-							fwrite($openssl_config, "explicitText=\"cert_SP_Pub\"\n");
-						} else {
-							fwrite($openssl_config, "explicitText=\"cert_SP_Priv\"\n");
-						}
-					
-					echo $colors->getColoredString("OK\n", "green");
-		    } 
-		    shell_exec(
-		            "openssl req -new -x509 -config spid-php-openssl.cnf -days 730 " .
-		            " -keyout " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert/spid-sp.pem" .
-		            " -out " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert/spid-sp.crt" . 
-		            " -extensions req_ext "
-		    );
+                        default:
+                            echo $colors->getColoredString("Your Organization type is not correctly set. Please retry installation. Found: " . $config['spIsPublicAdministration'] . "\n", "red");
+                            fwrite($openssl_config, "ERROR- Interrupted\n");
+                            fclose($openssl_config);
+                            die();
+                            break;
+                    }
+                    fwrite($openssl_config, "userNotice=@spid_notice\n");
+                        
+                    fwrite($openssl_config, "\n[ spid_notice ]\n");
+                            if($config['spIsPublicAdministration']) {
+                                fwrite($openssl_config, "explicitText=\"cert_SP_Pub\"\n");
+                            } else {
+                                fwrite($openssl_config, "explicitText=\"cert_SP_Priv\"\n");
+                            }
+                        
+                        echo $colors->getColoredString("OK\n", "green");
+                } 
+                shell_exec(
+                        "openssl req -new -x509 -config spid-php-openssl.cnf -days 730 " .
+                        " -keyout " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert/spid-sp.pem" .
+                        " -out " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert/spid-sp.crt" . 
+                        " -extensions req_ext "
+                );
 
-		    $dest = $config['installDir'] . "/cert";
-		    $filesystem->mkdir($dest);
-		    $filesystem->mirror(
-		        $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert",
-		        $dest
-		    );
-		}
-	}
+                $dest = $config['installDir'] . "/cert";
+                $filesystem->mkdir($dest);
+                $filesystem->mirror(
+                    $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert",
+                    $dest
+                );
+            }
+        }
 
         // create CIE certificates
         if($config['addCIE']) {
-		if (file_exists($config['installDir'] . "/cert/cie-sp.crt") && file_exists($config['installDir'] . "/cert/cie-sp.pem")) {
-		    echo $colors->getColoredString("\nSkipping CIE certificates generation", "white");
-		    $dest = $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert";
-		    $filesystem->mkdir($dest);
-		    $filesystem->mirror($config['installDir'] . "/cert", $dest);
-		} else {
-		    $filesystem->mkdir(
-		        $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert"
-		    );
-		    echo $colors->getColoredString("\nConfiguring OpenSSL... ", "white");
-		    if (!file_exists('cie-php-openssl.cnf')) {
-		        $openssl_config = fopen("cie-php-openssl.cnf", "w");
-		        fwrite($openssl_config, "oid_section = cie_oids\n");
+            if (file_exists($config['installDir'] . "/cert/cie-sp.crt") && file_exists($config['installDir'] . "/cert/cie-sp.pem")) {
+                echo $colors->getColoredString("\nSkipping CIE certificates generation", "white");
+                $dest = $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert";
+                $filesystem->mkdir($dest);
+                $filesystem->mirror($config['installDir'] . "/cert", $dest);
+            } else {
+                $filesystem->mkdir(
+                    $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert"
+                );
+                echo $colors->getColoredString("\nConfiguring OpenSSL... ", "white");
+                if (!file_exists('cie-php-openssl.cnf')) {
+                    $openssl_config = fopen("cie-php-openssl.cnf", "w");
+                    fwrite($openssl_config, "oid_section = cie_oids\n");
 
-		        fwrite($openssl_config, "\n[ req ]\n");
-		        fwrite($openssl_config, "default_bits = 3072\n");
-		        fwrite($openssl_config, "default_md = sha256\n");
-		        fwrite($openssl_config, "distinguished_name = dn\n");
-		        fwrite($openssl_config, "encrypt_key = no\n");
-		        fwrite($openssl_config, "prompt = no\n");
-		        fwrite($openssl_config, "req_extensions  = req_ext\n");
+                    fwrite($openssl_config, "\n[ req ]\n");
+                    fwrite($openssl_config, "default_bits = 3072\n");
+                    fwrite($openssl_config, "default_md = sha256\n");
+                    fwrite($openssl_config, "distinguished_name = dn\n");
+                    fwrite($openssl_config, "encrypt_key = no\n");
+                    fwrite($openssl_config, "prompt = no\n");
+                    fwrite($openssl_config, "req_extensions  = req_ext\n");
 
-		        fwrite($openssl_config, "\n[ cie_oids ]\n");
-		        //fwrite($openssl_config, "organizationIdentifier=2.5.4.97\n");
-		        fwrite($openssl_config, "uri=2.5.4.83\n");
+                    fwrite($openssl_config, "\n[ cie_oids ]\n");
+                    //fwrite($openssl_config, "organizationIdentifier=2.5.4.97\n");
+                    fwrite($openssl_config, "uri=2.5.4.83\n");
 
-		        fwrite($openssl_config, "\n[ dn ]\n");
-		        fwrite($openssl_config, "organizationName=" . $config['spCertOrganizationName'] . "\n");
-		        fwrite($openssl_config, "commonName=" . $config['spOrganizationDisplayName'] . "\n");
-		        fwrite($openssl_config, "uri=" . $config['entityID'] . "\n");
-		        fwrite($openssl_config, "organizationIdentifier=" . $config['spOrganizationIdentifier'] . "\n");
-		        fwrite($openssl_config, "countryName=" . $config['spCountryName'] . "\n");
-		        fwrite($openssl_config, "localityName=" . $config['spLocalityName'] . "\n");
-		        //fwrite($openssl_config, "serialNumber=" . $config['spOrganizationCode'] . "\n");
+                    fwrite($openssl_config, "\n[ dn ]\n");
+                    fwrite($openssl_config, "organizationName=" . $config['spCertOrganizationName'] . "\n");
+                    fwrite($openssl_config, "commonName=" . $config['spOrganizationDisplayName'] . "\n");
+                    fwrite($openssl_config, "uri=" . $config['entityID'] . "\n");
+                    fwrite($openssl_config, "organizationIdentifier=" . $config['spOrganizationIdentifier'] . "\n");
+                    fwrite($openssl_config, "countryName=" . $config['spCountryName'] . "\n");
+                    fwrite($openssl_config, "localityName=" . $config['spLocalityName'] . "\n");
+                    //fwrite($openssl_config, "serialNumber=" . $config['spOrganizationCode'] . "\n");
 
-		        fwrite($openssl_config, "\n[ req_ext ]\n");
+                    fwrite($openssl_config, "\n[ req_ext ]\n");
 
-		        echo $colors->getColoredString("OK\n", "green");
-		    } 
-		    shell_exec(
-		            "openssl req -new -x509 -config cie-php-openssl.cnf -days 730 " .
-		            " -keyout " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert/cie-sp.pem" .
-		            " -out " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert/cie-sp.crt" . 
-		            " -extensions req_ext "
-		    );
+                    echo $colors->getColoredString("OK\n", "green");
+                } 
+                shell_exec(
+                        "openssl req -new -x509 -config cie-php-openssl.cnf -days 730 " .
+                        " -keyout " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert/cie-sp.pem" .
+                        " -out " . $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert/cie-sp.crt" . 
+                        " -extensions req_ext "
+                );
 
-		    $dest = $config['installDir'] . "/cert";
-		    $filesystem->mkdir($dest);
-		    $filesystem->mirror(
-		        $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert",
-		        $dest
-		    );
-		}
-	}
+                $dest = $config['installDir'] . "/cert";
+                $filesystem->mkdir($dest);
+                $filesystem->mirror(
+                    $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/cert",
+                    $dest
+                );
+            }
+        }
 	
         //echo $colors->getColoredString("\n\nReady to setup. Press a key to continue or CTRL-C to exit\n", "white");
         //readline();
@@ -1177,80 +1186,81 @@ class Setup {
         // customize and copy authsources file
         
         if($config['addSPID']) {
-		echo $colors->getColoredString("\nCompile SPID authsource file... ", "white");
-		$vars = array(
-		    "{{ENTITYID}}" => "'" . $config['entityID'] . "'",
-		    "{{NAME}}" => "'" . $config['spName'] . "'",
-		    "{{DESCRIPTION}}" => "'" . $config['spDescription'] . "'",
-		    "{{ORGANIZATIONNAME}}" => "'" . $config['spOrganizationName'] . "'",
-		    "{{ORGANIZATIONDISPLAYNAME}}" => "'" . $config['spOrganizationDisplayName'] . "'",
-		    "{{ORGANIZATIONURL}}" => "'" . $config['spOrganizationURL'] . "'",
-		    "{{ACSINDEX}}" => $config['acsIndex'],
-		    "{{ATTRIBUTES}}" => implode(",", $config['attr']),
-		    "{{ORGANIZATIONCODETYPE}}" => "'" . $config['spOrganizationCodeType'] . "'",
-		    "{{ORGANIZATIONCODE}}" => "'" . $config['spOrganizationCode'] . "'",
-		    "{{ORGANIZATIONEMAILADDRESS}}" => "'" . $config['spOrganizationEmailAddress'] . "'",
-		    "{{ORGANIZATIONTELEPHONENUMBER}}" => "'" . $config['spOrganizationTelephoneNumber'] . "'",
-		);
+            echo $colors->getColoredString("\nCompile SPID authsource file... ", "white");
+            $vars = array(
+                "{{ENTITYID}}" => "'" . $config['entityID'] . "'",
+                "{{NAME}}" => "'" . $config['spName'] . "'",
+                "{{DESCRIPTION}}" => "'" . $config['spDescription'] . "'",
+                "{{ORGANIZATIONNAME}}" => "'" . $config['spOrganizationName'] . "'",
+                "{{ORGANIZATIONDISPLAYNAME}}" => "'" . $config['spOrganizationDisplayName'] . "'",
+                "{{ORGANIZATIONURL}}" => "'" . $config['spOrganizationURL'] . "'",
+                "{{ACSINDEX}}" => $config['acsIndex'],
+                "{{ATTRIBUTES}}" => implode(",", $config['attr']),
+                "{{ORGANIZATIONCODETYPE}}" => "'" . $config['spOrganizationCodeType'] . "'",
+                "{{ORGANIZATIONCODE}}" => "'" . $config['spOrganizationCode'] . "'",
+                "{{ORGANIZATIONEMAILADDRESS}}" => "'" . $config['spOrganizationEmailAddress'] . "'",
+                "{{ORGANIZATIONTELEPHONENUMBER}}" => "'" . $config['spOrganizationTelephoneNumber'] . "'",
+            );
 
-		if(!$config['spIsPublicAdministration']) {
-		    $vars_fpa = array(
-		        "{{FPAIDPAESE}}" => "'" . $config['fpaIdPaese'] . "'",
-		        "{{FPAIDCODICE}}" => "'" . $config['fpaIdCodice'] . "'",
-		        "{{FPADENOMINAZIONE}}" => "'" . $config['fpaDenominazione'] . "'",
-		        "{{FPAINDIRIZZO}}" => "'" . $config['fpaIndirizzo'] . "'",
-		        "{{FPANUMEROCIVICO}}" => "'" . $config['fpaNumeroCivico'] . "'",
-		        "{{FPACAP}}" => "'" . $config['fpaCAP'] . "'",
-		        "{{FPACOMUNE}}" => "'" . $config['fpaComune'] . "'",
-		        "{{FPAPROVINCIA}}" => "'" . $config['fpaProvincia'] . "'",
-		        "{{FPANAZIONE}}" => "'" . $config['fpaNazione'] . "'",
-		        "{{FPAORGANIZATIONNAME}}" => "'" . $config['fpaOrganizationName'] . "'",
-		        "{{FPAORGANIZATIONEMAILADDRESS}}" => "'" . $config['fpaOrganizationEmailAddress'] . "'",
-		        "{{FPAORGANIZATIONTELEPHONENUMBER}}" => "'" . $config['fpaOrganizationTelephoneNumber'] . "'"
-		    );
+            if(!$config['spIsPublicAdministration']) {
+                $vars_fpa = array(
+                    "{{FPAIDPAESE}}" => "'" . $config['fpaIdPaese'] . "'",
+                    "{{FPAIDCODICE}}" => "'" . $config['fpaIdCodice'] . "'",
+                    "{{FPADENOMINAZIONE}}" => "'" . $config['fpaDenominazione'] . "'",
+                    "{{FPAINDIRIZZO}}" => "'" . $config['fpaIndirizzo'] . "'",
+                    "{{FPANUMEROCIVICO}}" => "'" . $config['fpaNumeroCivico'] . "'",
+                    "{{FPACAP}}" => "'" . $config['fpaCAP'] . "'",
+                    "{{FPACOMUNE}}" => "'" . $config['fpaComune'] . "'",
+                    "{{FPAPROVINCIA}}" => "'" . $config['fpaProvincia'] . "'",
+                    "{{FPANAZIONE}}" => "'" . $config['fpaNazione'] . "'",
+                    "{{FPAORGANIZATIONNAME}}" => "'" . $config['fpaOrganizationName'] . "'",
+                    "{{FPAORGANIZATIONEMAILADDRESS}}" => "'" . $config['fpaOrganizationEmailAddress'] . "'",
+                    "{{FPAORGANIZATIONTELEPHONENUMBER}}" => "'" . $config['fpaOrganizationTelephoneNumber'] . "'"
+                );
 
-		    $vars = array_merge($vars, $vars_fpa);
-		}
+                $vars = array_merge($vars, $vars_fpa);
+            }
 
 
-		$template_spid_type = ($config['spIsPublicAdministration']) ? 'authsources_spid_public.tpl' : 'authsources_spid_private.tpl';
-		$template_spid = file_get_contents($config['installDir'] . '/setup/config/' . $template_spid_type, true);
-		$template_spid_source = str_replace(array_keys($vars), $vars, $template_spid);
+            $template_spid_type = ($config['spIsPublicAdministration']) ? 'authsources_spid_public.tpl' : 'authsources_spid_private.tpl';
+            $template_spid = file_get_contents($config['installDir'] . '/setup/config/' . $template_spid_type, true);
+            $template_spid_source = str_replace(array_keys($vars), $vars, $template_spid);
 
-		echo $colors->getColoredString("OK", "green");
+            echo $colors->getColoredString("OK", "green");
         }
         
         if($config['addCIE']) {
-		echo $colors->getColoredString("\nCompile CIE authsource file... ", "white");
-		$vars = array(
-		    "{{ENTITYID}}" => "'" . $config['entityID'] . "'",
-		    "{{NAME}}" => "'" . $config['spName'] . "'",
-		    "{{DESCRIPTION}}" => "'" . $config['spDescription'] . "'",
-		    "{{ORGANIZATIONNAME}}" => "'" . $config['spOrganizationName'] . "'",
-		    "{{ORGANIZATIONDISPLAYNAME}}" => "'" . $config['spOrganizationDisplayName'] . "'",
-		    "{{ORGANIZATIONURL}}" => "'" . $config['spOrganizationURL'] . "'",
-		    "{{ORGANIZATIONCODE}}" => "'" . $config['spOrganizationCode'] . "'",
-		    "{{ORGANIZATIONFISCALCODE}}" => "'" . $config['spOrganizationFiscalCode'] . "'",
-		    "{{ORGANIZATIONNACE2CODE}}" => "'" . $config['spOrganizationNace2Code'] . "'",
-		    "{{ORGANIZATIONEMAILADDRESS}}" => "'" . $config['spOrganizationEmailAddress'] . "'",
-		    "{{ORGANIZATIONTELEPHONENUMBER}}" => "'" . $config['spOrganizationTelephoneNumber'] . "'",
-		    "{{ORGANIZATIONMUNICIPALITY}}" => "'" . $config['spMunicipality'] . "'",
-		    "{{ORGANIZATIONPROVINCE}}" => "'" . $config['spProvince'] . "'",
-		    "{{ORGANIZATIONCOUNTRY}}" => "'" . $config['spCountryName'] . "'"
-		);
-		
-		$template_cie_type = ($config['spIsPublicAdministration']) ? 'authsources_cie_public.tpl' : 'authsources_cie_private.tpl';
-		$template_cie = file_get_contents($config['installDir'] . '/setup/config/' . $template_cie_type, true);
-		$template_cie_source = str_replace(array_keys($vars), $vars, $template_cie);
+            echo $colors->getColoredString("\nCompile CIE authsource file... ", "white");
+            $vars = array(
+                "{{ENTITYID}}" => "'" . $config['entityID'] . "'",
+                "{{NAME}}" => "'" . $config['spName'] . "'",
+                "{{DESCRIPTION}}" => "'" . $config['spDescription'] . "'",
+                "{{ORGANIZATIONNAME}}" => "'" . $config['spOrganizationName'] . "'",
+                "{{ORGANIZATIONDISPLAYNAME}}" => "'" . $config['spOrganizationDisplayName'] . "'",
+                "{{ORGANIZATIONURL}}" => "'" . $config['spOrganizationURL'] . "'",
+                "{{ORGANIZATIONCODE}}" => "'" . $config['spOrganizationCode'] . "'",
+                "{{ORGANIZATIONFISCALCODE}}" => "'" . $config['spOrganizationFiscalCode'] . "'",
+                "{{ORGANIZATIONNACE2CODE}}" => "'" . $config['spOrganizationNace2Code'] . "'",
+                "{{ORGANIZATIONEMAILADDRESS}}" => "'" . $config['spOrganizationEmailAddress'] . "'",
+                "{{ORGANIZATIONTELEPHONENUMBER}}" => "'" . $config['spOrganizationTelephoneNumber'] . "'",
+                "{{ORGANIZATIONMUNICIPALITY}}" => "'" . $config['spMunicipality'] . "'",
+                "{{ORGANIZATIONPROVINCE}}" => "'" . $config['spProvince'] . "'",
+                "{{ORGANIZATIONCOUNTRY}}" => "'" . $config['spCountryName'] . "'"
+            );
+            
+            $template_cie_type = ($config['spIsPublicAdministration']) ? 'authsources_cie_public.tpl' : 'authsources_cie_private.tpl';
+            $template_cie = file_get_contents($config['installDir'] . '/setup/config/' . $template_cie_type, true);
+            $template_cie_source = str_replace(array_keys($vars), $vars, $template_cie);
 
-		echo $colors->getColoredString("OK", "green");
-	}
+            echo $colors->getColoredString("OK", "green");
+        }
 
-	echo $colors->getColoredString("\nWrite authsources file... ", "white");
-	$vars = array(
-            "{{AUTHSOURCE_SPID}}" => $config['addSPID']? $template_spid_source : '',
-            "{{AUTHSOURCE_CIE}}" => $config['addCIE']? $template_cie_source : '',
-	);
+        echo $colors->getColoredString("\nWrite authsources file... ", "white");
+        $vars = array(
+                "{{AUTHSOURCE_SPID}}" => $config['addSPID']? $template_spid_source : '',
+                "{{AUTHSOURCE_CIE}}" => $config['addCIE']? $template_cie_source : '',
+        );
+
         $template = file_get_contents($config['installDir'] . '/setup/config/authsources.tpl', true);
         $template_source = str_replace(array_keys($vars), $vars, $template);
 
@@ -1262,80 +1272,96 @@ class Setup {
         
         Setup::updateMetadata();
 
-	if ($config['addSPID']) {
-		if ($config['useSmartButton']) {
-		    // overwrite template file
-		    echo $colors->getColoredString("\nWrite SPID smart-button template... ", "white");
-		    $vars = array("{{SERVICENAME}}" => $config['serviceName']);
-		    $template = file_get_contents($config['installDir'] .
-		            '/setup/templates/smartbutton/selectidp-links.tpl', true);
-		    $customized = str_replace(array_keys($vars), $vars, $template);
-		    file_put_contents($config['installDir'] .
-		            "/vendor/simplesamlphp/simplesamlphp/templates/selectidp-links.php", $customized);
+        if ($config['addSPID']) {
+            if ($config['useSmartButton']) {
+                // overwrite template file
+                echo $colors->getColoredString("\nWrite SPID smart-button template... ", "white");
+                $vars = array("{{SERVICENAME}}" => $config['serviceName']);
+                $template = file_get_contents($config['installDir'] .
+                        '/setup/templates/smartbutton/selectidp-links.tpl', true);
+                $customized = str_replace(array_keys($vars), $vars, $template);
+                file_put_contents($config['installDir'] .
+                        "/vendor/simplesamlphp/simplesamlphp/templates/selectidp-links.php", $customized);
 
-		    // overwrite smart button js file
-		    $vars = array("{{SERVICENAME}}" => $config['serviceName']);
-		    $template = file_get_contents($config['installDir'] . '/setup/www/js/agid-spid-enter.tpl', true);
-		    $customized = str_replace(array_keys($vars), $vars, $template);
-		    $filesystem->mkdir(
-		        $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/js"
-		    );
-		    file_put_contents($config['installDir'] .
-		            "/vendor/simplesamlphp/simplesamlphp/www/js/agid-spid-enter.js", $customized);
-		    echo $colors->getColoredString("OK", "green");
+                // overwrite smart button js file
+                $vars = array("{{SERVICENAME}}" => $config['serviceName']);
+                $template = file_get_contents($config['installDir'] . '/setup/www/js/agid-spid-enter.tpl', true);
+                $customized = str_replace(array_keys($vars), $vars, $template);
+                $filesystem->mkdir(
+                    $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/js"
+                );
+                file_put_contents($config['installDir'] .
+                        "/vendor/simplesamlphp/simplesamlphp/www/js/agid-spid-enter.js", $customized);
+                echo $colors->getColoredString("OK", "green");
 
-		    // copy smart button css and img
-		    echo $colors->getColoredString("\nCopy smart-button resurces... ", "white");
-		    $dest = $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/css";
-		    $filesystem->mkdir($dest);
-		    $filesystem->mirror(
-		        $config['installDir'] . "/vendor/italia/spid-smart-button/css",
-		        $dest
-		    );
-		    $dest = $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/img";
-		    $filesystem->mkdir($dest);
-		    $filesystem->mirror(
-		        $config['installDir'] . "/vendor/italia/spid-smart-button/img",
-		        $dest
-		    );
-		    echo $colors->getColoredString("OK", "green");
-		} else {
-		    // overwrite template file
-		    echo $colors->getColoredString("\nWrite SPID button template... ", "white");
-		    $path = $config['installDir'] .
-		        "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button";
+                // copy smart button css and img
+                echo $colors->getColoredString("\nCopy smart-button resurces... ", "white");
+                $dest = $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/css";
+                $filesystem->mkdir($dest);
+                $filesystem->mirror(
+                    $config['installDir'] . "/vendor/italia/spid-smart-button/css",
+                    $dest
+                );
+                $dest = $config['installDir'] . "/vendor/simplesamlphp/simplesamlphp/www/img";
+                $filesystem->mkdir($dest);
+                $filesystem->mirror(
+                    $config['installDir'] . "/vendor/italia/spid-smart-button/img",
+                    $dest
+                );
+                echo $colors->getColoredString("OK", "green");
+            } else {
+                // overwrite template file
+                echo $colors->getColoredString("\nWrite SPID button template... ", "white");
+                $path = $config['installDir'] .
+                    "/vendor/simplesamlphp/simplesamlphp/www/spid-sp-access-button";
 
-		    foreach (["/css", "/img", "/js"] as $value) {
-		        $dest = $path . $value;
-		        $filesystem->mkdir($dest);
-		        $filesystem->mirror(
-		            $config['installDir'] . "/vendor/italia/spid-sp-access-button/src/production" . $value,
-		            $dest
-		        );
-		    }
+                foreach (["/css", "/img", "/js"] as $value) {
+                    $dest = $path . $value;
+                    $filesystem->mkdir($dest);
+                    $filesystem->mirror(
+                        $config['installDir'] . "/vendor/italia/spid-sp-access-button/src/production" . $value,
+                        $dest
+                    );
+                }
 
-		    echo $colors->getColoredString("OK", "green");
-		}
-	}
+                echo $colors->getColoredString("OK", "green");
+            }
+        }
+
+        if ($config['addEIDAS']) {
+            echo $colors->getColoredString("\nWrite EIDAS graphics... ", "white");
+            $path = $config['installDir'] .
+                "/vendor/simplesamlphp/simplesamlphp/www/eidas-sp-access-button";
+
+            foreach (["/css", "/img"] as $value) {
+                $dest = $path . $value;
+                $filesystem->mkdir($dest);
+                $filesystem->mirror(
+                    $config['installDir'] . "/vendor/AgID/eidas-italian-node/eidas-button/src/production" . $value,
+                    $dest
+                );
+            }
+
+            echo $colors->getColoredString("OK", "green");
+        }        
         
-	// overwrite CIE graphics
-	if ($config['addCIE']) {
-		echo $colors->getColoredString("\nWrite CIE graphics... ", "white");
-		$path = $config['installDir'] .
-			"/vendor/simplesamlphp/simplesamlphp/www/cie-graphics";
+        // overwrite CIE graphics
+        if ($config['addCIE']) {
+            echo $colors->getColoredString("\nWrite CIE graphics... ", "white");
+            $path = $config['installDir'] .
+                "/vendor/simplesamlphp/simplesamlphp/www/cie-graphics";
 
-		foreach (["/SVG", "/PNG"] as $value) {
-			$dest = $path . $value;
-			$filesystem->mkdir($dest);
-			$filesystem->mirror(
-				$config['installDir'] . "/vendor/italia/cie-graphics" . $value,
-				$dest
-			);
-		}
+            foreach (["/SVG", "/PNG"] as $value) {
+                $dest = $path . $value;
+                $filesystem->mkdir($dest);
+                $filesystem->mirror(
+                    $config['installDir'] . "/vendor/italia/cie-graphics" . $value,
+                    $dest
+                );
+            }
 
-		echo $colors->getColoredString("OK", "green");
-	}
-
+            echo $colors->getColoredString("OK", "green");
+        }
 
         // apply simplesamlphp patch for spid compliance
         // needed only for templates and scripts, not for classes
@@ -1491,8 +1517,105 @@ class Setup {
             $xml = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml);
             $xml = simplexml_load_string($xml);
             $xmlDom = dom_import_simplexml($xml);
+
+            foreach ($xml->EntityDescriptor as $entity) {
+                $OrganizationName = trim($entity->Organization->OrganizationName);
+                $OrganizationDisplayName = trim($entity->Organization->OrganizationDisplayName);
+                $OrganizationURL = trim($entity->Organization->OrganizationURL);
+                $IDPentityID = trim($entity->attributes()['entityID']);
+
+                $template_keys = "array(\n";
+                $nK = 0;
+                $template_key = file_get_contents($config['installDir'] . '/setup/metadata/key.ptpl', true);
+                foreach ($entity->IDPSSODescriptor->KeyDescriptor as $keyDescriptor) {
+                    $X509Certificate = trim($keyDescriptor->KeyInfo->X509Data->X509Certificate);
+                    $template_keys .= "\t\t" . $nK++ . " => ";
+                    $vars = array("{{X509CERTIFICATE}}" => $X509Certificate);
+                    $template_keys .= str_replace(array_keys($vars), $vars, $template_key);
+                }
+                $template_keys .= "\n\t)";
+
+
+                $NameIDFormat = trim($entity->IDPSSODescriptor->NameIDFormat);
+
+                $template_slo = file_get_contents($config['installDir'] . '/setup/metadata/slo.ptpl', true);
+                foreach ($entity->IDPSSODescriptor->SingleLogoutService as $slo) {
+                    $SLOBinding = trim($slo->attributes()['Binding']);
+                    $SLOLocation = trim($slo->attributes()['Location']);
+
+                    if ($SLOBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect") {
+                        $vars = array("{{SLOREDIRECTLOCATION}}" => $SLOLocation);
+                        $template_slo = str_replace(array_keys($vars), $vars, $template_slo);
+                    }
+
+                    if ($SLOBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST") {
+                        $vars = array("{{SLOPOSTLOCATION}}" => $SLOLocation);
+                        $template_slo = str_replace(array_keys($vars), $vars, $template_slo);
+                    }
+                }
+
+                $template_sso = file_get_contents($config['installDir'] . '/setup/metadata/sso.ptpl', true);
+                foreach ($entity->IDPSSODescriptor->SingleSignOnService as $sso) {
+                    $SSOBinding = trim($sso->attributes()['Binding']);
+                    $SSOLocation = trim($sso->attributes()['Location']);
+
+                    if ($SSOBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect") {
+                        $vars = array("{{SSOREDIRECTLOCATION}}" => $SSOLocation);
+                        $template_sso = str_replace(array_keys($vars), $vars, $template_sso);
+                    }
+
+                    if ($SSOBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST") {
+                        $vars = array("{{SSOPOSTLOCATION}}" => $SSOLocation);
+                        $template_sso = str_replace(array_keys($vars), $vars, $template_sso);
+                    }
+                }
+
+                $icon = "assets/icons/spid-idp-dummy.png";
+                echo $colors->getColoredString("\nRetrieve IDP logo for " . $IDPentityID . "... ", "white");
+                $registry_idp_json = file_get_contents('https://registry.spid.gov.it/entities-idp?output=json');
+                $registry_idp = json_decode($registry_idp_json, true);
+    
+                foreach($registry_idp as $registry_idp_entity) {
+                    if($registry_idp_entity['entity_id']==$IDPentityID) {
+                        $icon = $registry_idp_entity['logo_uri'];
+                    }
+                }
+                echo $colors->getColoredString("OK", "green");
+
+                $vars = array(
+                    "{{ENTITYID}}" => $IDPentityID,
+                    "{{ICON}}" => $icon,
+                    "{{SPENTITYID}}" => $config['entityID'],
+                    "{{ORGANIZATIONNAME}}" => $OrganizationName,
+                    "{{ORGANIZATIONDISPLAYNAME}}" => $OrganizationDisplayName,
+                    "{{ORGANIZATIONURL}}" => $OrganizationURL,
+                    "{{SSO}}" => $template_sso,
+                    "{{SLO}}" => $template_slo,
+                    "{{NAMEIDFORMAT}}" => $NameIDFormat,
+                    "{{KEYS}}" => $template_keys
+                );
+
+                $template_idp = file_get_contents($config['installDir'] . '/setup/metadata/saml20-idp-remote.ptpl', true);
+                $template_idp = str_replace(array_keys($vars), $vars, $template_idp);
+
+                $IDPMetadata .= "\n\n" . $template_idp;
+                $IDPEntities .= "\n\t\t\t\$this->idps['" . str_replace("'", "", $OrganizationName) . "'] = '" . $IDPentityID . "';";
+            }
+
             echo $colors->getColoredString("OK", "green");
         }
+
+        // add configuration for EIDAS
+        if ($config['addEIDAS']) {
+            echo $colors->getColoredString("\nWrite metadata for eIDAS... ", "white");
+            $vars = array("{{ENTITYID}}" => "'" . $config['entityID'] . "'");
+            $template_idp_eidas = file_get_contents($_installDir . '/setup/metadata/saml20-idp-remote-eidas.ptpl', true);
+            $template_idp_eidas = str_replace(array_keys($vars), $vars, $template_idp_eidas);
+            $IDPMetadata .= "\n\n" . $template_idp_eidas;
+            $IDPEntities .= "\n\t\t\t\$this->idps['EIDAS'] = 'https://sp-proxy.eid.gov.it/spproxy/idpit';";
+            $IDPEntities .= "\n\t\t\t\$this->idps['EIDAS QA'] = 'https://sp-proxy.pre.eid.gov.it/spproxy/idpit';";
+            echo $colors->getColoredString("OK", "green");
+        }        
 
         // add configuration for CIE
         if ($config['addCIE']) {
@@ -1557,99 +1680,6 @@ class Setup {
             $xmlDom->appendChild($xmlDom->ownerDocument->importNode($xmlLocalTestDom, true));
         }
 
-        if ($config['addSPID']) {
-            foreach ($xml->EntityDescriptor as $entity) {
-                $OrganizationName = trim($entity->Organization->OrganizationName);
-                $OrganizationDisplayName = trim($entity->Organization->OrganizationDisplayName);
-                $OrganizationURL = trim($entity->Organization->OrganizationURL);
-                $IDPentityID = trim($entity->attributes()['entityID']);
-
-                $template_keys = "array(\n";
-                $nK = 0;
-                $template_key = file_get_contents($config['installDir'] . '/setup/metadata/key.ptpl', true);
-                foreach ($entity->IDPSSODescriptor->KeyDescriptor as $keyDescriptor) {
-                    $X509Certificate = trim($keyDescriptor->KeyInfo->X509Data->X509Certificate);
-                    $template_keys .= "\t\t" . $nK++ . " => ";
-                    $vars = array("{{X509CERTIFICATE}}" => $X509Certificate);
-                    $template_keys .= str_replace(array_keys($vars), $vars, $template_key);
-                }
-                $template_keys .= "\n\t)";
-
-
-                $NameIDFormat = trim($entity->IDPSSODescriptor->NameIDFormat);
-
-                $template_slo = file_get_contents($config['installDir'] . '/setup/metadata/slo.ptpl', true);
-                foreach ($entity->IDPSSODescriptor->SingleLogoutService as $slo) {
-                    $SLOBinding = trim($slo->attributes()['Binding']);
-                    $SLOLocation = trim($slo->attributes()['Location']);
-
-                    if ($SLOBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect") {
-                        $vars = array("{{SLOREDIRECTLOCATION}}" => $SLOLocation);
-                        $template_slo = str_replace(array_keys($vars), $vars, $template_slo);
-                    }
-
-                    if ($SLOBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST") {
-                        $vars = array("{{SLOPOSTLOCATION}}" => $SLOLocation);
-                        $template_slo = str_replace(array_keys($vars), $vars, $template_slo);
-                    }
-                }
-
-                $template_sso = file_get_contents($config['installDir'] . '/setup/metadata/sso.ptpl', true);
-                foreach ($entity->IDPSSODescriptor->SingleSignOnService as $sso) {
-                    $SSOBinding = trim($sso->attributes()['Binding']);
-                    $SSOLocation = trim($sso->attributes()['Location']);
-
-                    if ($SSOBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect") {
-                        $vars = array("{{SSOREDIRECTLOCATION}}" => $SSOLocation);
-                        $template_sso = str_replace(array_keys($vars), $vars, $template_sso);
-                    }
-
-                    if ($SSOBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST") {
-                        $vars = array("{{SSOPOSTLOCATION}}" => $SSOLocation);
-                        $template_sso = str_replace(array_keys($vars), $vars, $template_sso);
-                    }
-                }
-
-                if ($config['addCIE']) {
-                    $icon = "assets/icons/spid-cie-dummy.png";
-                }
-
-                if ($config['addSPID']) {
-                    $icon = "assets/icons/spid-idp-dummy.png";
-                    echo $colors->getColoredString("\nRetrieve IDP logo for " . $IDPentityID . "... ", "white");
-                    $registry_idp_json = file_get_contents('https://registry.spid.gov.it/entities-idp?output=json');
-                    $registry_idp = json_decode($registry_idp_json, true);
-        
-                    foreach($registry_idp as $registry_idp_entity) {
-                        if($registry_idp_entity['entity_id']==$IDPentityID) {
-                            $icon = $registry_idp_entity['logo_uri'];
-                        }
-                    }
-                }
-
-                $vars = array(
-                    "{{ENTITYID}}" => $IDPentityID,
-                    "{{ICON}}" => $icon,
-                    "{{SPENTITYID}}" => $config['entityID'],
-                    "{{ORGANIZATIONNAME}}" => $OrganizationName,
-                    "{{ORGANIZATIONDISPLAYNAME}}" => $OrganizationDisplayName,
-                    "{{ORGANIZATIONURL}}" => $OrganizationURL,
-                    "{{SSO}}" => $template_sso,
-                    "{{SLO}}" => $template_slo,
-                    "{{NAMEIDFORMAT}}" => $NameIDFormat,
-                    "{{KEYS}}" => $template_keys
-                );
-
-                $template_idp = file_get_contents($config['installDir'] . '/setup/metadata/saml20-idp-remote.ptpl', true);
-                $template_idp = str_replace(array_keys($vars), $vars, $template_idp);
-
-                $IDPMetadata .= "\n\n" . $template_idp;
-                $IDPEntities .= "\n\t\t\t\$this->idps['" . str_replace("'", "", $OrganizationName) . "'] = '" . $IDPentityID . "';";
-            }
-        }
-
-        echo $colors->getColoredString("OK", "green");
-
         echo $colors->getColoredString("\nWrite metadata for production IDPs... ", "white");
         $vars = array(
             "{{IDPMETADATA}}" => $IDPMetadata
@@ -1663,6 +1693,7 @@ class Setup {
         echo $colors->getColoredString("\nWrite sdk helper class... ", "white");
         $vars = array(
             "{{SPID_ENABLED}}" => $config['addSPID']? "true":"false",
+            "{{EIDAS_ENABLED}}" => $config['addEIDAS']? "true":"false",
             "{{CIE_ENABLED}}" => $config['addCIE']? "true":"false",
             "{{SERVICENAME}}" => $config['serviceName'], 
             "{{IDPS}}" => $IDPEntities
@@ -1854,10 +1885,6 @@ class Setup {
         echo $colors->getColoredString("\n\nSPID PHP SDK successfully removed\n\n", "green");
     }
 
-    /**
-     * @param $config
-     * @return array
-     */
     private static function proxyVariables($config) {
         return array(
             "{{SDKHOME}}" => $config['installDir'],

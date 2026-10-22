@@ -1,0 +1,139 @@
+/* eIDAS Produzione */
+$metadata['https://sp-proxy.eid.gov.it/spproxy/idpit'] = array (
+
+  'entityid' => 'https://spid.agid.gov.it',
+  'description' => array (
+    'en' => 'eIDAS Production',
+    'it' => 'eIDAS Production',
+  ),  
+  'icon' => 'spid-idp-dummy.svg', 
+  'OrganizationName' => array (
+    'en' => 'Agenzia per l\'Italia Digitale - AgID',
+    'it' => 'Agenzia per l\'Italia Digitale - AgID',
+  ),
+  'name' => array (
+    'en' => 'eIDAS Production',
+    'it' => 'eIDAS Production',
+  ),
+  'OrganizationDisplayName' => array (
+    'en' => 'Agenzia per l\'Italia Digitale - AgID',
+    'it' => 'Agenzia per l\'Italia Digitale - AgID',
+  ),
+  'url' => array (
+    'en' => 'https://www.agid.gov.it/en',
+    'it' => 'https://www.agid.gov.it',
+  ),
+  'OrganizationURL' => array (
+    'en' => 'https://www.agid.gov.it/en',
+    'it' => 'https://www.agid.gov.it',
+  ),
+  'contacts' => array (
+  ),
+  'metadata-set' => 'saml20-idp-remote',
+  'sign.authnrequest' => true,
+  'SingleSignOnService' => array (
+    0 => array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+      'Location' => 'https://sp-proxy.eid.gov.it/spproxy/samlsso',
+    ),
+
+    1 => array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+      'Location' => 'https://sp-proxy.eid.gov.it/spproxy/samlsso',
+    )
+  ),
+  'SingleLogoutService' => array (
+    0 => array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+      'Location' => 'https://sp-proxy.eid.gov.it/spproxy/samlslo',
+    ),
+    1 => array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+      'Location' => 'https://sp-proxy.eid.gov.it/spproxy/samlslo',
+    )
+  ),
+  'ArtifactResolutionService' => array (
+  ),
+  'NameIDFormats' => array (
+    0 => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
+  ),
+  'keys' => array(
+		0 => array (
+   'encryption' => false,
+   'signing' => true,
+   'type' => 'X509Certificate',
+   'X509Certificate' => 'MIIE9zCCA1+gAwIBAgIUOR40cZ6AM4Fq7ZopeVE7DxNOc/owDQYJKoZIhvcNAQELBQAwgaUxCzAJBgNVBAYTAklUMS0wKwYDVQQKDCRBZ2VuemlhIHBlciBsJ0l0YWxpYSBEaWdpdGFsZSAtIEFnSUQxKDAmBgNVBAsMH0ZJQ0VQIFByb2R1Y3Rpb24gSW5mcmFzdHJ1Y3R1cmUxPTA7BgNVBAMMNFB1YmxpYyBBZG1pbmlzdHJhdGlvbiBTUCBQUk9YWSBJRFAtSVQgU0FNTCBTaWduYXR1cmUwHhcNMjIxMDI4MTI0ODUwWhcNMjQxMDI3MTI0ODUwWjCBpTELMAkGA1UEBhMCSVQxLTArBgNVBAoMJEFnZW56aWEgcGVyIGwnSXRhbGlhIERpZ2l0YWxlIC0gQWdJRDEoMCYGA1UECwwfRklDRVAgUHJvZHVjdGlvbiBJbmZyYXN0cnVjdHVyZTE9MDsGA1UEAww0UHVibGljIEFkbWluaXN0cmF0aW9uIFNQIFBST1hZIElEUC1JVCBTQU1MIFNpZ25hdHVyZTCCAaIwDQYJKoZIhvcNAQEBBQADggGPADCCAYoCggGBAM06FvH+3qxyw/k45LMCWwVtrIpPHuMRNTUXVvl62OPZmrdKSHoZ4pbfYSzYu8MFTTUpI81QhAQtKiUbWYmFokzOJyyrCuChI5Lt2ODoXxVtKlx4ThFtk5PPPpbe6IDiiF/7XgmSSETZreoJajPDZuIxiFVONjo5bkvzuumVDGaQTazzXdViMCBPlUL2s4eycRV5EwoQg46qSmQI4G/V2Wpfu6L/j3684fARNhSd1CXyZG4H1g1UWHgBNziGc3TRp18OiO7Pw8EqFECv0jOnHufH3zKzdOWbjcJOB2wlNIaF7fA6l2GUXzm6EKRrfDzAhl4VXGs/Aj1mTjVgJWCvFZJaMEPHZ5Xo/sMwWeb2UiGkSqXXtJqRF9VFVFVJ0V7GaMFg5LyNYjqVDdy4BO8oJimd/PEChbhGX0r7POCg3qvSfhsnX0TpBUQpnJrSZS0Bnm5EQ8U+9iJty333vOXjbfsDuP4Vo8MePdi2Ls+t0QlvpNZ6sZrOaJCstz0gwNIDfwIDAQABox0wGzAMBgNVHRMBAf8EAjAAMAsGA1UdDwQEAwIGwDANBgkqhkiG9w0BAQsFAAOCAYEAsH6rE3lwjU0VsHd9ELdkMmzhNWaBeUtWWLxRO0LQqnrZhxEVfROCR9a7zlPqYpWF88XAwuhoiDFy0+BfDQ1zJUbykpM4Twv0TRWfvoudZKQlCd7vYohA7RQ95iILRlg4GenRzqttbEqWPVhIb0uw84ja/MVnhVJiCEP4A3uKtVtC77ZntNj/pTHHoGqk7JqFN78O2tcO5omIPTEpQJrrgXqPol5pe8PBfpcgwiTlGW3OsQ+U/hpoPlnKoJm2Wyiyb10A2udxvYjIKMoJsTvWd2uB2IrwP4cgyD3ePeN5wT+3TcCiKNQGjUW0y2GS/bqC7ONa8dds7Vlv5/lLpyZb9xaeJCMjai63nnQOwzt2AwfUTfLZNY+twITy8SrzcHpVpEqk7DL5ebV1L7LNXEEPkq0yScztx79cTQCvAc+Ns9tGSYpW+GrKhdedE6gMfgsnSwEfLMep9DgjmWAMgQ1rZdor2FL6Bxlyt4TkGsyFV0u0p2Pr0Lx9MrpcXIySnIqW'
+    ),
+
+	)
+);
+
+/* eIDAS Quality Assurance */
+$metadata['https://sp-proxy.pre.eid.gov.it/spproxy/idpit'] = array (
+
+  'entityid' => 'https://spid.agid.gov.it',
+  'description' => array (
+    'en' => 'eIDAS Quality Assurance',
+    'it' => 'eIDAS Quality Assurance',
+  ),  
+  'icon' => 'spid-idp-dummy.svg', 
+  'OrganizationName' => array (
+    'en' => 'Agenzia per l\'Italia Digitale - AgID',
+    'it' => 'Agenzia per l\'Italia Digitale - AgID',
+  ),
+  'name' => array (
+    'en' => 'eIDAS Quality Assurance',
+    'it' => 'eIDAS Quality Assurance',
+  ),
+  'OrganizationDisplayName' => array (
+    'en' => 'Agenzia per l\'Italia Digitale - AgID',
+    'it' => 'Agenzia per l\'Italia Digitale - AgID',
+  ),
+  'url' => array (
+    'en' => 'https://www.agid.gov.it/en',
+    'it' => 'https://www.agid.gov.it',
+  ),
+  'OrganizationURL' => array (
+    'en' => 'https://www.agid.gov.it/en',
+    'it' => 'https://www.agid.gov.it',
+  ),
+  'contacts' => array (
+  ),
+  'metadata-set' => 'saml20-idp-remote',
+  'sign.authnrequest' => true,
+  'SingleSignOnService' => array (
+    0 => array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+      'Location' => 'https://sp-proxy.pre.eid.gov.it/spproxy/samlsso',
+    ),
+
+    1 => array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+      'Location' => 'https://sp-proxy.pre.eid.gov.it/spproxy/samlsso',
+    )
+  ),
+  'SingleLogoutService' => array (
+    0 => array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+      'Location' => 'https://sp-proxy.pre.eid.gov.it/spproxy/samlslo',
+    ),
+    1 => array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+      'Location' => 'https://sp-proxy.pre.eid.gov.it/spproxy/samlslo',
+    )
+  ),
+  'ArtifactResolutionService' => array (
+  ),
+  'NameIDFormats' => array (
+    0 => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
+  ),
+  'keys' => array(
+		0 => array (
+   'encryption' => false,
+   'signing' => true,
+   'type' => 'X509Certificate',
+   'X509Certificate' => 'MIIEbTCCAtWgAwIBAgIUVZUh4mRUk2a15vxTg7qxkzaaIx0wDQYJKoZIhvcNAQELBQAwYTELMAkGA1UEBhMCSVQxLTArBgNVBAoMJEFnZW56aWEgcGVyIGwnSXRhbGlhIERpZ2l0YWxlIC0gQWdJRDEjMCEGA1UEAwwaU1AgUHJveHkgUUEgU0FNTCBTaWduYXR1cmUwHhcNMjQwOTEyMTYwNzI2WhcNMjYxMTAxMTYwNzI2WjBhMQswCQYDVQQGEwJJVDEtMCsGA1UECgwkQWdlbnppYSBwZXIgbCdJdGFsaWEgRGlnaXRhbGUgLSBBZ0lEMSMwIQYDVQQDDBpTUCBQcm94eSBRQSBTQU1MIFNpZ25hdHVyZTCCAaIwDQYJKoZIhvcNAQEBBQADggGPADCCAYoCggGBAOISWkkpmQsD5/hfb8/9RjyQKRrPeaeo5C27h2+Vo7mkfUpgVYEpigBvQkGKRjOqId6Bu8UYSJ8l/UUTjrdLH0T4RdYhYUTZ8Vdt4kwhgOVC/8UZmc/yDSrcNYIO8+xEYeLnaX+jBWqBpdxqcUbggNiAkw/1Vh+/WKtFA2WeloSNhlcb3Z97v8rtiv/FMBwG6+CHQSc3jI5h6mSWUaL+MJunPWJNMPbTuDIjlue3kcSqKqfyKSMSpMtfMejTwTuX6O47KPo2TvlX9Gsmkolt/tn2fUkWC3IncwDBETVnrCtgXtZCuFYC7NB5LwbK18afFgEtmpiKFu/86K2fJHlVOqkUgJ9CYFPwDC/ZPueXd2FFnGHjbMFpeZBUVpVq8fdU5/NoTDmeoqmwTC0UcafwJ5iIpi1f0SMNOv9ENjVAYPt/eqn2hjbsjezf//WdnxH0KLJM72fH98w/ZwkgHDfOO8L3EV7YYFfO1duYARVyvzj815xwSRrlk/q6/FoJrT0mfwIDAQABox0wGzAMBgNVHRMBAf8EAjAAMAsGA1UdDwQEAwIGwDANBgkqhkiG9w0BAQsFAAOCAYEANSzYr/BCpGN5wSuioKr+cS/5FKKNAahQ+WUO9zF0EbAX8sAys0EVZKeVc29JJjl1bkciklx3b18QRE8hWe83+VaszMOlsz0ZpNTVq9YDt/iMlwfhCx8aCwLCfYdzQ8ikM2ATLZrD8T6lRm6zFPCqaW6klJQud0T3SQjlrGT3FcomnIuZ5XHE6eoScDgJoXGDd1wbAfrZJhS9V6DKHoPPVNeH95ST/GAgsiHwaQtysHpD7TSWWD0OgRhM3RXSEJx0BTqfR+8lhdoAi5ojkx0qgmeyiurNU3n9JhH7O07C75vGszNFqbBscKpVKqDup4Y71IWWNCG8ghb9fTJptAXu+MIp5lxBsfW1OJsl9QKYJ/4D85TaFZlx6W3kSuvdHKW7EBuy3wCBS//Rzzs0UxLgeVu7qlkhiKCO1ZRY7QKg7djicOZWNhq9fT7TX+Z4mqQfMJpyEvRRpTaD8Se7wVkbXPZMtDP51KfQUvh+mVIf+tmBxB5r2vT9KIgeGrosACu3'
+    ),
+
+	)
+);

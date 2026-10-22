@@ -12,7 +12,7 @@ spid-php has been developed and is maintained by Michele D'Amico (@damikael). **
 
 <img src="doc/spid-php-tutorial.gif" alt="spid-php video tutorial" />
 
-spid-php è uno script composer (https://getcomposer.org/) che semplifica e automatizza il processo di installazione e configurazione di SimpleSAMLphp (https://simplesamlphp.org/) per l'integrazione dell'autenticazione SPID e CIE all'interno di applicazioni PHP. spid-php permette di realizzare un Service Provider (pubblico o privato) per SPID e/o CIE in pochi secondi, ma **non è orientato alla realizzazione di Aggregatori e/o Gestori**.  
+spid-php è uno script composer (https://getcomposer.org/) che semplifica e automatizza il processo di installazione e configurazione di SimpleSAMLphp (https://simplesamlphp.org/) per l'integrazione dell'autenticazione SPID, eIDAS e CIE all'interno di applicazioni PHP. spid-php permette di realizzare un Service Provider (pubblico o privato) per SPID e/o CIE in pochi secondi, ma **non è orientato alla realizzazione di Aggregatori e/o Gestori**.  
 
 **Si raccomanda di mantenere sempre aggiornata la propria installazione all'ultima versione**.
 
@@ -20,7 +20,7 @@ Durante il processo di setup lo script richiede l'inserimento delle seguenti inf
 * directory di installazione (directory corrente)
 * directory root del webserver
 * nome del link al quale collegare SimpleSAMLphp
-* se eseguire l'installazione per SPID e/o CIE
+* se eseguire l'installazione per SPID, eIDAS e/o CIE
 * EntityID del service provider
 * Tipologia del service provider (pubblico o privato)
 * Informazioni del service provider da inserire nel metadata
@@ -38,13 +38,16 @@ Durante il processo di setup lo script richiede l'inserimento delle seguenti inf
 e si occupa di eseguire i seguenti passi:
 * scarica l'ultima versione di SimpleSAMLphp con le relative dipendenze
 * scarica l'ultima versione dello grafica per il bottone SPID (https://github.com/italia/spid-sp-access-button)
+* scarica l'ultima versione dello grafica per il bottone eIDAS (https://github.com/AgID/eidas-italian-node)
 * scarica l'ultima versione della grafica per il bottone CIE (https://github.com/italia/cie-graphics)
 * crea un certificato X.509 per il service provider SPID
 * crea un certificato X.509 per il service provider CIE
 * scarica i metadata degli IDP SPID di produzione tramite il metadata unico di configurazione (https://registry.spid.gov.it/metadata/idp/spid-entities-idps.xml)
+* configura il metadata degli IDP eIDAS di quality assurance e di produzione
 * configura il metadata degli IDP CIE di test e di produzione
 * effettua tutte le necessarie configurazioni su SimpleSAMLphp
 * predispone il template e le risorse grafiche dello SPID SP Access Button per essere utilizzate con SimpleSAMLphp
+* predispone il template e le risorse grafiche dello eIDAS Button per essere utilizzate con SimpleSAMLphp
 * predispone il template e le risorse grafiche CIE essere utilizzate con SimpleSAMLphp
 
 Al termine del processo di setup si potranno scaricare i [metadata](#Metadata) oppure utilizzare i certificato X.509 creati nella directory /cert per registrare il service provider sull'ambiente di test/validazione.
@@ -55,7 +58,7 @@ Se si è scelto di copiare i file di esempio come proxy, sarà possibile verific
 
 ## Requisiti
 * Web server
-* php >= 8.0.28
+* php >= 8.5
 * php-xml
 * php-mbstring
 * php-gmp
@@ -174,6 +177,12 @@ bool isSPIDEnabled()
 ```
 restituisce true se è stata eseguita le configurazione per SPID, false altrimenti
 
+### isEIDASEnabled
+```
+bool isEIDASEnabled()
+```
+restituisce true se è stata eseguita le configurazione per eIDAS, false altrimenti
+
 ### isCIEEnabled
 ```
 bool isCIEEnabled()
@@ -226,6 +235,12 @@ stampa il codice per l'inserimento del pulsante 'Entra con SPID'.
 
 **$method** specifica la versione del pulsante (GET|POST)
 
+### insertEIDASButton
+```
+void insertEIDASButton([$size='default'])
+```
+stampa il codice per l'inserimento del pulsante 'Login with eIDAS'. 
+
 ### insertCIEButton
 ```
 void insertCIEButton([$size='default'])
@@ -262,6 +277,8 @@ invia una richiesta di login livello $level verso l'idp **$idp**. Dopo l'autenti
 * Sielte S.p.A.
 * TeamSystem s.p.a.
 * TI Trust Technologies srl
+* EIDAS QA
+* EIDAS
 * CIE TEST
 * CIE
 
