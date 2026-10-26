@@ -1337,7 +1337,7 @@ class Setup {
                 $dest = $path . $value;
                 $filesystem->mkdir($dest);
                 $filesystem->mirror(
-                    $config['installDir'] . "/vendor/AgID/eidas-italian-node/eidas-button/src/production" . $value,
+                    $config['installDir'] . "/vendor/agid/eidas-italian-node/eidas-button/src/production" . $value,
                     $dest
                 );
             }
@@ -1517,6 +1517,7 @@ class Setup {
             $xml = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $xml);
             $xml = simplexml_load_string($xml);
             $xmlDom = dom_import_simplexml($xml);
+            echo $colors->getColoredString("OK", "green");
 
             foreach ($xml->EntityDescriptor as $entity) {
                 $OrganizationName = trim($entity->Organization->OrganizationName);
@@ -1601,8 +1602,6 @@ class Setup {
                 $IDPMetadata .= "\n\n" . $template_idp;
                 $IDPEntities .= "\n\t\t\t\$this->idps['" . str_replace("'", "", $OrganizationName) . "'] = '" . $IDPentityID . "';";
             }
-
-            echo $colors->getColoredString("OK", "green");
         }
 
         // add configuration for EIDAS
