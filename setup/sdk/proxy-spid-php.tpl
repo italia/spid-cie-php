@@ -57,45 +57,47 @@ class PROXY_SPID_PHP extends SPID_PHP {
         ";
 
 
-        $button_local = "";
-        if ($this->isIdPAvailable("LOCAL")) {
-            $button_local = "
-                    <li class=\"spid-idp-button-link\" data-idp=\"localid\">
-                        <a href=\"/proxy.php?client_id=".$this->client_id."&action=login&redirect_uri=".$this->redirect_uri."&idp=LOCAL&state=".$this->state."\">IDP LOCAL</a>
-                    </li>
-                ";
-        }
+        if(!$this->production) {
+            $button_local = "";
+            if ($this->isIdPAvailable("LOCAL")) {
+                $button_local = "
+                        <li class=\"spid-idp-button-link\" data-idp=\"localid\">
+                            <a href=\"/proxy.php?client_id=".$this->client_id."&action=login&redirect_uri=".$this->redirect_uri."&idp=LOCAL&state=".$this->state."\">IDP LOCAL</a>
+                        </li>
+                    ";
+            }
 
-        if ($this->isIdPAvailable("VALIDATOR")) {
-            $button_li .= "
-                    <li class=\"spid-idp-support-link\">
-                        <a href=\"/proxy.php?client_id=".$this->client_id."&action=login&redirect_uri=".$this->redirect_uri."&idp=VALIDATOR&state=".$this->state."\">SPID Validator</a>
-                    </li>
-                ";
-        }
+            if ($this->isIdPAvailable("VALIDATOR")) {
+                $button_li .= "
+                        <li class=\"spid-idp-support-link\">
+                            <a href=\"/proxy.php?client_id=".$this->client_id."&action=login&redirect_uri=".$this->redirect_uri."&idp=VALIDATOR&state=".$this->state."\">SPID Validator</a>
+                        </li>
+                    ";
+            }
 
-        if ($this->isIdPAvailable("DEMO")) {
-            $button_li .= "
-                    <li class=\"spid-idp-support-link\">
-                        <a href=\"/proxy.php?client_id=".$this->client_id."&action=login&redirect_uri=".$this->redirect_uri."&idp=DEMO&state=".$this->state."\">SPID DEMO</a>
-                    </li>
-                ";
-        }
+            if ($this->isIdPAvailable("DEMO")) {
+                $button_li .= "
+                        <li class=\"spid-idp-support-link\">
+                            <a href=\"/proxy.php?client_id=".$this->client_id."&action=login&redirect_uri=".$this->redirect_uri."&idp=DEMO&state=".$this->state."\">SPID DEMO</a>
+                        </li>
+                    ";
+            }
 
-        if ($this->isIdPAvailable("DEMOVALIDATOR")) {
-            $button_li .= "
-                    <li class=\"spid-idp-support-link\">
-                        <a href=\"/proxy.php?client_id=".$this->client_id."&action=login&redirect_uri=".$this->redirect_uri."&idp=DEMOVALIDATOR&state=".$this->state."\">SPID Demo (Validator mode)</a>
-                    </li>
-                ";
-        }
+            if ($this->isIdPAvailable("DEMOVALIDATOR")) {
+                $button_li .= "
+                        <li class=\"spid-idp-support-link\">
+                            <a href=\"/proxy.php?client_id=".$this->client_id."&action=login&redirect_uri=".$this->redirect_uri."&idp=DEMOVALIDATOR&state=".$this->state."\">SPID Demo (Validator mode)</a>
+                        </li>
+                    ";
+            }
 
-        if ($this->isIdPAvailable("TEST")) {
-            $button_li .= "
-                    <li class=\"spid-idp-support-link\">
-                        <a href=\"/proxy.php?client_id=".$this->client_id."&action=login&redirect_uri=".$this->redirect_uri."&idp=TEST&state=".$this->state."\">SPID Test</a>
-                    </li>
-                ";
+            if ($this->isIdPAvailable("TEST")) {
+                $button_li .= "
+                        <li class=\"spid-idp-support-link\">
+                            <a href=\"/proxy.php?client_id=".$this->client_id."&action=login&redirect_uri=".$this->redirect_uri."&idp=TEST&state=".$this->state."\">SPID Test</a>
+                        </li>
+                    ";
+            }
         }
 
         return $button_li;

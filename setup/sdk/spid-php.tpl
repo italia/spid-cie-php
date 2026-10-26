@@ -575,6 +575,14 @@
             echo $this->getCIEButton($size);
         }
 
+        public function getEIDASButtonCSS() {
+            return "<link type=\"text/css\" rel=\"stylesheet\" href=\"/proxy/eidas-sp-access-button/css/eidas-sp-access-button.min.css\" />";
+        }
+
+        public function insertEIDASButtonCSS() {
+            echo $this->getEIDASButtonCSS();
+        }
+
         public function getEIDASButton($size = 'L') {
             if($this->isEIDASEnabled()) {
                 $size = strtolower($size);
@@ -586,7 +594,7 @@
 
                 return "<a href=\"?idp=" . $idp . "\" class=\"italia-it-button italia-it-button-size-$size button-eidas\" aria-haspopup=\"false\" aria-expanded=\"false\">
                     <span class=\"italia-it-button-icon\"><img src=\"/{{SERVICENAME}}/eidas-sp-access-button/img/ficep-it-eidas-ybw.svg\" alt=\"Entra con eIDAS\" /></span>
-                    <span class=\"italia-it-button-text sr-only\" style=\"display:none\">Login with eIDAS</span>             
+                    <span class=\"italia-it-button-text\">Login with eIDAS</span>             
                 </a>";   
             }       
         }

@@ -31,11 +31,12 @@
                 $spidsdk->insertSPIDButtonJS(); 
             }
             if($spidsdk->isEIDASEnabled()) {
-                echo "<p>EIDAS BUTTON";
+                echo "<p>EIDAS BUTTON</p>";
+                $spidsdk->insertEIDASButtonCSS();
                 $spidsdk->insertEIDASButton();
             }               
             if($spidsdk->isCIEEnabled()) {
-                echo "<p>CIE BUTTON";
+                echo "<p>CIE BUTTON</p>";
                 $spidsdk->insertCIEButton();
             }         
             
