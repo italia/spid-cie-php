@@ -171,6 +171,9 @@
                                                     <div class="col-12 col-md-6 text-center">
                                                         <?php $spidsdk->insertSPIDButton("M"); ?>
                                                     </div>
+                                                    <div class="col-12 col-md-6 text-center">
+                                                        <?php $spidsdk->insertEIDASButton(); ?>
+                                                    </div>                                                    
                                                 </div>
 
                                                 <div class="row align-items-center mt-3">

@@ -30,10 +30,15 @@
                 $spidsdk->insertSPIDButton("L");  
                 $spidsdk->insertSPIDButtonJS(); 
             }
+            if($spidsdk->isEIDASEnabled()) {
+                echo "<p>EIDAS BUTTON</p>";
+                $spidsdk->insertEIDASButtonCSS();
+                $spidsdk->insertEIDASButton();
+            }               
             if($spidsdk->isCIEEnabled()) {
-                echo "<p>CIE BUTTON";
+                echo "<p>CIE BUTTON</p>";
                 $spidsdk->insertCIEButton();
-            }
+            }         
             
         } else {
             $spidsdk->login($_GET['idp'], 2);  
