@@ -47,8 +47,30 @@
         /* Configurazione attributi per metadata */
         'attributes.index' => {{ACSINDEX}},
         //'attributes.isDefault' => true,
-        'attributes.NameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:basic',
-        'attributes' => array({{ATTRIBUTES}}),
+        //'attributes.NameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:basic',
+        //'attributes' => array({{ATTRIBUTES}}),
+
+        'AttributeConsumingService' => array(
+            {{ACSINDEX}} => array(
+                'isDefault' => true,
+                'name' => array('it'=> 'Set Attributi Default'),
+                'description' => array('it'=> 'Set Attributi Default'),
+                'NameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:basic',
+                'attributes' => array({{ATTRIBUTES}})
+            ),
+            99 => array(
+                'isDefault' => false,
+                'name' => array('it'=> 'eIDAS Natural Person Minimum Attribute Set'),
+                'NameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:basic',
+                'attributes' => array('dateOfBirth', 'familyName', 'name', 'spidCode')
+            ),
+            100 => array(
+                'isDefault' => false,
+                'name' => array('it'=> 'eIDAS Natural Person Full Attribute Set'),
+                'NameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:basic',
+                'attributes' => array('address', 'dateOfBirth', 'familyName', 'gender', 'name', 'placeOfBirth', 'spidCode')
+            )
+        ),
 
         /* AttributeConsumingServiceIndex richiesto in AuthnRequest */
         'AttributeConsumingServiceIndex' => {{ACSINDEX}},
