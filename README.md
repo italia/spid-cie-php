@@ -59,9 +59,11 @@ Se si è scelto di copiare i file di esempio come proxy, sarà possibile verific
 ## Requisiti
 * Web server
 * php >= 8.5
+* php-curl
 * php-xml
 * php-mbstring
 * php-gmp
+* php-zip
 * Composer (https://getcomposer.org)
 * OpenSSL >= 1.1.1
 * OpenSSL aes-256-cbc Cipher Algorithm
